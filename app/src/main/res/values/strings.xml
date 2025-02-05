@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">TogetherNotes</string>
+    <string name="create_account">CREATE ACCOUNT</string>
+    <string name="sing_up">SING UP</string>
+    <string name="logo">Logo</string>
+    <string name="artist">artist</string>
+    <string name="space">space</string>
+    <string name="contine">contine</string>
 </resources>
