@@ -43,13 +43,31 @@
         android:textColor="@color/white"
         android:layout_marginBottom="16dp"
         />
-    <Button
-        android:id="@+id/sign_up_button"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        android:text="@string/contine"
-        android:textAllCaps="false"
-        android:backgroundTint="@color/white"
-        android:textColor="@color/black"
-        />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        >
+
+        <!-- Fondo con borde -->
+        <ImageView
+
+            android:id="@+id/contine_rol_button"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:src="@drawable/button_border"
+            android:text="@string/contine"
+            android:layout_marginLeft="35dp"/>
+
+        <!-- Texto sobre el fondo -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/contine"
+            android:textColor="@color/black" />
+
+    </FrameLayout>
 </LinearLayout>

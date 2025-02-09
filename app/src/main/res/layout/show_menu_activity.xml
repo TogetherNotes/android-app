@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,8 +13,13 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navMenu"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="75dp"
         app:menu="@menu/navigation_menu"
         android:layout_gravity="bottom"
-        android:background="@color/bottom_bar"/>
+
+        android:background="@color/bottom_bar"
+        app:itemIconSize="60dp"
+        app:itemBackground="@drawable/bottom_nav_item_background"
+        style="@style/NoRippleBottomNavigation"
+    />
 </FrameLayout>
