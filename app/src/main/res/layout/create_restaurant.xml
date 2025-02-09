@@ -5,90 +5,122 @@
     android:padding="16dp"
     android:background="@color/blue"
     android:gravity="center">
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/logo_simple"
+        android:layout_gravity="start|top"
+        android:layout_marginTop="4dp"
+        />
+    <TextView
+        android:id="@+id/tituloApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TogetherNotes"
+        android:textSize="12sp"
+        android:textColor="#4F6571"
+        android:textStyle="bold"
+        android:gravity="center_vertical"
+        android:layout_marginTop="-35dp"
+        android:layout_marginRight="100dp"
+        />
+
+    <!-- Título -->
 
 
 
     <!-- Campo TogetherNotes -->
-    <EditText
-        android:gravity="center"
-        android:id="@+id/togetherNotes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="TogetherNotes"
-        android:textColorHint="@color/grey_hint"
-        android:inputType="text"
-        android:o="@color/grey_hint"
-        android:layout_marginBottom="16dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="20dp">
 
-    <!-- Campo Correu -->
-    <EditText
-        android:gravity="center"
-        android:id="@+id/correu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Correu"
-        android:inputType="textEmailAddress"
-        android:layout_marginBottom="16dp"/>
 
-    <!-- Campo Contrasenya -->
-    <EditText
-        android:gravity="center"
-        android:id="@+id/contrasenya"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Contrasenya"
-        android:inputType="textPassword"
-        android:layout_marginBottom="16dp"/>
 
-    <!-- Campo Capacitat -->
-    <EditText
-        android:gravity="center"
-        android:id="@+id/capacitat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Capacitat"
-        android:inputType="number"
-        android:layout_marginBottom="16dp"/>
+            <EditText
+                android:id="@+id/correu"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:hint="Correu"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColorHint="@color/hint_color"
+                android:inputType="textEmailAddress"
+                android:layout_marginBottom="16dp"/>
 
-    <!-- Campo Horari -->
-    <EditText
-        android:gravity="center"
-        android:id="@+id/horari"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Horari"
-        android:inputType="text"
-        android:layout_marginBottom="16dp"/>
+            <EditText
+                android:id="@+id/contrasenya"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/hint_color"
+                android:hint="Contrasenya"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:inputType="textPassword"
+                android:layout_marginBottom="16dp"/>
+            <EditText
+                android:id="@+id/togetherNotes"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:hint="Confirmar contrasenya"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColorHint="@color/hint_color"
+                android:inputType="text"
+                android:layout_marginBottom="16dp"/>
 
-    <!-- Campo Ubicació -->
-    <EditText
-        android:gravity="center"
-        android:id="@+id/ubicacio"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ubicació"
-        android:inputType="text"
-        android:layout_marginBottom="16dp"/>
+            <EditText
+                android:id="@+id/capacitat"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:hint="Capacitat"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColorHint="@color/hint_color"
+                android:inputType="number"
+                android:layout_marginBottom="16dp"/>
 
-    <!-- Campo Tipus de local -->
-    <EditText
-        android:gravity="center"
-        android:id="@+id/tipusLocal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Tipus de local"
-        android:inputType="text"
-        android:layout_marginBottom="24dp"/>
+            <EditText
+                android:id="@+id/horari"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:hint="Horari"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColorHint="@color/hint_color"
+                android:inputType="text"
+                android:layout_marginBottom="16dp"/>
+
+            <EditText
+                android:id="@+id/ubicacio"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:hint="Ubicació"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColorHint="@color/hint_color"
+                android:inputType="text"
+                android:layout_marginBottom="16dp"/>
+
+            <EditText
+                android:id="@+id/tipusLocal"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:hint="Tipus de local"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColorHint="@color/hint_color"
+                android:inputType="text"
+                android:layout_marginBottom="24dp"/>
+        </LinearLayout>
 
     <!-- Botón CREAR COMPTE -->
     <Button
-        android:gravity="center"
-        android:id="@+id/crearCompte"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="CREAR COMPTE"
-        android:backgroundTint="@color/blue"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
+        android:id="@+id/sign_up_button"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:text="@string/contine"
+        android:textAllCaps="false"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
+        />
+
+
+
 </LinearLayout>
