@@ -1,0 +1,124 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/blue"
+    android:gravity="center">
+
+    <!-- Contenedor para el logo y el nombre de la aplicación -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|top"
+        android:orientation="vertical"
+        android:layout_marginBottom="1dp">
+
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/logo_simple"
+            android:layout_gravity="start|top"
+            android:layout_marginBottom="250dp"/>
+
+        <!-- Nombre de la aplicación -->
+        <TextView
+            android:id="@+id/tituloApp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TogetherNotes"
+            android:layout_marginLeft="50dp"
+            android:textSize="12sp"
+            android:textColor="#4F6571"
+            android:textStyle="bold"
+            android:layout_marginTop="-280dp"
+            android:gravity="center_vertical"
+           />
+    </LinearLayout>
+
+    <!-- Contenedor para los EditText con margen superior negativo -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-100dp"
+        android:layout_marginBottom="1dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <!-- Campo Correu -->
+        <EditText
+            android:id="@+id/correu"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:hint="Correu"
+            android:inputType="textEmailAddress"
+            android:textColorHint="@color/hint_color" />
+
+        <!-- Campo Contrasenya -->
+        <EditText
+            android:id="@+id/contrasenya"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:hint="Contrasenya"
+            android:inputType="textPassword"
+            android:textColorHint="@color/hint_color" />
+
+        <!-- Campo Confirmar Contrasenya -->
+        <EditText
+            android:id="@+id/togetherNotes"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:hint="Confirmar contrasenya"
+            android:inputType="text"
+            android:textColorHint="@color/hint_color" />
+
+        <!-- Campo Génere músical -->
+        <EditText
+            android:id="@+id/capacitat"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:hint="Génere músical"
+            android:inputType="number"
+            android:textColorHint="@color/hint_color" />
+
+        <!-- Botón CREAR COMPTE -->
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            >
+
+            <!-- Fondo con borde -->
+            <ImageView
+
+                android:id="@+id/contine_button"
+                android:layout_width="300dp"
+                android:layout_height="40dp"
+                android:src="@drawable/button_border"
+                android:text="@string/contine"
+                android:layout_marginLeft="35dp"/>
+
+            <!-- Texto sobre el fondo -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/contine"
+                android:textColor="@color/black" />
+
+        </FrameLayout>
+    </LinearLayout>
+</LinearLayout>
