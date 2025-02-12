@@ -76,13 +76,6 @@
                 android:padding="10dp" />
 
         </FrameLayout>
-
-
-        <Button
-
-
-          />
-
     </LinearLayout>
 
 </LinearLayout>

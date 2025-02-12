@@ -3,10 +3,6 @@
     <!-- Fondo blanco -->
     <solid android:color="@android:color/white"/>
 
-    <!-- Borde rosa -->
-    <stroke
-        android:color="@color/pink"
-    android:width="2dp"/>
 
     <!-- Bordes redondeados -->
     <corners android:radius="20dp"/> <!-- Bordes redondeados -->
