@@ -1,13 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blue"
+    android:orientation="vertical"
     tools:context=".AccountFragment">
     <include
         layout="@layout/logo_reusable" />
     <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:fontFamily="@font/inter_18pt_bold"
+        android:text="@string/settings"
+        android:layout_gravity="center|top"
+        android:textColor="@color/white"
+        android:layout_marginTop="-20dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gold"
+        android:layout_marginTop="10dp"/>
 
 
-</FrameLayout>
+
+
+</LinearLayout>

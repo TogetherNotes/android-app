@@ -1,121 +1,94 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/blue"
-    android:gravity="center">
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/logo_simple"
-        android:layout_gravity="start|top"
-        android:layout_marginTop="4dp"
-        />
-    <TextView
-        android:id="@+id/tituloApp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TogetherNotes"
-        android:textSize="12sp"
-        android:textColor="#4F6571"
-        android:textStyle="bold"
-        android:gravity="center_vertical"
-        android:layout_marginTop="-35dp"
-        android:layout_marginRight="100dp"
-        />
-
-    <!-- Título -->
-
 
 
     <!-- Campo TogetherNotes -->
-        <LinearLayout
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="20dp">
+            android:padding="16dp"
+            android:background="@color/blue"
+            >
+            <include
+                layout="@layout/logo_reusable"
+                />
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="100dp"
+        android:layout_gravity="center">
 
-            <EditText
-                android:id="@+id/correu"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:hint="Correu"
-                android:fontFamily="@font/inter_18pt_bold"
-                android:textColorHint="@color/hint_color"
-                android:inputType="textEmailAddress"
-                android:layout_marginBottom="16dp"/>
+        <!-- Campo de correo electrónico -->
+        <EditText
+            android:id="@+id/correu"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/email"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:textColorHint="@color/hint_color"
+            android:inputType="textEmailAddress"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp" />
 
-            <EditText
-                android:id="@+id/contrasenya"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:textColorHint="@color/hint_color"
-                android:hint="Contrasenya"
-                android:fontFamily="@font/inter_18pt_bold"
-                android:inputType="textPassword"
-                android:layout_marginBottom="16dp"/>
-            <EditText
-                android:id="@+id/togetherNotes"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:hint="Confirmar contrasenya"
-                android:fontFamily="@font/inter_18pt_bold"
-                android:textColorHint="@color/hint_color"
-                android:inputType="text"
-                android:layout_marginBottom="16dp"/>
+        <!-- Campo de contraseña -->
+        <EditText
+            android:id="@+id/contrasenya"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/hint_color"
+            android:hint="@string/password"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:inputType="textPassword"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp" />
 
-            <EditText
-                android:id="@+id/capacitat"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:hint="Capacitat"
-                android:fontFamily="@font/inter_18pt_bold"
-                android:textColorHint="@color/hint_color"
-                android:inputType="number"
-                android:layout_marginBottom="16dp"/>
+        <!-- Campo de confirmación de contraseña -->
+        <EditText
+            android:id="@+id/togetherNotes"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/confirm_password"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:textColorHint="@color/hint_color"
+            android:inputType="text"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp" />
 
-            <EditText
-                android:id="@+id/horari"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:hint="Horari"
-                android:fontFamily="@font/inter_18pt_bold"
-                android:textColorHint="@color/hint_color"
-                android:inputType="text"
-                android:layout_marginBottom="16dp"/>
+        <!-- Campo de capacidad -->
+        <EditText
+            android:id="@+id/capacitat"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/capacity"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:textColorHint="@color/hint_color"
+            android:inputType="number"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp" />
 
-            <EditText
-                android:id="@+id/ubicacio"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:hint="Ubicació"
-                android:fontFamily="@font/inter_18pt_bold"
-                android:textColorHint="@color/hint_color"
-                android:inputType="text"
-                android:layout_marginBottom="16dp"/>
+        <!-- Campo de ubicación (código postal) -->
+        <EditText
+            android:id="@+id/ubicacio"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/zip_code"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:textColorHint="@color/hint_color"
+            android:layout_gravity="center"
+            android:inputType="text"
+            android:layout_marginBottom="16dp" />
+    </LinearLayout>
 
-            <EditText
-                android:id="@+id/tipusLocal"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:hint="Tipus de local"
-                android:fontFamily="@font/inter_18pt_bold"
-                android:textColorHint="@color/hint_color"
-                android:inputType="text"
-                android:layout_marginBottom="24dp"/>
-        </LinearLayout>
+
 
     <!-- Botón CREAR COMPTE -->
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="120dp"
         >
 
         <!-- Fondo con borde -->

@@ -7,7 +7,7 @@
     <color name="grey_hint">#4F6571</color>
     <color name="hint_color">#959EA7</color>
     <color name="logo_color">#4F6571</color>
-    <color  name="bottom_bar">#98A8B1</color>
+    <color  name="bottom_bar">#FFFFFFFF</color>
     <color name="transparent">#00000000</color>
     <color name="pink">#D82A4A</color>  <!-- O el color que prefieras -->
 </resources>
