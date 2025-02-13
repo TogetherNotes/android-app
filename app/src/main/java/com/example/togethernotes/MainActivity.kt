@@ -6,67 +6,57 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-
 class MainActivity : AppCompatActivity() {
-    lateinit var navegation : BottomNavigationView
-    private val mOnNavMenu = BottomNavigationView.OnNavigationItemSelectedListener {
-        item ->
 
-        when(item.itemId) {
-            R.id.itemFragment1 -> {
-                supportFragmentManager.commit {
-                    replace<MatchFragment>(R.id.fragmentContainerView)
-                    setReorderingAllowed(true)
-                        addToBackStack("replacment")
-                    }
-                    return@OnNavigationItemSelectedListener true
-                }
+    lateinit var navigation: BottomNavigationView
+    private var currentFragmentIndex = 0 // Índice del fragment actual (0 por defecto)
 
-            }
-        when(item.itemId) {
-            R.id.itemFragment2 -> {
-                supportFragmentManager.commit {
-                    replace<ChatFragment>(R.id.fragmentContainerView)
-                    setReorderingAllowed(true)
-                        addToBackStack("replacment")
-                }
-                return@OnNavigationItemSelectedListener true
-            }
-        }
-        when(item.itemId) {
-            R.id.itemFragment3 -> {
-                supportFragmentManager.commit {
-                    replace<calendarFragment>(R.id.fragmentContainerView)
-                    setReorderingAllowed(true)
-                    addToBackStack("replacment")
-                }
-                return@OnNavigationItemSelectedListener true
-            }
-        }
-        when(item.itemId) {
-            R.id.itemFragment4 -> {
-                supportFragmentManager.commit {
-                    replace<AccountFragment>(R.id.fragmentContainerView)
-                    setReorderingAllowed(true)
-                    addToBackStack("replacment")
-                }
-                return@OnNavigationItemSelectedListener true
-            }
+    private val mOnNavMenu = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        val newFragmentIndex = when (item.itemId) {
+            R.id.itemFragment1 -> 0
+            R.id.itemFragment2 -> 1
+            R.id.itemFragment3 -> 2
+            R.id.itemFragment4 -> 3
+            else -> return@OnNavigationItemSelectedListener false
         }
 
-        false
+        val isMovingRight = newFragmentIndex > currentFragmentIndex // Detectar si nos movemos a la derecha
+        currentFragmentIndex = newFragmentIndex // Actualizar el índice del fragment actual
+
+        supportFragmentManager.commit {
+            setCustomAnimations(
+                if (isMovingRight) R.anim.slide_in_right else R.anim.slide_in_left, // Animación de entrada
+                if (isMovingRight) R.anim.slide_out_left else R.anim.slide_out_right // Animación de salida
+                               )
+            when (newFragmentIndex) {
+                0 -> replace<MatchFragment>(R.id.fragmentContainerView)
+                1 -> replace<ChatFragment>(R.id.fragmentContainerView)
+                2 -> replace<calendarFragment>(R.id.fragmentContainerView)
+                3 -> replace<AccountFragment>(R.id.fragmentContainerView)
+            }
+            setReorderingAllowed(true)
+            addToBackStack("replacement")
+        }
+
+        true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.show_menu_activity)
-        navegation = findViewById(R.id.navMenu)
-        navegation.setOnNavigationItemSelectedListener(mOnNavMenu)
 
+        navigation = findViewById(R.id.navMenu)
+        navigation.setOnNavigationItemSelectedListener(mOnNavMenu)
+
+        // Cargar el fragment inicial con animación
         supportFragmentManager.commit {
+            setCustomAnimations(
+                R.anim.slide_in_right,  // Animación de entrada
+                R.anim.slide_out_left   // Animación de salida
+                               )
             replace<MatchFragment>(R.id.fragmentContainerView)
             setReorderingAllowed(true)
-            addToBackStack("replacment")
+            addToBackStack("replacement")
         }
     }
 }
