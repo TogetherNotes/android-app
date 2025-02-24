@@ -6,9 +6,10 @@ import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.togethernotes.R
+import com.example.togethernotes.tools.Tools
 
-class RoleTypeActivity : AppCompatActivity() {
-
+class RoleTypeActivity : AppCompatActivity()
+{
     private var selectedRole: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,12 +25,32 @@ class RoleTypeActivity : AppCompatActivity() {
         val spaceRoleButton = findViewById<ImageView>(R.id.spaceRegister)
 
         val imageClickListener = View.OnClickListener { view ->
-            selectedRole?.alpha = 1.0f // Restaurar opacidad de la imagen anterior
-            view.alpha = 0.5f // Oscurecer la nueva imagen
+            selectedRole?.alpha = 0.5f
+
+            view.alpha = 1.0f
+
             selectedRole = view as ImageView
         }
 
+        // Asignar listeners a los botones de rol
         artistRoleButton.setOnClickListener(imageClickListener)
         spaceRoleButton.setOnClickListener(imageClickListener)
+
+        // Configurar el listener del botón "Continuar"
+        startActivities(artistRoleButton, spaceRoleButton)
+
+    }
+
+    private fun startActivities(artist: View, space: View) {
+        val continueButton = findViewById<View>(R.id.continue_rol_button)
+        continueButton.setOnClickListener {
+            if (selectedRole == artist) {
+                Tools.startActivity(continueButton, this, CreateArtistActivity::class.java)
+            }
+
+            else if (selectedRole == space) {
+                Tools.startActivity(continueButton, this, CreateSpaceActivity::class.java)
+            }
+        }
     }
 }

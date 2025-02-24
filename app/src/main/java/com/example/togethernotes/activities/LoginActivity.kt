@@ -6,7 +6,10 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.example.togethernotes.AccountFragment
+import com.example.togethernotes.MainActivity
 import com.example.togethernotes.R
+import com.example.togethernotes.tools.Tools
 
 class LoginActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
@@ -14,9 +17,13 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
-        val correuLogin = findViewById<EditText>(R.id.mailLogin)
-        if (correuLogin!0){
+        val mailLogin = findViewById<EditText>(R.id.mailLogin)
+        val passwordLogin = findViewById<EditText>(R.id.passwordLogin)
 
+        if (mailLogin!= null && passwordLogin!=null){
+            val continueButton = findViewById(R.id.login_button) as ImageView
+
+            Tools.startActivity(continueButton,this,MainActivity::class.java)
         }
     }
 }

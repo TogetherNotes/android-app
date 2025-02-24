@@ -5,7 +5,6 @@
     <string name="logo">Logo</string>
     <string name="artist">artist</string>
     <string name="space">space</string>
-    <string name="contine">contine</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="email">Email</string>
@@ -15,4 +14,6 @@
     <string name="capacity">Capacity</string>
     <string name="music_genre">music genre</string>
     <string name="settings">Settings</string>
+    <string name="continued">continue</string>
+
 </resources>

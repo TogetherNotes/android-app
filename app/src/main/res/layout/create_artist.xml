@@ -21,20 +21,22 @@
 
         <!-- Campo Correu -->
         <EditText
-            android:id="@+id/correu"
+            android:id="@+id/artistMail"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             android:fontFamily="@font/inter_18pt_bold"
             android:hint="@string/email"
             android:inputType="textEmailAddress"
+            android:padding="20dp"
             android:textColorHint="@color/hint_color" />
 
         <!-- Campo Contrasenya -->
         <EditText
-            android:id="@+id/contrasenya"
+            android:id="@+id/artistPassword"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
+            android:padding="20dp"
             android:layout_marginBottom="16dp"
             android:fontFamily="@font/inter_18pt_bold"
             android:hint="@string/password"
@@ -43,9 +45,10 @@
 
         <!-- Campo Confirmar Contrasenya -->
         <EditText
-            android:id="@+id/togetherNotes"
+            android:id="@+id/artistConfPassword"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
+            android:padding="20dp"
             android:layout_marginBottom="16dp"
             android:fontFamily="@font/inter_18pt_bold"
             android:hint="@string/confirm_password"
@@ -54,13 +57,15 @@
 
         <!-- Campo Génere músical -->
         <EditText
-            android:id="@+id/capacitat"
+            android:id="@+id/genre"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:fontFamily="@font/inter_18pt_bold"
             android:hint="@string/music_genre"
             android:inputType="number"
+            android:padding="20dp"
+
             android:textColorHint="@color/hint_color" />
 
         <!-- Botón CREAR COMPTE -->
@@ -78,7 +83,6 @@
                 android:layout_width="300dp"
                 android:layout_height="40dp"
                 android:src="@drawable/button_border"
-                android:text="@string/contine"
                 android:layout_marginLeft="35dp"/>
 
             <!-- Texto sobre el fondo -->
@@ -87,9 +91,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="@string/contine"
+                android:text="@string/continued"
                 android:textColor="@color/black" />
-
         </FrameLayout>
     </LinearLayout>
 </LinearLayout>

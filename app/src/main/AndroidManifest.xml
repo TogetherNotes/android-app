@@ -13,13 +13,19 @@
         android:theme="@style/Theme.TogetherNotes"
         tools:targetApi="31">
         <activity
+            android:name=".activities.CreateSpaceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.CreateArtistActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".activities.RoleTypeActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.InitialActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,9 +34,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.InitialActivity"
-            android:exported="true">
-        </activity>
+            android:name=".MainActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

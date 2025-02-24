@@ -22,10 +22,11 @@
 
         <!-- Campo de correo electrónico -->
         <EditText
-            android:id="@+id/correu"
+            android:id="@+id/spaceMail"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:hint="@string/email"
+            android:padding="20dp"
             android:fontFamily="@font/inter_18pt_bold"
             android:textColorHint="@color/hint_color"
             android:inputType="textEmailAddress"
@@ -34,8 +35,9 @@
 
         <!-- Campo de contraseña -->
         <EditText
-            android:id="@+id/contrasenya"
+            android:id="@+id/spacePassword"
             android:layout_width="300dp"
+            android:padding="20dp"
             android:layout_height="wrap_content"
             android:textColorHint="@color/hint_color"
             android:hint="@string/password"
@@ -46,22 +48,24 @@
 
         <!-- Campo de confirmación de contraseña -->
         <EditText
-            android:id="@+id/togetherNotes"
+            android:id="@+id/spaceConfPassword"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:hint="@string/confirm_password"
+            android:padding="20dp"
             android:fontFamily="@font/inter_18pt_bold"
             android:textColorHint="@color/hint_color"
-            android:inputType="text"
+            android:inputType="textPassword"
             android:layout_gravity="center"
             android:layout_marginBottom="16dp" />
 
         <!-- Campo de capacidad -->
         <EditText
-            android:id="@+id/capacitat"
+            android:id="@+id/capacity"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:hint="@string/capacity"
+            android:padding="20dp"
             android:fontFamily="@font/inter_18pt_bold"
             android:textColorHint="@color/hint_color"
             android:inputType="number"
@@ -70,10 +74,11 @@
 
         <!-- Campo de ubicación (código postal) -->
         <EditText
-            android:id="@+id/ubicacio"
+            android:id="@+id/zipCode"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:hint="@string/zip_code"
+            android:padding="20dp"
             android:fontFamily="@font/inter_18pt_bold"
             android:textColorHint="@color/hint_color"
             android:layout_gravity="center"
@@ -88,7 +93,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="20dp"
         >
 
         <!-- Fondo con borde -->
@@ -98,7 +103,6 @@
             android:layout_width="300dp"
             android:layout_height="40dp"
             android:src="@drawable/button_border"
-            android:text="@string/contine"
             android:layout_marginLeft="35dp"/>
 
         <!-- Texto sobre el fondo -->
@@ -107,7 +111,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="10dp"
-            android:text="@string/contine"
+            android:text="@string/continued"
             android:textColor="@color/black" />
 
     </FrameLayout>
