@@ -60,6 +60,7 @@ class CreateArtistActivity : AppCompatActivity() {
             if (errorMessage.isNotEmpty()) {
                 // Muestra un Toast o un AlertDialog con el mensaje de error
                 Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+
             } else {
                 // Si todo está correcto, procede con la lógica del registro
                 Toast.makeText(this, "Todos los campos son válidos", Toast.LENGTH_SHORT).show()

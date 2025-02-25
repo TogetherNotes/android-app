@@ -1,7 +1,6 @@
 package com.example.togethernotes.models
 
-
-data class Raitings(
+ class Raitings(
     val Comment: String,
     val CreatedAt: String,
     val MusicianID: Int,

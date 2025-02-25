@@ -6,7 +6,11 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.example.togethernotes.AccountFragment
+import com.example.togethernotes.MainActivity
 import com.example.togethernotes.R
+import com.example.togethernotes.tools.Tools
+import com.example.togethernotes.tools.actualUser
 
 class CreateSpaceActivity : AppCompatActivity() {
 
@@ -15,7 +19,9 @@ class CreateSpaceActivity : AppCompatActivity() {
     private lateinit var spaceConfPassword: EditText
     private lateinit var capacity: EditText
     private lateinit var zipCode: EditText
+    private lateinit var name: EditText
     private lateinit var continueButton: ImageView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,12 +35,11 @@ class CreateSpaceActivity : AppCompatActivity() {
     fun initVar() {
         spaceMail = findViewById(R.id.spaceMail) // Campo de correo electrónico
         spacePassword = findViewById(R.id.spacePassword) // Campo de contraseña
-        spaceConfPassword =
-            findViewById(R.id.spaceConfPassword) // Campo de confirmación de contraseña
+        spaceConfPassword = findViewById(R.id.spaceConfPassword) // Campo de confirmación de contraseña
         capacity = findViewById(R.id.capacity) // Campo de capacidad
         zipCode = findViewById(R.id.zipCode) // Campo de ubicación (código postal)
-        continueButton =
-            findViewById(R.id.contine_restaurant_button) as ImageView // Botón CREAR COMPTE
+        name = findViewById(R.id.spaceName)
+        continueButton = findViewById(R.id.contine_restaurant_button) as ImageView // Botón CREAR COMPTE
     }
 
     /**
@@ -45,37 +50,52 @@ class CreateSpaceActivity : AppCompatActivity() {
 
         continueButton.setOnClickListener {
             // Validación de campos vacíos
-            if (spaceMail.text.isEmpty()) {
-                errorMessage += "El campo de correo electrónico no puede estar vacío.\n"
+            if (spaceMail.text.isEmpty())
+            {
+                errorMessage += getString(R.string.mailEmpty)
             }
-            if (spacePassword.text.isEmpty()) {
-                errorMessage += "El campo de contraseña no puede estar vacío.\n"
+
+            if (spacePassword.text.isEmpty())
+            {
+                errorMessage += getString(R.string.passwordEmpty)
             }
-            if (spaceConfPassword.text.isEmpty()) {
-                errorMessage += "El campo de confirmación de contraseña no puede estar vacío.\n"
+
+            if (spaceConfPassword.text.isEmpty())
+            {
+                errorMessage += getString(R.string.passwordConfEmpty)
             }
-            if (capacity.text.isEmpty()) {
-                errorMessage += "El campo de capacidad no puede estar vacío.\n"
+
+            if (capacity.text.isEmpty())
+            {
+                errorMessage += getString(R.string.capacityEmpty)
             }
-            if (zipCode.text.isEmpty()) {
-                errorMessage += "El campo de código postal no puede estar vacío.\n"
+
+            if (zipCode.text.isEmpty())
+            {
+                errorMessage += getString(R.string.zipEmpty)
             }
 
             // Validación de coincidencia de contraseñas
-            if (spacePassword.text.toString() != spaceConfPassword.text.toString()) {
-                errorMessage += "Las contraseñas no coinciden.\n"
+            if (spacePassword.text.toString() != spaceConfPassword.text.toString())
+            {
+                errorMessage += getString(R.string.passwordMatchEmpty)
             }
 
+            if (name.text.isEmpty())
+            {
+                errorMessage += getString(R.string.nameEmpty)
+            }
             // Mostrar el mensaje de error si hay alguno
             if (errorMessage.isNotEmpty()) {
                 Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
-            } else {
-                // Si todo está correcto, procede con la lógica del registro
-                Toast.makeText(this, "Todos los campos son válidos", Toast.LENGTH_SHORT).show()
-            }
 
+            } else {
+                Tools.startActivity(continueButton, this, MainActivity::class.java)
+
+            }
             // Reiniciar el mensaje de error
             errorMessage = ""
         }
+
     }
 }

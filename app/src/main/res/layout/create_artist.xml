@@ -14,7 +14,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:layout_marginBottom="1dp"
         android:gravity="center_horizontal"
         android:orientation="vertical">
@@ -27,6 +27,17 @@
             android:layout_marginBottom="12dp"
             android:fontFamily="@font/inter_18pt_bold"
             android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:padding="20dp"
+            android:textColorHint="@color/hint_color" />
+
+        <EditText
+            android:id="@+id/artistName"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:hint="@string/name"
             android:inputType="textEmailAddress"
             android:padding="20dp"
             android:textColorHint="@color/hint_color" />
@@ -74,7 +85,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="50dp"
             >
 
             <!-- Fondo con borde -->

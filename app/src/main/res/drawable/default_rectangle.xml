@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:left="4dp" android:top="4dp" android:right="4dp" android:bottom="4dp">
+        <shape>
+
+            <!-- Fondo de gradiente suave -->
+            <gradient
+                android:startColor="@color/blue"
+                android:centerColor="@color/blue"
+                android:endColor="@color/blue"
+                android:angle="270" />
+
+            <!-- Esquinas redondeadas del borde -->
+            <corners android:radius="16dp" />
+
+            <!-- Borde de color tenue -->
+            <stroke
+                android:width="4dp"
+                android:color="@color/gold" /> <!-- Naranja suave -->
+
+            <!-- Textura sutil para el fondo -->
+            <padding
+                android:left="8dp"
+                android:top="8dp"
+                android:right="8dp"
+                android:bottom="8dp" />
+        </shape>
+    </item>
+</layer-list>

@@ -15,5 +15,14 @@
     <string name="music_genre">music genre</string>
     <string name="settings">Settings</string>
     <string name="continued">continue</string>
+    <string name="name">name</string>
+    <string name="mailEmpty">The email field cannot be empty.\n</string>
+    <string name="passwordEmpty">The password field cannot be empty.\n</string>
+    <string name="passwordConfEmpty">The password confirmation field cannot be empty.\n</string>
+    <string name="capacityEmpty">The capacity field cannot be empty.\n</string>
+    <string name="zipEmpty">The zip code field cannot be empty.\n</string>
+    <string name="passwordMatchEmpty">The passwords do not match.\n</string>
+    <string name="nameEmpty">The name field is empty.\n</string>
+    <string name="changeImage">Change image</string>
 
 </resources>

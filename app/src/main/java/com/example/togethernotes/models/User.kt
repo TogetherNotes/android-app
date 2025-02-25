@@ -8,5 +8,5 @@ class User(
     val PasswordHash: String,
     val UserID: Int,
     val UserName: String,
-    val UserRole: String
+    //val UserRole: int
 )
