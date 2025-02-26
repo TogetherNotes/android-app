@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/blue"
     android:orientation="vertical"
+    android:id="@+id/account_settings"
     tools:context=".AccountFragment">
 
     <!-- Logo reusable -->
@@ -100,5 +101,7 @@
     </LinearLayout>
     <!-- TogetherNotes -->
 
+    <include
+        layout="@layout/edit_user_activity" />
 
 </LinearLayout>

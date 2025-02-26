@@ -2,6 +2,7 @@ package com.example.togethernotes
 
 import android.Manifest
 import android.R.attr.bitmap
+import android.R.attr.buttonStyleToggle
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,6 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -31,7 +33,8 @@ class AccountFragment : Fragment() {
     private var param2: String? = null
     private lateinit var profileImageView: ImageView
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
@@ -59,27 +62,32 @@ class AccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //editUserInfo()
 
-        val cameraButton = view.findViewById<ImageView>(R.id.camera_button)
-        profileImageView = view.findViewById(R.id.user_image)
+        editProfilePicture()
 
-        cameraButton.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
+    }
 
+     fun editProfilePicture()
+    {
+         val cameraButton = view?.findViewById<ImageView>(R.id.camera_button)
+        profileImageView = view?.findViewById(R.id.user_image) as ImageView
+
+
+        cameraButton?.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(
                     requireActivity(),
                     arrayOf(Manifest.permission.CAMERA),
-                    REQUEST_CAMERA_PERMISSION
-                                                 )
-
+                    REQUEST_CAMERA_PERMISSION)
             } else {
                 abrirCamara()
             }
         }
     }
 
-    private fun abrirCamara() {
+    private fun abrirCamara()
+    {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         val packageManager = requireActivity().packageManager
 
@@ -90,6 +98,7 @@ class AccountFragment : Fragment() {
             Toast.makeText(requireContext(), "No se puede abrir la cámara", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
@@ -104,7 +113,8 @@ class AccountFragment : Fragment() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as? Bitmap
@@ -126,4 +136,29 @@ class AccountFragment : Fragment() {
             }
         }
     }
+    /*
+    private fun editUserInfo(){
+        var rol = "Artist" //TODO  cambiar cuando tenga la clase User lista.
+        var editRectange = view?.findViewById(R.id.nonDimmedArea) as FrameLayout
+        var userImage = view?.findViewById(R.id.user_icon) as ImageView
+        var button = view?.findViewById(R.id.confirm_edit_info) as ImageView
+
+
+
+        var editUserButton = view?.findViewById(R.id.edit_user_button) as ImageView
+        editUserButton.setOnClickListener {
+            if(rol == "Artist")
+            {
+                userImage.background = ""
+                editRectange.visibility= View.VISIBLE
+
+            }
+        }
+    }
+
+    private fun getUserGallery()
+    {
+
+    }
+    */
 }
