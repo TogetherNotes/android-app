@@ -1,12 +1,17 @@
 package com.example.togethernotes.models
 
 
-class User(
-    val CreatedAt: String,
-    val Email: String,
-    val LastLogin: String,
-    val PasswordHash: String,
-    val UserID: Int,
-    val UserName: String,
-    //val UserRole: int
+open class User(
+    val active: Boolean,
+    val file_id: Int,
+    val id: Int,
+    val language_id: Int,
+    val latitude: Double,
+    val longitude: Double,
+    var mail: String,
+    val name: String,
+    val notification_id: Int,
+    var password: String,
+    val rating: Int,
+    var role: String
 )

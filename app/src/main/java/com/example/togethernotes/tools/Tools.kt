@@ -3,6 +3,8 @@ package com.example.togethernotes.tools
 import android.content.Context
 import android.content.Intent
 import android.view.View
+import com.example.togethernotes.models.Artist
+import com.example.togethernotes.models.Space
 import com.example.togethernotes.models.User
 lateinit var actualUser: User
 object Tools {
@@ -29,8 +31,26 @@ object Tools {
     private fun startActivityTurned(context: Context, activityClass: Class<*>) {
         val intent = Intent(context, activityClass)
         context.startActivity(intent)
+
     }
-    private fun createUser(userRole: String, email: String, password: String, ){
-        var userToAdd: User
+    fun createUser(userRole: String, email: String, password: String, name: String, zipCode: Int =0,capacity: S){
+        actualUser = if (userRole == "Artist") {
+            Artist(
+                active = true,
+                mail = email,
+                password = password,
+                name = name,
+                rol = "Artist"
+                  )
+        } else {
+            Space(
+                active = true,
+                mail = email,
+                password = password,
+                name = "Nuevo Espacio",
+                rol = "Space"
+                 )
+        }
+
     }
 }

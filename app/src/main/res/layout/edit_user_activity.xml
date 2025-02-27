@@ -4,6 +4,8 @@
     android:layout_width="350dp"
     android:layout_height="450dp"
     android:layout_gravity="center"
+    android:visibility="gone"
+    android:layout_marginTop="-240dp"
     android:background="@drawable/default_rectangle"
     >
     <LinearLayout
@@ -29,11 +31,11 @@
                 android:padding="20dp"
                 android:textColorHint="@color/hint_color" />
             <EditText
-                android:id="@+id/editgenre"
+                android:id="@+id/editGenre"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:fontFamily="@font/inter_18pt_bold"
                 android:hint="@string/music_genre"
                 android:inputType="number"
@@ -41,7 +43,7 @@
                 android:textColorHint="@color/hint_color" />
             <!-- Texto sobre el fondo -->
             <EditText
-                android:id="@+id/capacity"
+                android:id="@+id/editCapacity"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/capacity"
@@ -50,10 +52,11 @@
                 android:textColorHint="@color/hint_color"
                 android:inputType="number"
                 android:layout_gravity="center"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"/>
 
             <EditText
-                android:id="@+id/zipCode"
+                android:id="@+id/editZipCode"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -62,7 +65,8 @@
                 android:hint="@string/zip_code"
                 android:inputType="text"
                 android:padding="20dp"
-                android:textColorHint="@color/hint_color" />
+                android:textColorHint="@color/hint_color"
+                android:visibility="gone"/>
 
             <FrameLayout
                 android:layout_width="match_parent"

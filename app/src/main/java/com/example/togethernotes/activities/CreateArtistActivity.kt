@@ -8,11 +8,13 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.togethernotes.R
+import com.example.togethernotes.tools.Tools
 
 class CreateArtistActivity : AppCompatActivity() {
     private lateinit var artistMail: EditText
     private lateinit var artistPassword: EditText
     private lateinit var artistConfPassword: EditText
+    private lateinit var artistName: EditText
     private lateinit var genre: EditText
     private lateinit var continueButton: ImageView
 
@@ -31,7 +33,9 @@ class CreateArtistActivity : AppCompatActivity() {
         artistPassword = findViewById(R.id.artistPassword) as EditText/// Campo Contrasenya
         artistConfPassword = findViewById(R.id.artistConfPassword) as EditText // Campo Confirmar Contrasenya
         genre = findViewById(R.id.genre) as EditText/// Campo Génere músical
+        artistName = findViewById(R.id.artistName) as EditText
         continueButton = findViewById(R.id.contine_button) as ImageView
+
         // Variable para almacenar mensajes de error
     }
     fun registerControl(){
@@ -62,6 +66,9 @@ class CreateArtistActivity : AppCompatActivity() {
                 Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
 
             } else {
+
+                Tools.createUser("Artist", artistMail.text.toString(), artistPassword.text.toString(),artistName.text.toString())
+
                 // Si todo está correcto, procede con la lógica del registro
                 Toast.makeText(this, "Todos los campos son válidos", Toast.LENGTH_SHORT).show()
             }

@@ -90,6 +90,7 @@ class CreateSpaceActivity : AppCompatActivity() {
                 Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
 
             } else {
+                Tools.createUser("Space",spaceMail.text.toString(), spacePassword.text.toString(), name.text.toString())
                 Tools.startActivity(continueButton, this, MainActivity::class.java)
 
             }

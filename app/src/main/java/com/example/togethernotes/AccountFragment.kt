@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
@@ -21,6 +22,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.fragment.app.Fragment
+import com.example.togethernotes.models.User
+import com.example.togethernotes.tools.actualUser
 
 
 private const val ARG_PARAM1 = "param1"
@@ -32,7 +35,7 @@ class AccountFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var profileImageView: ImageView
-
+    private lateinit var cameraButton: ImageView
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -62,7 +65,7 @@ class AccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //editUserInfo()
+        editUserInfo()
 
         editProfilePicture()
 
@@ -70,7 +73,7 @@ class AccountFragment : Fragment() {
 
      fun editProfilePicture()
     {
-         val cameraButton = view?.findViewById<ImageView>(R.id.camera_button)
+         cameraButton = view?.findViewById(R.id.camera_button) as ImageView
         profileImageView = view?.findViewById(R.id.user_image) as ImageView
 
 
@@ -136,29 +139,48 @@ class AccountFragment : Fragment() {
             }
         }
     }
-    /*
+
     private fun editUserInfo(){
-        var rol = "Artist" //TODO  cambiar cuando tenga la clase User lista.
-        var editRectange = view?.findViewById(R.id.nonDimmedArea) as FrameLayout
-        var userImage = view?.findViewById(R.id.user_icon) as ImageView
+
+        var rol = "Space" //TODO  cambiar cuando tenga la clase User lista.
+        val editRectangle = view?.findViewById<FrameLayout>(R.id.nonDimmedArea) as FrameLayout
         var button = view?.findViewById(R.id.confirm_edit_info) as ImageView
-
-
+        var showZipCode = view?.findViewById(R.id.editZipCode) as EditText
+        var showCapacity = view?.findViewById(R.id.editCapacity) as EditText
+        var showGenre = view?.findViewById(R.id.editGenre) as EditText
+        var showName = view?.findViewById(R.id.editUserName) as EditText
+        showName.setText(actualUser.name)
 
         var editUserButton = view?.findViewById(R.id.edit_user_button) as ImageView
+
         editUserButton.setOnClickListener {
+            cameraButton.visibility = View.GONE
+            editRectangle.visibility = View.VISIBLE
             if(rol == "Artist")
             {
-                userImage.background = ""
-                editRectange.visibility= View.VISIBLE
+                showGenre.visibility = View.VISIBLE
+            }
+            else if (rol =="Space")
+            {
+
+                showZipCode.visibility  = View.VISIBLE
+                showCapacity.visibility = View.VISIBLE
+
 
             }
-        }
-    }
+            button.setOnClickListener()
+            {
+                editUserNewInfo()
+            }
 
-    private fun getUserGallery()
+        }
+
+
+    }
+    //TODO cuando tengamos la clase del Usuario hacer los update
+    private fun editUserNewInfo()
     {
 
     }
-    */
+
 }

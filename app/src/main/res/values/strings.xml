@@ -23,6 +23,6 @@
     <string name="zipEmpty">The zip code field cannot be empty.\n</string>
     <string name="passwordMatchEmpty">The passwords do not match.\n</string>
     <string name="nameEmpty">The name field is empty.\n</string>
-    <string name="changeImage">Change image</string>
+    <string name="changeImage">Update changes</string>
 
 </resources>
