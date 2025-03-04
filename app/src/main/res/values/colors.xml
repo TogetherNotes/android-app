@@ -9,5 +9,6 @@
     <color name="logo_color">#4F6571</color>
     <color  name="bottom_bar">#FFFFFFFF</color>
     <color name="transparent">#00000000</color>
-    <color name="pink">#D82A4A</color>  <!-- O el color que prefieras -->
+    <color name="pink">#D82A4A</color>
+    <color name="chat_grey">#98A8B1</color>  <!-- O el color que prefieras -->
 </resources>

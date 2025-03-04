@@ -13,5 +13,5 @@ open class User(
     val notification_id: Int,
     var password: String,
     val rating: Int,
-    var role: String
+    var role: String,
 )

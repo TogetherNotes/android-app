@@ -14,5 +14,6 @@ class Artist(
     rating: Int = 0,
     rol: String = "",
     val app_user_id: Int = 0,
-    val genre_id: Int = 0
+    val genre_id: Int = 0,
+    var genreList: List<Genres>
             ) : User(active, file_id, id, language_id, latitude, longitude, mail, name, notification_id, password, rating, rol)

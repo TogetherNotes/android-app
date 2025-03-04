@@ -1,16 +1,21 @@
 package com.example.togethernotes.activities
 
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.example.togethernotes.AccountFragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.MainActivity
 import com.example.togethernotes.R
+import com.example.togethernotes.adapters.GenresAdapter
+import com.example.togethernotes.models.Genres
 import com.example.togethernotes.tools.Tools
-import com.example.togethernotes.tools.actualUser
 
 class CreateSpaceActivity : AppCompatActivity() {
 
@@ -41,6 +46,8 @@ class CreateSpaceActivity : AppCompatActivity() {
         name = findViewById(R.id.spaceName)
         continueButton = findViewById(R.id.contine_restaurant_button) as ImageView // Botón CREAR COMPTE
     }
+
+
 
     /**
      * Controla la lógica de validación y registro.
@@ -89,10 +96,10 @@ class CreateSpaceActivity : AppCompatActivity() {
             if (errorMessage.isNotEmpty()) {
                 Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
 
-            } else {
+            } else
+            {
                 Tools.createUser("Space",spaceMail.text.toString(), spacePassword.text.toString(), name.text.toString())
                 Tools.startActivity(continueButton, this, MainActivity::class.java)
-
             }
             // Reiniciar el mensaje de error
             errorMessage = ""

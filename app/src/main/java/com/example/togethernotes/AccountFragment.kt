@@ -3,19 +3,24 @@ package com.example.togethernotes
 import android.Manifest
 import android.R.attr.bitmap
 import android.R.attr.buttonStyleToggle
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -23,6 +28,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.fragment.app.Fragment
 import com.example.togethernotes.models.User
+import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualUser
 
 
@@ -36,6 +42,9 @@ class AccountFragment : Fragment() {
     private var param2: String? = null
     private lateinit var profileImageView: ImageView
     private lateinit var cameraButton: ImageView
+    private lateinit var  principalName: TextView
+    private lateinit var  showRol: TextView
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -66,14 +75,22 @@ class AccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         editUserInfo()
-
         editProfilePicture()
+        configUserInfo()
+    }
+
+    private fun configUserInfo()
+    {
+
+        principalName = view?.findViewById(R.id.userPrincipalName) as TextView
+        showRol = view?.findViewById(R.id.userRol) as TextView
+        principalName.text = actualUser.name
 
     }
 
-     fun editProfilePicture()
+    fun editProfilePicture()
     {
-         cameraButton = view?.findViewById(R.id.camera_button) as ImageView
+        cameraButton = view?.findViewById(R.id.camera_button) as ImageView
         profileImageView = view?.findViewById(R.id.user_image) as ImageView
 
 
@@ -140,6 +157,24 @@ class AccountFragment : Fragment() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    fun detectFocus(mainLayout: LinearLayout,secondaryLayout: FrameLayout){
+        mainLayout.setOnTouchListener { _, event ->
+            if (secondaryLayout.visibility == View.VISIBLE && event.action == MotionEvent.ACTION_DOWN) {
+                val x = event.rawX.toInt()
+                val y = event.rawY.toInt()
+
+                // Verificar si el clic está fuera del layout pequeño
+                val showGenresBounds = Rect()
+                secondaryLayout.getGlobalVisibleRect(showGenresBounds)
+                if (!showGenresBounds.contains(x, y)) {
+                    secondaryLayout.visibility = View.GONE
+                }
+            }
+            false // Permitir que otros gestos se procesen
+        }
+    }
+
     private fun editUserInfo(){
 
         var rol = "Space" //TODO  cambiar cuando tenga la clase User lista.
@@ -149,11 +184,14 @@ class AccountFragment : Fragment() {
         var showCapacity = view?.findViewById(R.id.editCapacity) as EditText
         var showGenre = view?.findViewById(R.id.editGenre) as EditText
         var showName = view?.findViewById(R.id.editUserName) as EditText
+        var principalLayout = view?.findViewById(R.id.account_settings) as LinearLayout
+
         showName.setText(actualUser.name)
 
         var editUserButton = view?.findViewById(R.id.edit_user_button) as ImageView
-
+        Tools.detectFocus(principalLayout,editRectangle)
         editUserButton.setOnClickListener {
+
             cameraButton.visibility = View.GONE
             editRectangle.visibility = View.VISIBLE
             if(rol == "Artist")
@@ -162,11 +200,8 @@ class AccountFragment : Fragment() {
             }
             else if (rol =="Space")
             {
-
                 showZipCode.visibility  = View.VISIBLE
                 showCapacity.visibility = View.VISIBLE
-
-
             }
             button.setOnClickListener()
             {
@@ -174,6 +209,7 @@ class AccountFragment : Fragment() {
             }
 
         }
+
 
 
     }
