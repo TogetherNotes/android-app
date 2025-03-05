@@ -59,7 +59,7 @@ class CreateArtistActivity : AppCompatActivity() {
         val selectGenresButton = findViewById<Button>(R.id.selectGenres)
         val showGenres = findViewById<FrameLayout>(R.id.showGenres)
         val confirmGenresButton = findViewById<ImageView>(R.id.confirm_genres_button)
-        Tools.detectFocus(mainLayout, showGenres)
+        detectFocus(mainLayout,showGenres)
 
 
         selectGenresButton.setOnClickListener {
@@ -92,14 +92,17 @@ class CreateArtistActivity : AppCompatActivity() {
                     Toast.makeText(this, "Debes seleccionar al menos un género", Toast.LENGTH_LONG).show()
                 }
             }
+
         }
+
     }
 
     //función para que cuando selecciones los generos i pulsas fuera del foco se haga invisible la activity
 
     @SuppressLint("ClickableViewAccessibility")
-    fun detectFocus(mainLayout: LinearLayout, showGenres: FrameLayout): Boolean{
+    fun detectFocus(mainLayout: LinearLayout, showGenres: FrameLayout){
         var windowClosed: Boolean
+
         windowClosed = false
         mainLayout.setOnTouchListener { _, event ->
             if (showGenres.visibility == View.VISIBLE && event.action == MotionEvent.ACTION_DOWN) {
@@ -114,9 +117,13 @@ class CreateArtistActivity : AppCompatActivity() {
                     windowClosed = true
                 }
             }
+            if(windowClosed)
+            {
+                continueButton.visibility = View.VISIBLE
+            }
             false // Permitir que otros gestos se procesen
+
         }
-        return windowClosed
     }
 
     fun registerControl(){

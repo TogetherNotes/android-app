@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.togethernotes.AccountFragment
 import com.example.togethernotes.MainActivity
 import com.example.togethernotes.R
+import com.example.togethernotes.models.User
 import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualUser
 

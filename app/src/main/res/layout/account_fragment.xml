@@ -79,7 +79,7 @@
         android:layout_marginTop="-40dp">
 
         <ImageView
-            android:id="@+id/ajustes_button"
+            android:id="@+id/configure_button"
             android:layout_width="90dp"
             android:layout_height="90dp"
             android:layout_gravity="center"
@@ -103,8 +103,9 @@
 
     </LinearLayout>
     <!-- TogetherNotes -->
-
     <include
         layout="@layout/edit_user_activity" />
+    <include
+        layout="@layout/select_genre_activity"/>
 
 </LinearLayout>

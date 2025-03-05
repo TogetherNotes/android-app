@@ -16,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -27,9 +28,15 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
+import com.example.togethernotes.models.Genres
+import com.example.togethernotes.adapters.GenresAdapter
+import com.example.togethernotes.models.Artist
 import com.example.togethernotes.models.User
 import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualUser
+import androidx.recyclerview.widget.LinearLayoutManager
+
 
 
 private const val ARG_PARAM1 = "param1"
@@ -44,6 +51,12 @@ class AccountFragment : Fragment() {
     private lateinit var cameraButton: ImageView
     private lateinit var  principalName: TextView
     private lateinit var  showRol: TextView
+    private lateinit var  configureButton: ImageView
+    private lateinit var  editUserButton: ImageView
+    private lateinit var genresAdapter: GenresAdapter
+    private lateinit var recyclerViewGenres: RecyclerView
+    private lateinit var   tmpGenreList: List<Genres>
+
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -88,30 +101,34 @@ class AccountFragment : Fragment() {
 
     }
 
-    fun editProfilePicture()
-    {
+    fun editProfilePicture() {
         cameraButton = view?.findViewById(R.id.camera_button) as ImageView
         profileImageView = view?.findViewById(R.id.user_image) as ImageView
 
-
-        cameraButton?.setOnClickListener {
+        cameraButton.setOnClickListener {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(
                     requireActivity(),
                     arrayOf(Manifest.permission.CAMERA),
-                    REQUEST_CAMERA_PERMISSION)
+                    REQUEST_CAMERA_PERMISSION
+                                                 )
             } else {
-                abrirCamara()
+                if (requireActivity().packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+                    abrirCamara()
+                } else {
+                    Log.e("Camera", "No se encontró ninguna cámara disponible en el dispositivo.")
+                    Toast.makeText(requireContext(), "No se puede abrir la cámara", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
-    private fun abrirCamara()
-    {
+    private fun abrirCamara() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         val packageManager = requireActivity().packageManager
 
         if (takePictureIntent.resolveActivity(packageManager) != null) {
+            Log.d("Camera", "Starting camera intent")
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
         } else {
             Log.e("Camera", "No se encontró una aplicación de cámara disponible.")
@@ -133,42 +150,44 @@ class AccountFragment : Fragment() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-    {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as? Bitmap
 
             if (imageBitmap != null) {
-                // Hacer la imagen cuadrada tomando el lado más pequeño
+                // Procesar la imagen bitmap
                 val size = minOf(imageBitmap.width, imageBitmap.height)
                 val croppedBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, size, size)
-
-                // Escalar la imagen a un tamaño adecuado para evitar que se vea pixelada
                 val scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, 250, 250, true)
-
-                // Convertir la imagen en un círculo
                 val roundedBitmapDrawable: RoundedBitmapDrawable = RoundedBitmapDrawableFactory.create(resources, scaledBitmap)
                 roundedBitmapDrawable.isCircular = true
-
-                // Asignar la imagen al ImageView
                 profileImageView.setImageDrawable(roundedBitmapDrawable)
             }
         }
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    fun detectFocus(mainLayout: LinearLayout,secondaryLayout: FrameLayout){
+    fun detectFocus(mainLayout: LinearLayout, showGenres: FrameLayout){
+        var windowClosed: Boolean
+        windowClosed = false
         mainLayout.setOnTouchListener { _, event ->
-            if (secondaryLayout.visibility == View.VISIBLE && event.action == MotionEvent.ACTION_DOWN) {
+            if (showGenres.visibility == View.VISIBLE && event.action == MotionEvent.ACTION_DOWN) {
                 val x = event.rawX.toInt()
                 val y = event.rawY.toInt()
 
                 // Verificar si el clic está fuera del layout pequeño
                 val showGenresBounds = Rect()
-                secondaryLayout.getGlobalVisibleRect(showGenresBounds)
+                showGenres.getGlobalVisibleRect(showGenresBounds)
                 if (!showGenresBounds.contains(x, y)) {
-                    secondaryLayout.visibility = View.GONE
+                    showGenres.visibility = View.GONE
+                    windowClosed = true
+                }
+                if (windowClosed)
+                {
+                    cameraButton.visibility = View.VISIBLE
+                    configureButton.visibility = View.VISIBLE
+                    editUserButton.visibility = View.VISIBLE
                 }
             }
             false // Permitir que otros gestos se procesen
@@ -176,47 +195,65 @@ class AccountFragment : Fragment() {
     }
 
     private fun editUserInfo(){
-
-        var rol = "Space" //TODO  cambiar cuando tenga la clase User lista.
+        configureButton = view?.findViewById(R.id.configure_button) as ImageView
         val editRectangle = view?.findViewById<FrameLayout>(R.id.nonDimmedArea) as FrameLayout
         var button = view?.findViewById(R.id.confirm_edit_info) as ImageView
         var showZipCode = view?.findViewById(R.id.editZipCode) as EditText
         var showCapacity = view?.findViewById(R.id.editCapacity) as EditText
-        var showGenre = view?.findViewById(R.id.editGenre) as EditText
+        var showGenre = view?.findViewById(R.id.editGenres) as Button
         var showName = view?.findViewById(R.id.editUserName) as EditText
         var principalLayout = view?.findViewById(R.id.account_settings) as LinearLayout
+        val showGenres = view?.findViewById<FrameLayout>(R.id.showGenres)
+
+
 
         showName.setText(actualUser.name)
 
-        var editUserButton = view?.findViewById(R.id.edit_user_button) as ImageView
-        Tools.detectFocus(principalLayout,editRectangle)
+        editUserButton = view?.findViewById(R.id.edit_user_button) as ImageView
+        detectFocus(principalLayout,editRectangle)
         editUserButton.setOnClickListener {
 
+            //TODO
+            editUserButton.visibility = View.GONE
+            configureButton.visibility = View.GONE
             cameraButton.visibility = View.GONE
             editRectangle.visibility = View.VISIBLE
-            if(rol == "Artist")
+            if(actualUser.role == "Artist")
             {
                 showGenre.visibility = View.VISIBLE
             }
-            else if (rol =="Space")
+            else if (actualUser.role =="Space")
             {
                 showZipCode.visibility  = View.VISIBLE
                 showCapacity.visibility = View.VISIBLE
             }
             button.setOnClickListener()
             {
-                editUserNewInfo()
+                //editUserNewInfo()
             }
 
         }
 
+        showGenre.setOnClickListener{
+            showGenres?.visibility = View.VISIBLE
+            recyclerViewGenres = view?.findViewById(R.id.recyclerViewGenres) as RecyclerView
+            recyclerViewGenres.layoutManager = LinearLayoutManager(requireContext())
+
+            // Inicializa el adapter después de configurar el LayoutManager
+            genresAdapter = GenresAdapter((actualUser as Artist).genreList) {
+                (actualUser as Artist).genreList = genresAdapter.getSelectedGenres()
+            }
+            recyclerViewGenres.adapter = genresAdapter
+        }
 
 
     }
+
     //TODO cuando tengamos la clase del Usuario hacer los update
     private fun editUserNewInfo()
     {
 
     }
+
 
 }

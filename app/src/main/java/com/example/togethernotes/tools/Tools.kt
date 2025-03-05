@@ -27,27 +27,7 @@ object Tools {
             startActivityTurned(context, targetActivity)
         }
     }
-    @SuppressLint("ClickableViewAccessibility")
-    fun detectFocus(mainLayout: LinearLayout, showGenres: FrameLayout): Boolean{
-        var windowClosed: Boolean
-        windowClosed = false
-        mainLayout.setOnTouchListener { _, event ->
-            if (showGenres.visibility == View.VISIBLE && event.action == MotionEvent.ACTION_DOWN) {
-                val x = event.rawX.toInt()
-                val y = event.rawY.toInt()
 
-                // Verificar si el clic está fuera del layout pequeño
-                val showGenresBounds = Rect()
-                showGenres.getGlobalVisibleRect(showGenresBounds)
-                if (!showGenresBounds.contains(x, y)) {
-                    showGenres.visibility = View.GONE
-                    windowClosed = true
-                }
-            }
-            false // Permitir que otros gestos se procesen
-        }
-        return windowClosed
-    }
 
 
     /**
