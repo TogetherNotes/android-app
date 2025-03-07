@@ -35,6 +35,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/editGenres"
                 android:text="Select genres"
+                android:visibility="gone"
                 android:textColor="@color/white"
                 android:backgroundTint="@color/grey_hint"
                 />

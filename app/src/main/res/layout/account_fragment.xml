@@ -69,6 +69,17 @@
             android:fontFamily="@font/inter_18pt_bold"
             android:textColor="@color/gold"
             android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/userArtistGenres"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:text="Music"
+            android:textColor="@color/pink"
+            android:textSize="18sp"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <LinearLayout

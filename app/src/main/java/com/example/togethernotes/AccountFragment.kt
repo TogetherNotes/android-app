@@ -56,8 +56,8 @@ class AccountFragment : Fragment() {
     private lateinit var genresAdapter: GenresAdapter
     private lateinit var recyclerViewGenres: RecyclerView
     private lateinit var   tmpGenreList: List<Genres>
-
-
+    private var editGenresActivate: Boolean = false
+    private lateinit var userGenres: TextView
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -98,6 +98,24 @@ class AccountFragment : Fragment() {
         principalName = view?.findViewById(R.id.userPrincipalName) as TextView
         showRol = view?.findViewById(R.id.userRol) as TextView
         principalName.text = actualUser.name
+        userGenres = view?.findViewById(R.id.userArtistGenres) as TextView
+        if(actualUser.role =="Artist")
+        {
+            userGenres.visibility = View.VISIBLE
+
+            var genreList =""
+            var firstLoop = true
+            for(genres: Genres in  (actualUser as Artist).genreList ){
+                if (firstLoop){
+                    genreList +=genres.name
+                    firstLoop = false
+                }
+                else{
+                    genreList += ", ${genres.name}"
+                }
+            }
+            userGenres.text = genreList
+        }
 
     }
 
@@ -171,26 +189,28 @@ class AccountFragment : Fragment() {
     fun detectFocus(mainLayout: LinearLayout, showGenres: FrameLayout){
         var windowClosed: Boolean
         windowClosed = false
-        mainLayout.setOnTouchListener { _, event ->
-            if (showGenres.visibility == View.VISIBLE && event.action == MotionEvent.ACTION_DOWN) {
-                val x = event.rawX.toInt()
-                val y = event.rawY.toInt()
+        if(editGenresActivate == false)
+        {
+            mainLayout.setOnTouchListener { _, event ->
+                if (showGenres.visibility == View.VISIBLE && event.action == MotionEvent.ACTION_DOWN) {
+                    val x = event.rawX.toInt()
+                    val y = event.rawY.toInt()
 
-                // Verificar si el clic está fuera del layout pequeño
-                val showGenresBounds = Rect()
-                showGenres.getGlobalVisibleRect(showGenresBounds)
-                if (!showGenresBounds.contains(x, y)) {
-                    showGenres.visibility = View.GONE
-                    windowClosed = true
+                    // Verificar si el clic está fuera del layout pequeño
+                    val showGenresBounds = Rect()
+                    showGenres.getGlobalVisibleRect(showGenresBounds)
+                    if (!showGenresBounds.contains(x, y)) {
+                        showGenres.visibility = View.GONE
+                        windowClosed = true
+                    }
+                    if (windowClosed) {
+                        cameraButton.visibility = View.VISIBLE
+                        configureButton.visibility = View.VISIBLE
+                        editUserButton.visibility = View.VISIBLE
+                    }
                 }
-                if (windowClosed)
-                {
-                    cameraButton.visibility = View.VISIBLE
-                    configureButton.visibility = View.VISIBLE
-                    editUserButton.visibility = View.VISIBLE
-                }
+                false // Permitir que otros gestos se procesen
             }
-            false // Permitir que otros gestos se procesen
         }
     }
 
@@ -235,6 +255,7 @@ class AccountFragment : Fragment() {
         }
 
         showGenre.setOnClickListener{
+            editGenresActivate = true
             showGenres?.visibility = View.VISIBLE
             recyclerViewGenres = view?.findViewById(R.id.recyclerViewGenres) as RecyclerView
             recyclerViewGenres.layoutManager = LinearLayoutManager(requireContext())
@@ -247,7 +268,7 @@ class AccountFragment : Fragment() {
         }
 
 
-    }
+        }
 
     //TODO cuando tengamos la clase del Usuario hacer los update
     private fun editUserNewInfo()
