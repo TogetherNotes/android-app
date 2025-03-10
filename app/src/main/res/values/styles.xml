@@ -1,0 +1,12 @@
+<resources>
+    <!-- Estilo base -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Personaliza aquí los atributos del tema -->
+    </style>
+
+    <!-- Estilo personalizado para esquinas redondeadas -->
+    <style name="RoundedCorners">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50dp</item> <!-- Radio de las esquinas -->
+    </style>
+</resources>
