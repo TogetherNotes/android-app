@@ -22,7 +22,7 @@
         android:text="Selecciona una fecha"
         android:textSize="20sp"
         android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/logo_reusable"
+        app:layout_constraintTop_toBottomOf=""
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
