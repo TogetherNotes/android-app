@@ -98,7 +98,7 @@ class CreateSpaceActivity : AppCompatActivity() {
 
             } else
             {
-                Tools.createUser("Space",spaceMail.text.toString(), spacePassword.text.toString(), name.text.toString())
+                Tools.createUser("Space",spaceMail.text.toString(), spacePassword.text.toString(), name.text.toString(),zipCode.text.toString().toInt(),capacity.text.toString().toInt())
                 Tools.startActivity(continueButton, this, MainActivity::class.java)
             }
             // Reiniciar el mensaje de error

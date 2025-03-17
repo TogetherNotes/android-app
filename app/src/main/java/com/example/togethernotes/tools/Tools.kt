@@ -66,9 +66,5 @@ object Tools {
         }
 
     }
-    fun getGenresList(): List<Genres>{
 
-        var artistUser = actualUser as Artist;
-        return  artistUser.genreList
-    }
 }

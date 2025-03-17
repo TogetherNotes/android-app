@@ -5,14 +5,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".calendarFragment"
-    android:background="@color/blue">
-
-    <!-- Incluir el logo -->
-    <include
-        layout="@layout/logo_reusable"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    android:background="@color/blue"
+    android:layout_marginTop ="0dp">
 
     <!-- TextView (si lo necesitas) -->
     <TextView
@@ -21,8 +15,8 @@
         android:layout_height="wrap_content"
         android:text="Selecciona una fecha"
         android:textSize="20sp"
+        android:fontFamily="@font/inter_18pt_bold"
         android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf=""
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
@@ -30,11 +24,12 @@
     <!-- CalendarView -->
     <CalendarView
         android:id="@+id/calendarView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
         android:firstDayOfWeek="2"
-        android:minDate="01/01/2023"
-        android:maxDate="31/12/2023"
+        android:minDate="1672531200000"
+        android:maxDate="1704067199999"
+        android:background="@drawable/calendar_border"
         app:layout_constraintTop_toBottomOf="@id/prueba"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

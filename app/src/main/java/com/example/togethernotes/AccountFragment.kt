@@ -87,9 +87,11 @@ class AccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        editUserInfo()
-        editProfilePicture()
-        configUserInfo()
+
+            editUserInfo()
+            editProfilePicture()
+            configUserInfo()
+
     }
 
     private fun configUserInfo()

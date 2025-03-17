@@ -155,8 +155,9 @@ class CreateArtistActivity : AppCompatActivity() {
             }
             else
             {
-                var  zipcode =2
-                var capacity =2
+                //valores por defecto
+                var  zipcode =0
+                var capacity =0
                 Tools.createUser("Artist", artistMail.text.toString(), artistPassword.text.toString(),artistName.text.toString(), zipcode, capacity, selectedGenres)
                 // Si todo está correcto, procede con la lógica del registro
                 Toast.makeText(this, "Todos los campos son válidos", Toast.LENGTH_SHORT).show()

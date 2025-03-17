@@ -25,6 +25,9 @@ class LoginActivity : AppCompatActivity() {
         if (mailLogin!= null && passwordLogin!=null){
             val continueButton = findViewById(R.id.login_button) as ImageView
             Tools.startActivity(continueButton,this,MainActivity::class.java)
+
+            //TODO cambiar el usuario por la lógica de encontrarlo en la base de datos
+            Tools.createUser("Space","Prueba","Prueba","Prueba",1,1,)
         }
     }
 }
