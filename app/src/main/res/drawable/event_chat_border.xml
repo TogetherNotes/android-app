@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Fondo blanco -->
-    <solid android:color="@color/chat_grey"/>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Capa de Sombra -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#4D000000" /> <!-- Color de la sombra (negro con transparencia) -->
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
 
-
-    <!-- Bordes redondeados -->
-    <corners android:radius="20dp"/> <!-- Bordes redondeados -->
-</shape>
+    <!-- Capa Principal (Fondo del Rectángulo) -->
+    <item
+        android:left="2dp"
+        android:right="2dp"
+        android:top="2dp"
+        android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/chat_grey" />
+            <corners android:radius="16dp" />
+            <stroke
+                android:width="2dp"
+                android:color="#AAAAAA" />
+        </shape>
+    </item>
+</layer-list>

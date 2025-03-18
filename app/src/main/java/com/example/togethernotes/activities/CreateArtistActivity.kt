@@ -100,7 +100,8 @@ class CreateArtistActivity : AppCompatActivity() {
     //función para que cuando selecciones los generos i pulsas fuera del foco se haga invisible la activity
 
     @SuppressLint("ClickableViewAccessibility")
-    fun detectFocus(mainLayout: LinearLayout, showGenres: FrameLayout){
+    fun detectFocus(mainLayout: LinearLayout, showGenres: FrameLayout)
+    {
         var windowClosed: Boolean
 
         windowClosed = false
