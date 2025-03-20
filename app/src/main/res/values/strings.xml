@@ -25,5 +25,6 @@
     <string name="nameEmpty">The name field is empty.\n</string>
     <string name="changeImage">Update changes</string>
     <string name="citas">Tus citas</string>
+    <string name="finish_task">finish task</string>
 
 </resources>

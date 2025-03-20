@@ -1,7 +1,7 @@
 package com.example.togethernotes.models
 
 
-data class Activity(
+data class Contract(
     val artist_id: Int,
     val end_hour: String,
     val init_hour: String,
@@ -10,5 +10,5 @@ data class Activity(
     val imagen: Int = 0, // Valor predeterminado
     val titulo: String = "", // Valor predeterminado
     val tipo: String = "" // Valor predeterminado
-)
+                   )
 

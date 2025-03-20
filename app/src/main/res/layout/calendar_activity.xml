@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".calendarFragment"
     android:background="@color/blue"
-    android:layout_marginTop ="0dp">
+    android:layout_marginTop="0dp">
 
     <!-- TextView (si lo necesitas) -->
     <TextView
@@ -22,17 +22,19 @@
         android:layout_marginTop="16dp"
         tools:ignore="MissingConstraints" />
 
-    <!-- CalendarView -->
-    <CalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="320dp"
-        android:layout_height="320dp"
-        android:firstDayOfWeek="2"
-        android:minDate="1672531200000"
-        android:maxDate="1704067199999"
-        android:background="@drawable/calendar_border"
+    <!-- DatePicker -->
+    <DatePicker
+        android:id="@+id/datePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner"
+        android:spinnersShown="true"
         app:layout_constraintTop_toBottomOf="@id/prueba"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
+
+    <!-- RecyclerView para mostrar eventos -->
+
 </androidx.constraintlayout.widget.ConstraintLayout>

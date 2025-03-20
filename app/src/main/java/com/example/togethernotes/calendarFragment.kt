@@ -1,52 +1,55 @@
 package com.example.togethernotes
 
-import ActivitiesAdapter
+import ContractsAdapter
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CalendarView
+import android.widget.DatePicker
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.togethernotes.models.Activity
+import com.example.togethernotes.models.Contract
 import com.example.togethernotes.models.WorkType
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [calendarFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class calendarFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+                             ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.calendar_fragment, container, false)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val calendarView = view.findViewById<CalendarView>(R.id.calendarView)
-        val selectedDay = view.findViewById<TextView>(R.id.show_day)
+        val datePicker = view.findViewById<DatePicker>(R.id.datePicker)
+        val recyclerViewEventos = view.findViewById<RecyclerView>(R.id.recyclerViewEventos)
 
-// Manejar la selección de fechas
-        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+        initContractAdapter(recyclerViewEventos)
+
+        // Configurar el RecyclerView
+        recyclerViewEventos.layoutManager = LinearLayoutManager(requireContext())
+
+        // Manejar la selección de fechas
+        datePicker.init(
+            datePicker.year,
+            datePicker.month,
+            datePicker.dayOfMonth
+                       ) { _, year, monthOfYear, dayOfMonth ->
             // Crear un objeto Calendar para obtener el día de la semana y el nombre del mes
             val calendar = java.util.Calendar.getInstance()
-            calendar.set(year, month, dayOfMonth) // Configurar la fecha seleccionada
+            calendar.set(year, monthOfYear, dayOfMonth)
+            val selectedDay = view.findViewById<TextView>(R.id.show_day)
 
             // Obtener el día de la semana (e.g., "Lunes", "Martes")
             val daysOfWeek =
@@ -66,22 +69,26 @@ class calendarFragment : Fragment() {
                 "Septiembre",
                 "Octubre",
                 "Noviembre",
-                "Diciembre")
-            val monthName = months[month]
+                "Diciembre"
+                                )
+            val monthName = months[monthOfYear]
 
-            // Formatear la fecha completa
-            selectedDay.text = "$dayOfWeek, $dayOfMonth de $monthName"
             // Mostrar la fecha seleccionada en un Toast
-            initContractAdapter()
+            selectedDay.text = "$dayOfWeek, $dayOfMonth de $monthName"
+
+
+            // Inicializar el adaptador con eventos ficticios
+            initContractAdapter(recyclerViewEventos)
         }
     }
-    fun initContractAdapter()
-    {
-        val recyclerViewEventos = view?.findViewById<RecyclerView>(R.id.recyclerViewEventos)
 
+    private fun initContractAdapter(recyclerViewEventos: RecyclerView) {
         // Crear una lista de eventos (puedes reemplazar esto con datos reales)
+        val finishTask = view?.findViewById(R.id.finishTask) as FrameLayout
+        val nombreTreaFinishContract = view?.findViewById(R.id.nombreTreaFinishContract) as TextView
+
         val listaEventos = listOf(
-            Activity(
+            Contract(
                 artist_id = 101,
                 end_hour = "22:00",
                 init_hour = "20:00",
@@ -91,7 +98,7 @@ class calendarFragment : Fragment() {
                 titulo = "Evento 1",
                 tipo = "Concierto"
                     ),
-            Activity(
+            Contract(
                 artist_id = 102,
                 end_hour = "02:00",
                 init_hour = "23:00",
@@ -101,7 +108,7 @@ class calendarFragment : Fragment() {
                 titulo = "Evento 2",
                 tipo = "Festival"
                     ),
-            Activity(
+            Contract(
                 artist_id = 103,
                 end_hour = "19:30",
                 init_hour = "18:00",
@@ -111,37 +118,76 @@ class calendarFragment : Fragment() {
                 titulo = "Evento 3",
                 tipo = "Teatro"
                     )
-                                 )
+                             )
 
-        // Configurar el RecyclerView
-        recyclerViewEventos?.layoutManager = LinearLayoutManager(requireContext())
-        recyclerViewEventos?.adapter = ActivitiesAdapter(listaEventos) // Asignar el adaptador
+        // Asignar el adaptador al RecyclerView
+        recyclerViewEventos.adapter = ContractsAdapter(listaEventos) { selectedEvent ->
+            // Manejar el clic en el fragmen
+            finishTask.visibility = View.VISIBLE
+            nombreTreaFinishContract.text= selectedEvent.titulo
+            getUserStars()
+            // Ejemplo de uso de findViewById en el fragmento
+        }
     }
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.calendar_fragment, container, false)
+    @SuppressLint("ClickableViewAccessibility")
+    fun getUserStars(){
+
+        val myImageView: ImageView? = view?.findViewById(R.id.finishContractStars)
+
+        myImageView?.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                // Obtener las coordenadas del clic relativas al ImageView
+                val x = event.x
+
+                // Obtener el ancho del ImageView
+                val imageViewWidth = v.width
+
+                // Dividir el ancho en 5 partes iguales
+                val sectionWidth = imageViewWidth / 5.0f
+
+                // Determinar en qué sección se hizo clic
+                val section = (x / sectionWidth).toInt() + 1
+
+                // Mostrar la sección en un Toast
+                Toast.makeText(v.context, "Sección: $section", Toast.LENGTH_SHORT).show()                // Realizar acciones según la sección
+                when (section) {
+                    1 -> {
+                        // Acción para la sección 1
+                        myImageView?.background = ContextCompat.getDrawable(v.context, R.drawable.stars1)
+                    }
+                    2 -> {
+                        myImageView?.background = ContextCompat.getDrawable(v.context, R.drawable.stars2)
+                        // Acción para la sección 2
+                    }
+                    3 -> {
+                        myImageView?.background = ContextCompat.getDrawable(v.context, R.drawable.stars3)
+
+                        // Acción para la sección 3
+                    }
+                    4 -> {
+                        // Acción para la sección
+                        myImageView?.background = ContextCompat.getDrawable(v.context, R.drawable.stars4)
+                    }
+                    5 -> {
+                        // Acción para la sección 5
+                        myImageView?.background = ContextCompat.getDrawable(v.context, R.drawable.stars5)
+
+                    }
+                }
+
+                true // Indica que el evento ha sido manejado
+            } else {
+                false
+            }
+        }
+
+
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TercerFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            calendarFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        fun newInstance(): calendarFragment {
+            return calendarFragment()
+        }
     }
 }

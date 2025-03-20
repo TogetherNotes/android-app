@@ -44,7 +44,7 @@
     <include
         layout="@layout/calendar_activity"
         android:layout_width="match_parent"
-        android:layout_height="420dp"
+        android:layout_height="240dp"
     />
 
     <LinearLayout
@@ -80,4 +80,7 @@
             android:layout_height="wrap_content"
         />
     </LinearLayout>
+    <include
+        layout="@layout/finish_contract_activity"
+        />
 </LinearLayout>
