@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/configUserActivity"
+    android:layout_width="350dp"
+    android:layout_height="450dp"
+    android:layout_gravity="center"
+    android:background="@drawable/default_rectangle"
+    >
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal">
+        <LinearLayout
+            android:layout_marginTop="65dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/select_spanish" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColor="@color/white"
+                android:text="@string/spanish"/>
+            </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/select_english" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColor="@color/white"
+                android:text="@string/english"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/select_catalan" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColor="@color/white"
+                android:text="@string/catalan"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp">
+
+
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+
+                <!-- Fondo con borde -->
+                <ImageView
+                    android:id="@+id/confirm_genres_button"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/button_border"
+                    android:layout_marginLeft="-5dp"/>
+
+
+                <!-- Texto sobre el fondo -->
+                <TextView
+                    android:layout_marginTop="-7dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:textSize="10sp"
+                    android:text="@string/changeImage"
+                    android:textColor="@color/black" />
+            </FrameLayout>
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+</FrameLayout>

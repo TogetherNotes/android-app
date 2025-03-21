@@ -26,5 +26,8 @@
     <string name="changeImage">Update changes</string>
     <string name="citas">Tus citas</string>
     <string name="finish_task">finish task</string>
+    <string name="spanish">Spanish</string>
+    <string name="english">English</string>
+    <string name="catalan">Catalan</string>
 
 </resources>
