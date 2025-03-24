@@ -118,5 +118,7 @@
         layout="@layout/edit_user_activity" />
     <include
         layout="@layout/select_genre_activity"/>
+    <include
+        layout="@layout/config_user_activity" />
 
 </LinearLayout>

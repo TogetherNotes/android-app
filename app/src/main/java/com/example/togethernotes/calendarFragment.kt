@@ -2,6 +2,7 @@ package com.example.togethernotes
 
 import ContractsAdapter
 import android.annotation.SuppressLint
+import android.graphics.Rect
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.DatePicker
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -35,7 +37,7 @@ class calendarFragment : Fragment() {
         val datePicker = view.findViewById<DatePicker>(R.id.datePicker)
         val recyclerViewEventos = view.findViewById<RecyclerView>(R.id.recyclerViewEventos)
 
-        initContractAdapter(recyclerViewEventos)
+        //initContractAdapter(recyclerViewEventos, year, monthOfYear, dayOfMonth)
 
         // Configurar el RecyclerView
         recyclerViewEventos.layoutManager = LinearLayoutManager(requireContext())
@@ -78,15 +80,22 @@ class calendarFragment : Fragment() {
 
 
             // Inicializar el adaptador con eventos ficticios
-            initContractAdapter(recyclerViewEventos)
+            initContractAdapter(recyclerViewEventos,year,monthOfYear,dayOfMonth)
         }
     }
 
-    private fun initContractAdapter(recyclerViewEventos: RecyclerView) {
+    private fun initContractAdapter(
+        recyclerViewEventos: RecyclerView,
+        year: Int,
+        monthOfYear: Int,
+        dayOfMonth: Int
+    ) {
+
         // Crear una lista de eventos (puedes reemplazar esto con datos reales)
         val finishTask = view?.findViewById(R.id.finishTask) as FrameLayout
         val nombreTreaFinishContract = view?.findViewById(R.id.nombreTreaFinishContract) as TextView
-
+        val finishTaskButton = view?.findViewById(R.id.confirm_finish_contract) as ImageView
+        val calendarFragment = view?.findViewById(R.id.calendarFragment) as LinearLayout
         val listaEventos = listOf(
             Contract(
                 artist_id = 101,
@@ -124,10 +133,18 @@ class calendarFragment : Fragment() {
         recyclerViewEventos.adapter = ContractsAdapter(listaEventos) { selectedEvent ->
             // Manejar el clic en el fragmen
             finishTask.visibility = View.VISIBLE
+            recyclerViewEventos.visibility = View.GONE
+
             nombreTreaFinishContract.text= selectedEvent.titulo
             getUserStars()
             // Ejemplo de uso de findViewById en el fragmento
         }
+        detectFocus(calendarFragment,finishTask,recyclerViewEventos)
+    }
+    fun recordFinishedTask()
+    {
+        val finishTask = view?.findViewById(R.id.finishTask) as FrameLayout
+        finishTask.visibility = View.GONE
     }
     @SuppressLint("ClickableViewAccessibility")
     fun getUserStars(){
@@ -182,6 +199,44 @@ class calendarFragment : Fragment() {
         }
 
 
+    }
+    @SuppressLint("ClickableViewAccessibility")
+    fun detectFocus(
+        mainLayout: LinearLayout,
+        showGenres: FrameLayout,
+        recyclerViewEventos: RecyclerView
+    )
+    {
+        var windowClosed: Boolean
+
+        windowClosed = false
+        mainLayout.setOnTouchListener { _, event ->
+            if (showGenres.visibility == View.VISIBLE && event.action == MotionEvent.ACTION_DOWN) {
+                val x = event.rawX.toInt()
+                val y = event.rawY.toInt()
+
+                // Verificar si el clic está fuera del layout pequeño
+                val showGenresBounds = Rect()
+                showGenres.getGlobalVisibleRect(showGenresBounds)
+                if (!showGenresBounds.contains(x, y)) {
+                    showGenres.visibility = View.GONE
+                    mainLayout.isClickable = false
+                    mainLayout.isFocusable = false
+                    recyclerViewEventos.visibility = View.VISIBLE
+
+                    windowClosed = true
+                }
+            }
+            /*
+            if(windowClosed)
+            {
+                continueButton.visibility = View.VISIBLE
+            }
+            */
+
+            false // Permitir que otros gestos se procesen
+
+        }
     }
 
     companion object {

@@ -91,6 +91,7 @@ class AccountFragment : Fragment() {
             editUserInfo()
             editProfilePicture()
             configUserInfo()
+            configureAccount()
 
     }
 
@@ -117,6 +118,20 @@ class AccountFragment : Fragment() {
                 }
             }
             userGenres.text = genreList
+        }
+
+    }
+    fun configureAccount() {
+        var configureAccountButton = view?.findViewById(R.id.configure_button) as ImageView
+        var showConfigureLayout = view?.findViewById(R.id.configUserActivity) as FrameLayout
+        var principalLayout = view?.findViewById(R.id.account_settings) as LinearLayout
+        var spanisg = view?.findViewById(R.id)
+        configureAccountButton.setOnClickListener {
+            showConfigureLayout.visibility = View.VISIBLE
+            detectFocus(principalLayout, showConfigureLayout)
+            editUserButton.visibility = View.GONE
+            configureButton.visibility = View.GONE
+            cameraButton.visibility = View.GONE
         }
 
     }
@@ -232,8 +247,8 @@ class AccountFragment : Fragment() {
         showName.setText(actualUser.name)
 
         editUserButton = view?.findViewById(R.id.edit_user_button) as ImageView
-        detectFocus(principalLayout,editRectangle)
         editUserButton.setOnClickListener {
+            detectFocus(principalLayout,editRectangle)
 
             //TODO
             editUserButton.visibility = View.GONE
