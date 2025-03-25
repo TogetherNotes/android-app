@@ -29,6 +29,16 @@ class ChatFragment : Fragment() {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        createEventSol()
+    }
+
+    private fun createEventSol() {
+        TODO("Not yet implemented")
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

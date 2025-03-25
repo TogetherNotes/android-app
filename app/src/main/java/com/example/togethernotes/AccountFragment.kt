@@ -91,7 +91,17 @@ class AccountFragment : Fragment() {
             editUserInfo()
             editProfilePicture()
             configUserInfo()
+            createEventSol()
 
+    }
+
+    private fun createEventSol()
+    {
+        var solEventButton = view?.findViewById(R.id.createEventButton) as ImageView
+
+        solEventButton.setOnClickListener{
+
+        }
     }
 
     private fun configUserInfo()
@@ -172,10 +182,12 @@ class AccountFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK)
+        {
             val imageBitmap = data?.extras?.get("data") as? Bitmap
 
-            if (imageBitmap != null) {
+            if (imageBitmap != null)
+            {
                 // Procesar la imagen bitmap
                 val size = minOf(imageBitmap.width, imageBitmap.height)
                 val croppedBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, size, size)

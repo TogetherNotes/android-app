@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nonDimmedArea"
+    android:layout_width="350dp"
+    android:layout_height="450dp"
+    android:layout_gravity="center"
+    android:background="@drawable/default_rectangle"
+    >
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal">
+        <EditText
+            android:id="@+id/titolEvent"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:hint="@string/name"
+            android:inputType="textEmailAddress"
+            android:padding="20dp"
+            android:textColorHint="@color/hint_color" />
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:textColor="@color/hint_color"
+            android:textSize="15dp"
+            android:text="Work accord"
+            />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                >
+
+                <!-- Fondo con borde -->
+                <ImageView
+                    android:id="@+id/confirm_edit_info"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/button_border"
+                    android:layout_marginLeft="-5dp"/>
+
+                <!-- Texto sobre el fondo -->
+                <TextView
+                    android:layout_marginTop="-7dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:textSize="10sp"
+                    android:text="@string/changeImage"
+                    android:textColor="@color/black" />
+
+            </FrameLayout>
+
+    </LinearLayout>
+
+
+</FrameLayout>
