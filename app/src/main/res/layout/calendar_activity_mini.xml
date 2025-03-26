@@ -1,0 +1,41 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".calendarFragment"
+    android:background="@color/blue"
+    android:layout_marginTop="0dp">
+
+    <!-- TextView (si lo necesitas) -->
+    <TextView
+        android:id="@+id/prueba"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selecciona una fecha"
+        android:textSize="15dp"
+        android:fontFamily="@font/inter_18pt_bold"
+        android:textColor="@color/hint_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        tools:ignore="MissingConstraints" />
+
+    <!-- DatePicker -->
+    <DatePicker
+        android:id="@+id/datePicker"
+        android:layout_width="250dp"
+        android:layout_height="120dp"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner"
+        android:spinnersShown="true"
+        app:layout_constraintTop_toBottomOf="@id/prueba"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="40dp"/>
+
+    <!-- RecyclerView para mostrar eventos -->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

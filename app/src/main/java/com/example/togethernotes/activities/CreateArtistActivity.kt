@@ -13,13 +13,16 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.MainActivity
 import com.example.togethernotes.R
 import com.example.togethernotes.adapters.GenresAdapter
 import com.example.togethernotes.models.Genres
+import com.example.togethernotes.repository.GenreRepository
 import com.example.togethernotes.tools.Tools
+import kotlinx.coroutines.launch
 
 class CreateArtistActivity : AppCompatActivity() {
     private lateinit var artistMail: EditText
@@ -55,6 +58,7 @@ class CreateArtistActivity : AppCompatActivity() {
     }
     @SuppressLint("ClickableViewAccessibility")
     fun selectGenres() {
+        val genreRepository = GenreRepository()
         val mainLayout = findViewById<LinearLayout>(R.id.createArtistLayout)
         val selectGenresButton = findViewById<Button>(R.id.selectGenres)
         val showGenres = findViewById<FrameLayout>(R.id.showGenres)
@@ -69,12 +73,27 @@ class CreateArtistActivity : AppCompatActivity() {
             recyclerViewGenres = findViewById(R.id.recyclerViewGenres)
             recyclerViewGenres.layoutManager = LinearLayoutManager(this)
 
-            val genresList = listOf(
+            var genresList = listOf(
                 Genres(1, "Pop"),
                 Genres(2, "Rock"),
                 Genres(3, "Jazz"),
                 Genres(4, "Clásica")
                                    )
+
+
+            lifecycleScope.launch {
+              try {
+                  val response = genreRepository.getAllGenres()
+                  if (response.isSuccessful) {
+                      genresList = response.body() ?: emptyList()
+                  } else {
+                      Toast.makeText(this@CreateArtistActivity, "Error fetching genres: ${response.message()}", Toast.LENGTH_LONG).show()
+                  }
+              } catch (e: Exception) {
+                  Toast.makeText(this@CreateArtistActivity, "Exception: ${e.message}", Toast.LENGTH_LONG).show()
+              }
+            }
+
             genresAdapter = GenresAdapter(genresList) { selectedGenre ->
                 tmpGenreList = genresAdapter.getSelectedGenres()
             }

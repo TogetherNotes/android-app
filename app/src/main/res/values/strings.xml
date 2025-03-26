@@ -29,5 +29,6 @@
     <string name="spanish">Spanish</string>
     <string name="english">English</string>
     <string name="catalan">Catalan</string>
+    <string name="request">request</string>
 
 </resources>

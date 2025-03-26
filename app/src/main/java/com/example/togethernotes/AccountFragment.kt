@@ -91,18 +91,8 @@ class AccountFragment : Fragment() {
             editUserInfo()
             editProfilePicture()
             configUserInfo()
-            createEventSol()
-
     }
 
-    private fun createEventSol()
-    {
-        var solEventButton = view?.findViewById(R.id.createEventButton) as ImageView
-
-        solEventButton.setOnClickListener{
-
-        }
-    }
 
     private fun configUserInfo()
     {
@@ -239,7 +229,6 @@ class AccountFragment : Fragment() {
         var principalLayout = view?.findViewById(R.id.account_settings) as LinearLayout
         val showGenres = view?.findViewById<FrameLayout>(R.id.showGenres)
         var updateGenresButton = view?.findViewById(R.id.confirm_genres_button) as ImageView
-
 
         showName.setText(actualUser.name)
 

@@ -8,10 +8,7 @@
     android:background="@color/blue"
     >
     <include
-        layout="@layout/logo_reusable"
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        layout="@layout/logo_reusable"  />
     <!-- TODO: Update blank fragment layout -->
 
     <LinearLayout
@@ -47,7 +44,9 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"/>
 
-
+        <include
+            layout = "@layout/create_user_event"
+            />
     </LinearLayout>
 
 </LinearLayout>
