@@ -8,6 +8,7 @@ object Retrofit {
 
     private val retrofit: Retrofit by lazy {
         val gson = GsonBuilder()
+
             .create()
         Retrofit.Builder()
             .baseUrl(BASE_URL)

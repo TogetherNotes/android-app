@@ -1,7 +1,9 @@
 package com.example.togethernotes.models
 
+import com.google.gson.annotations.SerializedName
 
-class Genres(
-    val id: Int,
-    val name: String
-)
+
+data class Genres(
+    @SerializedName("id") val id: Int,
+    @SerializedName("name") val name: String
+ )

@@ -20,7 +20,7 @@ import com.example.togethernotes.MainActivity
 import com.example.togethernotes.R
 import com.example.togethernotes.adapters.GenresAdapter
 import com.example.togethernotes.models.Genres
-import com.example.togethernotes.repository.GenreRepository
+import com.example.togethernotes.services.genres.GenreRepository
 import com.example.togethernotes.tools.Tools
 import kotlinx.coroutines.launch
 
@@ -73,19 +73,24 @@ class CreateArtistActivity : AppCompatActivity() {
             recyclerViewGenres = findViewById(R.id.recyclerViewGenres)
             recyclerViewGenres.layoutManager = LinearLayoutManager(this)
 
-            var genresList = listOf(
+            var genresList = mutableListOf(
                 Genres(1, "Pop"),
                 Genres(2, "Rock"),
                 Genres(3, "Jazz"),
                 Genres(4, "Clásica")
                                    )
+            lifecycleScope.launch {
+                val response = genreRepository.getAllGenres()
+
+            }
 
 
             lifecycleScope.launch {
               try {
                   val response = genreRepository.getAllGenres()
+
                   if (response.isSuccessful) {
-                      genresList = response.body() ?: emptyList()
+                      genresList = (response.body() ?: emptyList()).toMutableList()
                   } else {
                       Toast.makeText(this@CreateArtistActivity, "Error fetching genres: ${response.message()}", Toast.LENGTH_LONG).show()
                   }

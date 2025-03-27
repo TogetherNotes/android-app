@@ -1,8 +1,6 @@
 package com.example.togethernotes
 
 import android.Manifest
-import android.R.attr.bitmap
-import android.R.attr.buttonStyleToggle
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -32,9 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.models.Genres
 import com.example.togethernotes.adapters.GenresAdapter
 import com.example.togethernotes.models.Artist
-import com.example.togethernotes.models.User
-import com.example.togethernotes.tools.Tools
-import com.example.togethernotes.tools.actualUser
+import com.example.togethernotes.tools.actualApp
 import androidx.recyclerview.widget.LinearLayoutManager
 
 
@@ -88,26 +84,27 @@ class AccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-            editUserInfo()
-            editProfilePicture()
-            configUserInfo()
-    }
+        editUserInfo()
+        editProfilePicture()
+        configUserInfo()
+        configureAccount()
 
+    }
 
     private fun configUserInfo()
     {
 
         principalName = view?.findViewById(R.id.userPrincipalName) as TextView
         showRol = view?.findViewById(R.id.userRol) as TextView
-        principalName.text = actualUser.name
+        principalName.text = actualApp.name
         userGenres = view?.findViewById(R.id.userArtistGenres) as TextView
-        if(actualUser.role =="Artist")
+        if(actualApp.role =="Artist")
         {
             userGenres.visibility = View.VISIBLE
 
             var genreList =""
             var firstLoop = true
-            for(genres: Genres in  (actualUser as Artist).genreList ){
+            for(genres: Genres in  (actualApp as Artist).genreList ){
                 if (firstLoop){
                     genreList +=genres.name
                     firstLoop = false
@@ -117,6 +114,20 @@ class AccountFragment : Fragment() {
                 }
             }
             userGenres.text = genreList
+        }
+
+    }
+    fun configureAccount() {
+        var configureAccountButton = view?.findViewById(R.id.configure_button) as ImageView
+        var showConfigureLayout = view?.findViewById(R.id.configUserActivity) as FrameLayout
+        var principalLayout = view?.findViewById(R.id.account_settings) as LinearLayout
+       // var spanisg = view?.findViewById(R.id)
+        configureAccountButton.setOnClickListener {
+            showConfigureLayout.visibility = View.VISIBLE
+            detectFocus(principalLayout, showConfigureLayout)
+            editUserButton.visibility = View.GONE
+            configureButton.visibility = View.GONE
+            cameraButton.visibility = View.GONE
         }
 
     }
@@ -172,12 +183,10 @@ class AccountFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK)
-        {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as? Bitmap
 
-            if (imageBitmap != null)
-            {
+            if (imageBitmap != null) {
                 // Procesar la imagen bitmap
                 val size = minOf(imageBitmap.width, imageBitmap.height)
                 val croppedBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, size, size)
@@ -230,22 +239,23 @@ class AccountFragment : Fragment() {
         val showGenres = view?.findViewById<FrameLayout>(R.id.showGenres)
         var updateGenresButton = view?.findViewById(R.id.confirm_genres_button) as ImageView
 
-        showName.setText(actualUser.name)
+
+        showName.setText(actualApp.name)
 
         editUserButton = view?.findViewById(R.id.edit_user_button) as ImageView
-        detectFocus(principalLayout,editRectangle)
         editUserButton.setOnClickListener {
+            detectFocus(principalLayout,editRectangle)
 
             //TODO
             editUserButton.visibility = View.GONE
             configureButton.visibility = View.GONE
             cameraButton.visibility = View.GONE
             editRectangle.visibility = View.VISIBLE
-            if(actualUser.role == "Artist")
+            if(actualApp.role == "Artist")
             {
                 showGenre.visibility = View.VISIBLE
             }
-            else if (actualUser.role =="Space")
+            else if (actualApp.role =="Space")
             {
                 showZipCode.visibility  = View.VISIBLE
                 showCapacity.visibility = View.VISIBLE
@@ -273,13 +283,13 @@ class AccountFragment : Fragment() {
             }
             recyclerViewGenres.adapter = genresAdapter
             updateGenresButton.setOnClickListener{
-                (actualUser as Artist).genreList = genresAdapter.getSelectedGenres()
+                (actualApp as Artist).genreList = genresAdapter.getSelectedGenres()
                 showGenres?.visibility = View.GONE
             }
         }
 
 
-        }
+    }
 
     //TODO cuando tengamos la clase del Usuario hacer los update
     private fun editUserNewInfo()

@@ -30,5 +30,6 @@
     <string name="english">English</string>
     <string name="catalan">Catalan</string>
     <string name="request">request</string>
+    <string name="logout">logout</string>
 
 </resources>

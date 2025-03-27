@@ -1,18 +1,13 @@
 package com.example.togethernotes.tools
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Rect
-import android.view.MotionEvent
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.LinearLayout
 import com.example.togethernotes.models.Artist
 import com.example.togethernotes.models.Genres
 import com.example.togethernotes.models.Space
-import com.example.togethernotes.models.User
-lateinit var actualUser: User
+import com.example.togethernotes.models.App
+lateinit var actualApp: App
 object Tools {
 
     /**
@@ -36,7 +31,7 @@ object Tools {
      * @param context El contexto desde donde se inicia la actividad.
      * @param activityClass La clase de la actividad a iniciar.
      */
-    private fun startActivityTurned(context: Context, activityClass: Class<*>) {
+    fun startActivityTurned(context: Context, activityClass: Class<*>) {
         val intent = Intent(context, activityClass)
         context.startActivity(intent)
 
@@ -46,13 +41,13 @@ object Tools {
         capacity: Int = 5,
         genreList: List<Genres> =  listOf(
             Genres(1, "Prueba"),)){
-        actualUser = if (userRole == "Artist") {
+        actualApp = if (userRole == "Artist") {
             Artist(
                 active = true,
                 mail = email,
                 password = password,
                 name = name,
-                rol = "Artist",
+                role = "Artist",
                 genreList = genreList
                   )
         } else {
@@ -61,7 +56,7 @@ object Tools {
                 mail = email,
                 password = password,
                 name = "Nuevo Espacio",
-                rol = "Space"
+                role = "Space"
                  )
         }
 

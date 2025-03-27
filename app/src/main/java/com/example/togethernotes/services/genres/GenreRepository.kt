@@ -1,18 +1,15 @@
-package com.example.togethernotes.repository
+package com.example.togethernotes.services.genres
 
 import com.example.togethernotes.Retrofit
-import com.example.togethernotes.api.GenresService
 import com.example.togethernotes.models.Genres
 import retrofit2.Response
 
 class GenreRepository {
 
-    private val GenresService: GenresService by lazy {
-        Retrofit.createService(GenresService::class.java)
-    }
+    private val genresService: GenresService = Retrofit.createService(GenresService::class.java)
 
     suspend fun getAllGenres(): Response<List<Genres>> {
-        return GenresService.getAllGenres()
+        return genresService.getAllGenres()
     }
     /*
     suspend fun getGenreById(id: Int): Response<Genre> {
