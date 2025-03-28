@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -16,6 +18,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [ChatFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@Suppress("UNREACHABLE_CODE")
 class ChatFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -28,6 +31,23 @@ class ChatFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        createEventSol()
+    }
+
+    private fun createEventSol() {
+        var solEventButton = view?.findViewById(R.id.createEventButton) as ImageView
+        var solEventLayout = view?.findViewById(R.id.createEventSol) as FrameLayout
+        solEventButton.setOnClickListener{
+            solEventLayout.visibility  = View.VISIBLE
+        }
+
+
+
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

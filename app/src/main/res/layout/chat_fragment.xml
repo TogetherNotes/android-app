@@ -3,18 +3,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ChatFragment"
     android:background="@color/blue"
     >
     <include
-        layout="@layout/logo_reusable" />
+        layout="@layout/logo_reusable"  />
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="25sp"
-        android:textColor="@color/white"
-        android:gravity="center"
-        android:text="Fragment2" />
+        android:orientation="vertical"
+        android:layout_marginTop="-35dp"
+        >
+        <!-- Título "Settings" -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:fontFamily="@font/inter_18pt_bold"
+            android:text="Mohamed"
+            android:layout_gravity="center|top"
+            android:textColor="@color/white"
+            android:layout_marginBottom="10dp" />
+        <ImageView
+            android:id="@+id/createEventButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src= "@drawable/calendar_icon_event"
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="-40dp"/>
+
+        <!-- Línea divisoria -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gold"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <include
+            layout = "@layout/create_user_event"
+            />
+    </LinearLayout>
 
 </LinearLayout>
