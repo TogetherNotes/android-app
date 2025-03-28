@@ -62,7 +62,7 @@
                     android:gravity="center"
                     android:padding="10dp"
                     android:textSize="10sp"
-                    android:text="@string/request"
+                    android:text="@string/request_date"
                     android:textColor="@color/black" />
             </FrameLayout>
 

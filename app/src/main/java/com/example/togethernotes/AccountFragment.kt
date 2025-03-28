@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
 import android.provider.MediaStore
@@ -121,7 +122,20 @@ class AccountFragment : Fragment() {
         var configureAccountButton = view?.findViewById(R.id.configure_button) as ImageView
         var showConfigureLayout = view?.findViewById(R.id.configUserActivity) as FrameLayout
         var principalLayout = view?.findViewById(R.id.account_settings) as LinearLayout
-       // var spanisg = view?.findViewById(R.id)
+        var spanishButton = view?.findViewById(R.id.spaish_flag) as LinearLayout
+        var englishButton = view?.findViewById(R.id.english_flag) as LinearLayout
+        var catalanButton = view?.findViewById(R.id.catalan_flag) as LinearLayout
+
+        spanishButton.setOnClickListener {
+            spanishButton.setBackgroundColor(Color.argb(128, 255, 255, 255)) // Blanco con 50% de opacidad
+        }
+        englishButton.setOnClickListener {
+            englishButton.setBackgroundColor(Color.argb(128, 255, 255, 255)) // Blanco con 50% de opacidad
+        }
+        catalanButton.setOnClickListener {
+            catalanButton.setBackgroundColor(Color.argb(128, 255, 255, 255)) // Blanco con 50% de opacidad
+        }
+
         configureAccountButton.setOnClickListener {
             showConfigureLayout.visibility = View.VISIBLE
             detectFocus(principalLayout, showConfigureLayout)
