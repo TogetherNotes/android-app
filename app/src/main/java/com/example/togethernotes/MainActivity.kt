@@ -20,14 +20,23 @@ class MainActivity : AppCompatActivity() {
             else -> return@OnNavigationItemSelectedListener false
         }
 
-        val isMovingRight = newFragmentIndex > currentFragmentIndex // Detectar si nos movemos a la derecha
-        currentFragmentIndex = newFragmentIndex // Actualizar el índice del fragment actual
+        // Verificar si el fragmento seleccionado es el mismo que el actual
+        if (newFragmentIndex == currentFragmentIndex) {
+            // No hacer nada si el fragmento no cambia
+            return@OnNavigationItemSelectedListener true
+        }
 
+        val isMovingRight = newFragmentIndex > currentFragmentIndex // Detectar si nos movemos a la derecha
+
+        // Actualizar el índice del fragmento actual
+        currentFragmentIndex = newFragmentIndex
+
+        // Realizar la transacción del fragmento con animaciones
         supportFragmentManager.commit {
             setCustomAnimations(
                 if (isMovingRight) R.anim.slide_in_right else R.anim.slide_in_left, // Animación de entrada
                 if (isMovingRight) R.anim.slide_out_left else R.anim.slide_out_right // Animación de salida
-                               )
+            )
             when (newFragmentIndex) {
                 0 -> replace<MatchFragment>(R.id.fragmentContainerView)
                 1 -> replace<ChatFragment>(R.id.fragmentContainerView)

@@ -90,7 +90,7 @@ class CreateArtistActivity : AppCompatActivity() {
                   val response = genreRepository.getAllGenres()
 
                   if (response.isSuccessful) {
-                      genresList = (response.body() ?: emptyList()).toMutableList()
+                      //genresList = (response.body() ?: emptyList()).toMutableList()
                   } else {
                       Toast.makeText(this@CreateArtistActivity, "Error fetching genres: ${response.message()}", Toast.LENGTH_LONG).show()
                   }

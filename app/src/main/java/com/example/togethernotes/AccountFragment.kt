@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -55,6 +56,8 @@ class AccountFragment : Fragment() {
     private lateinit var   tmpGenreList: List<Genres>
     private var editGenresActivate: Boolean = false
     private lateinit var userGenres: TextView
+    private lateinit var  selectedLanguage: LinearLayout
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -125,15 +128,16 @@ class AccountFragment : Fragment() {
         var spanishButton = view?.findViewById(R.id.spaish_flag) as LinearLayout
         var englishButton = view?.findViewById(R.id.english_flag) as LinearLayout
         var catalanButton = view?.findViewById(R.id.catalan_flag) as LinearLayout
-
+        selectedLanguage= englishButton
         spanishButton.setOnClickListener {
-            spanishButton.setBackgroundColor(Color.argb(128, 255, 255, 255)) // Blanco con 50% de opacidad
+            setDefaultLanguage(spanishButton)
         }
         englishButton.setOnClickListener {
-            englishButton.setBackgroundColor(Color.argb(128, 255, 255, 255)) // Blanco con 50% de opacidad
+            setDefaultLanguage(englishButton)
         }
         catalanButton.setOnClickListener {
-            catalanButton.setBackgroundColor(Color.argb(128, 255, 255, 255)) // Blanco con 50% de opacidad
+
+            setDefaultLanguage(catalanButton)
         }
 
         configureAccountButton.setOnClickListener {
@@ -143,6 +147,15 @@ class AccountFragment : Fragment() {
             configureButton.visibility = View.GONE
             cameraButton.visibility = View.GONE
         }
+
+    }
+    fun setDefaultLanguage( clickedButton: LinearLayout) {
+
+        clickedButton.background = ContextCompat.getDrawable(requireContext(), R.drawable.language_border_selected)
+        if (selectedLanguage != clickedButton){
+            selectedLanguage.background = ContextCompat.getDrawable(requireContext(), R.drawable.language_border)
+        }
+        selectedLanguage = clickedButton
 
     }
 

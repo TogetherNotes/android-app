@@ -3,16 +3,17 @@
     android:id="@+id/createEventSol"
     android:layout_width="350dp"
     android:layout_height="450dp"
-    android:layout_marginTop="-70dp"
     android:layout_gravity="center"
     android:visibility="gone"
+    android:layout_marginTop="-70dp"
     android:background="@drawable/default_rectangle"
     >
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/titolEvent"
@@ -24,47 +25,49 @@
             android:inputType="textEmailAddress"
             android:padding="20dp"
             android:textColorHint="@color/hint_color" />
+
         <CheckBox
-            android:layout_marginBottom="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
+            android:layout_marginBottom="30dp"
             android:fontFamily="@font/inter_18pt_bold"
+            android:text="Work accord"
             android:textColor="@color/hint_color"
-            android:textSize="15dp"
-            android:text="Work accord" />
-            <include
-                layout="@layout/calendar_activity_mini"
-                android:layout_gravity="center"
-                android:layout_width="180dp"
-                android:layout_height="120dp"
+            android:textSize="15dp" />
 
-                />
-            <FrameLayout
+        <include
+            layout="@layout/calendar_activity_mini"
+            android:layout_width="180dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+
+            />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+            <!-- Fondo con borde -->
+            <ImageView
+                android:id="@+id/confirm_edit_info"
+                android:layout_width="150dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="-5dp"
+                android:src="@drawable/button_border" />
+
+            <!-- Texto sobre el fondo -->
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                >
-                <!-- Fondo con borde -->
-                <ImageView
-                    android:id="@+id/confirm_edit_info"
-                    android:layout_width="150dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/button_border"
-                    android:layout_marginLeft="-5dp"/>
-
-                <!-- Texto sobre el fondo -->
-                <TextView
-                    android:layout_marginTop="-7dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:textSize="10sp"
-                    android:text="@string/request_date"
-                    android:textColor="@color/black" />
-            </FrameLayout>
+                android:layout_marginTop="-7dp"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/request_date"
+                android:textColor="@color/black"
+                android:textSize="10sp" />
+        </FrameLayout>
 
     </LinearLayout>
 
