@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Together Notes</string>
+    <string name="create_account">CREAR COMPTE</string>
+    <string name="sing_up">INICIAR SESSIÓ</string>
+    <string name="logo">Logo</string>
+    <string name="artist">Artista</string>
+    <string name="space">Espai</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="email">Email</string>
+    <string name="password">Contrasenya</string>
+    <string name="confirm_password">Confirmar contrasenya</string>
+    <string name="zip_code">Codi postal</string>
+    <string name="capacity">Capacitat</string>
+    <string name="music_genre">Gènere musical</string>
+    <string name="settings">Ajustaments</string>
+    <string name="continued">Continuar</string>
+    <string name="name">Nom</string>
+    <string name="mailEmpty">El camp de correu electrònic no pot estar buit.\n</string>
+    <string name="passwordEmpty">El camp de contrasenya no pot estar buit.\n</string>
+    <string name="passwordConfEmpty">El camp de confirmació de contrasenya no pot estar buit.\n</string>
+    <string name="capacityEmpty">El camp de capacitat no pot ser buit.\n</string>
+    <string name="zipEmpty">El camp de codi postal no pot ser buit.\n</string>
+    <string name="passwordMatchEmpty">Les contrasenyes no coincideixen.\n</string>
+    <string name="nameEmpty">El camp de nom és buit.\n</string>
+    <string name="changeImage">Actualitzar canvis</string>
+    <string name="citas">Les teves cites</string>
+    <string name="finish_task">Finalitzar tasca</string>
+    <string name="spanish">Castellà</string>
+    <string name="english">Anglès</string>
+    <string name="catalan">Català</string>
+    <string name="logout">Tancar sessió</string>
+    <string name="request_date">Data de sol·licitud</string>
+    <string name="select_your_language">Seleccioneu el vostre idioma</string>
+    <string name="choose_date">Trieu una data</string>
+    <string name="Choose_genres">Triar gèneres</string>
+    <string name="work_accord">acord de treball</string>
+
+</resources>

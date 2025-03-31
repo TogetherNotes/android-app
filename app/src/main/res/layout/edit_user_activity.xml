@@ -34,7 +34,7 @@
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/editGenres"
-                android:text="Select genres"
+                android:text="@string/Choose_genres"
                 android:visibility="gone"
                 android:textColor="@color/white"
                 android:backgroundTint="@color/grey_hint"

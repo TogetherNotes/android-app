@@ -3,8 +3,10 @@ package com.example.togethernotes
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Rect
@@ -34,7 +36,7 @@ import com.example.togethernotes.adapters.GenresAdapter
 import com.example.togethernotes.models.Artist
 import com.example.togethernotes.tools.actualApp
 import androidx.recyclerview.widget.LinearLayoutManager
-
+import java.util.Locale
 
 
 private const val ARG_PARAM1 = "param1"
@@ -93,7 +95,23 @@ class AccountFragment : Fragment() {
         configUserInfo()
         configureAccount()
 
+        // Obtener idioma guardado
+        val prefs = requireActivity().getSharedPreferences("config", Context.MODE_PRIVATE)
+        val idioma = prefs.getString("idioma", Locale.getDefault().language) ?: "es"
+
+        // Aplicar idioma
+        changeLanguage(requireActivity(), idioma)
     }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        val prefs = context.getSharedPreferences("config", Context.MODE_PRIVATE)
+        val language = prefs.getString("language", Locale.getDefault().language) ?: "en"
+
+        changeLanguage(context, language)
+    }
+
 
     private fun configUserInfo()
     {
@@ -149,15 +167,44 @@ class AccountFragment : Fragment() {
         }
 
     }
-    fun setDefaultLanguage( clickedButton: LinearLayout) {
 
-        clickedButton.background = ContextCompat.getDrawable(requireContext(), R.drawable.language_border_selected)
-        if (selectedLanguage != clickedButton){
-            selectedLanguage.background = ContextCompat.getDrawable(requireContext(), R.drawable.language_border)
+    fun setDefaultLanguage(clickedButton: LinearLayout) {
+        val ctx = context ?: return
+
+        val chosenLanguage = when (clickedButton.id) {
+            R.id.spaish_flag -> "es"
+            R.id.english_flag -> "en"
+            R.id.catalan_flag -> "ca"
+            else -> "en"
+        }
+
+        val prefs = ctx.getSharedPreferences("config", Context.MODE_PRIVATE).edit()
+        prefs.putString("language", chosenLanguage)
+        prefs.apply()
+
+        changeLanguage(ctx, chosenLanguage)
+
+        clickedButton.background = ContextCompat.getDrawable(ctx, R.drawable.language_border_selected)
+        if (selectedLanguage != clickedButton) {
+            selectedLanguage.background = ContextCompat.getDrawable(ctx, R.drawable.language_border)
         }
         selectedLanguage = clickedButton
 
+        activity?.recreate()
     }
+
+
+    private fun changeLanguage(requireContext: Context, chosenLanguage: String) {
+        val locale = Locale(chosenLanguage)
+        Locale.setDefault(locale)
+
+        val config = Configuration(requireContext.resources.configuration)
+        config.setLocale(locale)
+
+        requireContext.createConfigurationContext(config)
+        requireContext.resources.updateConfiguration(config, requireContext.resources.displayMetrics)
+    }
+
 
     fun editProfilePicture() {
         cameraButton = view?.findViewById(R.id.camera_button) as ImageView

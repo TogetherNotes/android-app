@@ -13,7 +13,7 @@
         android:id="@+id/prueba"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Selecciona una fecha"
+        android:text="@string/choose_date"
         android:textSize="15dp"
         android:fontFamily="@font/inter_18pt_bold"
         android:textColor="@color/hint_color"
