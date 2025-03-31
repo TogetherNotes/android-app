@@ -33,8 +33,8 @@ class LoginActivity : AppCompatActivity() {
         continueButton.setOnClickListener {
             if (mailLogin.text.toString()!= "" && passwordLogin.text.toString()!="")
             {
-                actualApp.mail ="espacio1@example.com"
-                actualApp.password = "pass123"
+                actualApp.mail ="artist1@domain.com"
+                actualApp.password = "artist1password"
 
                 actualApp.active = true
                 login(actualApp)

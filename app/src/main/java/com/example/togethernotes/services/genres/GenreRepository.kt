@@ -3,6 +3,7 @@ package com.example.togethernotes.services.genres
 import com.example.togethernotes.Retrofit
 import com.example.togethernotes.models.Genres
 import retrofit2.Response
+import java.util.Objects
 
 class GenreRepository {
 

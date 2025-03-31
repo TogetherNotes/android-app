@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="8dp">
-
     <!-- Mensaje recibido (izquierda) -->
     <LinearLayout
         android:id="@+id/receivedMessageLayout"
