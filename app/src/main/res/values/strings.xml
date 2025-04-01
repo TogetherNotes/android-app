@@ -1,21 +1,21 @@
 <resources>
-    <string name="app_name">TogetherNotes</string>
+    <string name="app_name">Together Notes</string>
     <string name="create_account">CREATE ACCOUNT</string>
     <string name="sing_up">SING UP</string>
     <string name="logo">Logo</string>
-    <string name="artist">artist</string>
-    <string name="space">space</string>
+    <string name="artist">Artist</string>
+    <string name="space">Space</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="email">Email</string>
+    <string name="email">E-mail</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm password</string>
     <string name="zip_code">Zip code</string>
     <string name="capacity">Capacity</string>
-    <string name="music_genre">music genre</string>
+    <string name="music_genre">Music genre</string>
     <string name="settings">Settings</string>
-    <string name="continued">continue</string>
-    <string name="name">name</string>
+    <string name="continued">Continue</string>
+    <string name="name">Name</string>
     <string name="mailEmpty">The email field cannot be empty.\n</string>
     <string name="passwordEmpty">The password field cannot be empty.\n</string>
     <string name="passwordConfEmpty">The password confirmation field cannot be empty.\n</string>
@@ -24,13 +24,16 @@
     <string name="passwordMatchEmpty">The passwords do not match.\n</string>
     <string name="nameEmpty">The name field is empty.\n</string>
     <string name="changeImage">Update changes</string>
-    <string name="citas">Tus citas</string>
-    <string name="finish_task">finish task</string>
+    <string name="citas">Your appointments</string>
+    <string name="finish_task">Finish task</string>
     <string name="spanish">Spanish</string>
     <string name="english">English</string>
     <string name="catalan">Catalan</string>
     <string name="logout">Log out</string>
     <string name="request_date">Request date</string>
     <string name="select_your_language">Select your language</string>
+    <string name="choose_date">Choose date</string>
+    <string name="Choose_genres">Choose genres</string>
+    <string name="work_accord">Work accord</string>
 
 </resources>

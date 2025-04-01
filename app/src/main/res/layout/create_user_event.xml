@@ -32,7 +32,7 @@
             android:layout_gravity="left"
             android:layout_marginBottom="30dp"
             android:fontFamily="@font/inter_18pt_bold"
-            android:text="Work accord"
+            android:text="@string/work_accord"
             android:textColor="@color/hint_color"
             android:textSize="15dp" />
 

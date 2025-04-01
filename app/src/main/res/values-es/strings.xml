@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Together Notes</string>
+    <string name="create_account">CREAR CUENTA</string>
+    <string name="sing_up">INICIAR SESIÓN</string>
+    <string name="logo">Logo</string>
+    <string name="artist">Artista</string>
+    <string name="space">Espacio</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="email">Email</string>
+    <string name="password">Contraseña</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="zip_code">Codigo postal</string>
+    <string name="capacity">Capacidad</string>
+    <string name="music_genre">Género musical</string>
+    <string name="settings">Ajustes</string>
+    <string name="continued">Continuar</string>
+    <string name="name">Nombre</string>
+    <string name="mailEmpty">El campo de correo electrónico no puede estar vacío.\n</string>
+    <string name="passwordEmpty">El campo de contraseña no puede estar vacío.\n</string>
+    <string name="passwordConfEmpty">El campo de confirmación de contraseña no puede estar vacío.\n</string>
+    <string name="capacityEmpty">El campo de capacidad no puede estar vacío.\n</string>
+    <string name="zipEmpty">El campo de código postal no puede estar vacío.\n</string>
+    <string name="passwordMatchEmpty">Las contraseñas no coinciden.\n</string>
+    <string name="nameEmpty">El campo de nombre está vacío.\n</string>
+    <string name="changeImage">Actualizar cambios</string>
+    <string name="citas">Tus citas</string>
+    <string name="finish_task">Finalizar tarea</string>
+    <string name="spanish">Castellano</string>
+    <string name="english">Inglés</string>
+    <string name="catalan">Catalán</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="request_date">Fecha de solicitud</string>
+    <string name="select_your_language">Selecciona tu idioma</string>
+    <string name="choose_date">Selecciona una fecha</string>
+    <string name="Choose_genres">Elegir géneros</string>
+    <string name="work_accord">Acuerdo de trabajo</string>
+
+</resources>
