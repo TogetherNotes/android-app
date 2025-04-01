@@ -36,5 +36,6 @@
     <string name="choose_date">Trieu una data</string>
     <string name="Choose_genres">Triar gèneres</string>
     <string name="work_accord">acord de treball</string>
+    <string name="apply">Aplicar</string>
 
 </resources>

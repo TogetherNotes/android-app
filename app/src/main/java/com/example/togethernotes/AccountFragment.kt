@@ -47,6 +47,7 @@ private const val REQUEST_CAMERA_PERMISSION = 100
 class AccountFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
+    private var selectedLanguageCode: String = "en"
     private lateinit var profileImageView: ImageView
     private lateinit var cameraButton: ImageView
     private lateinit var  principalName: TextView
@@ -95,11 +96,10 @@ class AccountFragment : Fragment() {
         configUserInfo()
         configureAccount()
 
-        // Obtener idioma guardado
+
         val prefs = requireActivity().getSharedPreferences("config", Context.MODE_PRIVATE)
         val idioma = prefs.getString("idioma", Locale.getDefault().language) ?: "es"
 
-        // Aplicar idioma
         changeLanguage(requireActivity(), idioma)
     }
 
@@ -143,29 +143,24 @@ class AccountFragment : Fragment() {
 
     }
     fun configureAccount() {
-        var configureAccountButton = view?.findViewById(R.id.configure_button) as ImageView
-        var showConfigureLayout = view?.findViewById(R.id.configUserActivity) as FrameLayout
-        var principalLayout = view?.findViewById(R.id.account_settings) as LinearLayout
-        var spanishButton = view?.findViewById(R.id.spaish_flag) as LinearLayout
-        var englishButton = view?.findViewById(R.id.english_flag) as LinearLayout
-        var catalanButton = view?.findViewById(R.id.catalan_flag) as LinearLayout
-        selectedLanguage= englishButton
-        spanishButton.setOnClickListener {
-            setDefaultLanguage(spanishButton)
-        }
-        englishButton.setOnClickListener {
-            setDefaultLanguage(englishButton)
-        }
-        catalanButton.setOnClickListener {
+        val configureAccountButton = view?.findViewById<ImageView>(R.id.configure_button)
+        val showConfigureLayout = view?.findViewById<FrameLayout>(R.id.configUserActivity)
+        val principalLayout = view?.findViewById<LinearLayout>(R.id.account_settings)
+        val spanishButton = view?.findViewById<LinearLayout>(R.id.spaish_flag)
+        val englishButton = view?.findViewById<LinearLayout>(R.id.english_flag)
+        val catalanButton = view?.findViewById<LinearLayout>(R.id.catalan_flag)
+        val applyButton = view?.findViewById<ImageView>(R.id.apply_button)
 
-            setDefaultLanguage(catalanButton)
-        }
+        selectedLanguage = englishButton ?: return
 
-        configureAccountButton.setOnClickListener {
-            showConfigureLayout.visibility = View.VISIBLE
-            if (actualApp.role== "artist")
-            {
-                detectFocus(principalLayout, showConfigureLayout)
+        spanishButton?.setOnClickListener { setDefaultLanguage(spanishButton) }
+        englishButton?.setOnClickListener { setDefaultLanguage(englishButton) }
+        catalanButton?.setOnClickListener { setDefaultLanguage(catalanButton) }
+
+        configureAccountButton?.setOnClickListener {
+            showConfigureLayout?.visibility = View.VISIBLE
+            if (actualApp.role == "artist") {
+                detectFocus(principalLayout!!, showConfigureLayout!!)
             }
 
             editUserButton.visibility = View.GONE
@@ -173,32 +168,42 @@ class AccountFragment : Fragment() {
             cameraButton.visibility = View.GONE
         }
 
+        applyButton?.setOnClickListener {
+            applyLanguageChange()
+        }
     }
+
+    fun applyLanguageChange() {
+        val ctx = context ?: return
+
+        val prefs = ctx.getSharedPreferences("config", Context.MODE_PRIVATE).edit()
+        prefs.putString("language", selectedLanguageCode)
+        prefs.apply()
+
+        changeLanguage(ctx, selectedLanguageCode)
+
+        activity?.recreate()
+    }
+
+
 
     fun setDefaultLanguage(clickedButton: LinearLayout) {
         val ctx = context ?: return
 
-        val chosenLanguage = when (clickedButton.id) {
+        selectedLanguageCode = when (clickedButton.id) {
             R.id.spaish_flag -> "es"
             R.id.english_flag -> "en"
             R.id.catalan_flag -> "ca"
             else -> "en"
         }
 
-        val prefs = ctx.getSharedPreferences("config", Context.MODE_PRIVATE).edit()
-        prefs.putString("language", chosenLanguage)
-        prefs.apply()
-
-        changeLanguage(ctx, chosenLanguage)
-
         clickedButton.background = ContextCompat.getDrawable(ctx, R.drawable.language_border_selected)
         if (selectedLanguage != clickedButton) {
             selectedLanguage.background = ContextCompat.getDrawable(ctx, R.drawable.language_border)
         }
         selectedLanguage = clickedButton
-
-        activity?.recreate()
     }
+
 
 
     private fun changeLanguage(requireContext: Context, chosenLanguage: String) {
