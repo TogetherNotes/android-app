@@ -35,5 +35,6 @@
     <string name="choose_date">Choose date</string>
     <string name="Choose_genres">Choose genres</string>
     <string name="work_accord">Work accord</string>
+    <string name="apply">Apply</string>
 
 </resources>

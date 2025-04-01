@@ -36,5 +36,6 @@
     <string name="choose_date">Selecciona una fecha</string>
     <string name="Choose_genres">Elegir géneros</string>
     <string name="work_accord">Acuerdo de trabajo</string>
+    <string name="apply">Aplicar</string>
 
 </resources>
