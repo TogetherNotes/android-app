@@ -3,6 +3,7 @@ package com.example.togethernotes.services.genres
 import com.example.togethernotes.models.Genres
 import retrofit2.Response
 import retrofit2.http.*
+import java.util.Objects
 
 interface GenresService {
 

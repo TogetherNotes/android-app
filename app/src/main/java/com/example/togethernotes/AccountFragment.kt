@@ -119,6 +119,7 @@ class AccountFragment : Fragment() {
         principalName = view?.findViewById(R.id.userPrincipalName) as TextView
         showRol = view?.findViewById(R.id.userRol) as TextView
         principalName.text = actualApp.name
+        /*
         userGenres = view?.findViewById(R.id.userArtistGenres) as TextView
         if(actualApp.role =="Artist")
         {
@@ -137,6 +138,8 @@ class AccountFragment : Fragment() {
             }
             userGenres.text = genreList
         }
+        */
+
 
     }
     fun configureAccount() {
@@ -160,7 +163,11 @@ class AccountFragment : Fragment() {
 
         configureAccountButton.setOnClickListener {
             showConfigureLayout.visibility = View.VISIBLE
-            detectFocus(principalLayout, showConfigureLayout)
+            if (actualApp.role== "artist")
+            {
+                detectFocus(principalLayout, showConfigureLayout)
+            }
+
             editUserButton.visibility = View.GONE
             configureButton.visibility = View.GONE
             cameraButton.visibility = View.GONE
@@ -340,26 +347,29 @@ class AccountFragment : Fragment() {
             }
 
         }
+        if(actualApp.role =="artist")
+        {
+            showGenre.setOnClickListener{
+                editGenresActivate = true
+                showGenres?.visibility = View.VISIBLE
+                recyclerViewGenres = view?.findViewById(R.id.recyclerViewGenres) as RecyclerView
+                recyclerViewGenres.layoutManager = LinearLayoutManager(requireContext())
+                val genresList = listOf(
+                    Genres(1, "Pop"),
+                    Genres(2, "Rock"),
+                    Genres(3, "Jazz"),
+                    Genres(4, "Clásica")
+                                       )
+                // Inicializa el adapter después de configurar el LayoutManager
+                genresAdapter = GenresAdapter(genresList) {
+                }
+                recyclerViewGenres.adapter = genresAdapter
+                updateGenresButton.setOnClickListener{
+                    (actualApp as Artist).genreList = genresAdapter.getSelectedGenres()
+                    showGenres?.visibility = View.GONE
+                }
+            }
 
-        showGenre.setOnClickListener{
-            editGenresActivate = true
-            showGenres?.visibility = View.VISIBLE
-            recyclerViewGenres = view?.findViewById(R.id.recyclerViewGenres) as RecyclerView
-            recyclerViewGenres.layoutManager = LinearLayoutManager(requireContext())
-            val genresList = listOf(
-                Genres(1, "Pop"),
-                Genres(2, "Rock"),
-                Genres(3, "Jazz"),
-                Genres(4, "Clásica")
-                                   )
-            // Inicializa el adapter después de configurar el LayoutManager
-            genresAdapter = GenresAdapter(genresList) {
-            }
-            recyclerViewGenres.adapter = genresAdapter
-            updateGenresButton.setOnClickListener{
-                (actualApp as Artist).genreList = genresAdapter.getSelectedGenres()
-                showGenres?.visibility = View.GONE
-            }
         }
 
 

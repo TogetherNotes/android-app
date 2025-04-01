@@ -34,7 +34,6 @@ class CreateArtistActivity : AppCompatActivity() {
     private lateinit var recyclerViewGenres: RecyclerView
     private lateinit var genresAdapter: GenresAdapter
     private  lateinit var  selectedGenres: List<Genres>
-    private lateinit var   tmpGenreList: List<Genres>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +63,7 @@ class CreateArtistActivity : AppCompatActivity() {
         val showGenres = findViewById<FrameLayout>(R.id.showGenres)
         val confirmGenresButton = findViewById<ImageView>(R.id.confirm_genres_button)
         detectFocus(mainLayout,showGenres)
+        var tmpGenreList: MutableList<Genres>
 
 
         selectGenresButton.setOnClickListener {
@@ -73,37 +73,32 @@ class CreateArtistActivity : AppCompatActivity() {
             recyclerViewGenres = findViewById(R.id.recyclerViewGenres)
             recyclerViewGenres.layoutManager = LinearLayoutManager(this)
 
-            var genresList = mutableListOf(
-                Genres(1, "Pop"),
-                Genres(2, "Rock"),
-                Genres(3, "Jazz"),
-                Genres(4, "Clásica")
-                                   )
-            lifecycleScope.launch {
-                val response = genreRepository.getAllGenres()
-
-            }
-
+            tmpGenreList = mutableListOf()
 
             lifecycleScope.launch {
-              try {
-                  val response = genreRepository.getAllGenres()
+                try {
+                    val response = genreRepository.getAllGenres()
+                    if (response.isSuccessful) {
+                        var genres = response.body()
+                        if (genres != null) {
+                            genresAdapter = GenresAdapter(genres) { selectedGenre ->
+                            }// Actualiza tmpGenreList con los datos de la API
+                            recyclerViewGenres.adapter = genresAdapter
 
-                  if (response.isSuccessful) {
-                      //genresList = (response.body() ?: emptyList()).toMutableList()
-                  } else {
-                      Toast.makeText(this@CreateArtistActivity, "Error fetching genres: ${response.message()}", Toast.LENGTH_LONG).show()
-                  }
-              } catch (e: Exception) {
-                  Toast.makeText(this@CreateArtistActivity, "Exception: ${e.message}", Toast.LENGTH_LONG).show()
-              }
+                        } else {
+                            Toast.makeText(this@CreateArtistActivity, "Respuesta vacía", Toast.LENGTH_LONG).show()
+                        }
+                    } else {
+                        Toast.makeText(this@CreateArtistActivity, "Error fetching genres: ${response.message()}", Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this@CreateArtistActivity, "Exception: ${e.message}", Toast.LENGTH_LONG).show()
+                }
             }
 
-            genresAdapter = GenresAdapter(genresList) { selectedGenre ->
-                tmpGenreList = genresAdapter.getSelectedGenres()
-            }
 
-            recyclerViewGenres.adapter = genresAdapter
+
+
 
             confirmGenresButton.setOnClickListener {
                 val selectedGenresFromAdapter = genresAdapter.getSelectedGenres()
