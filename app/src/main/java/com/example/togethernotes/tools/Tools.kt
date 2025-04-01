@@ -3,11 +3,18 @@ package com.example.togethernotes.tools
 import android.content.Context
 import android.content.Intent
 import android.view.View
+import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.example.togethernotes.models.Artist
 import com.example.togethernotes.models.Genres
 import com.example.togethernotes.models.Space
 import com.example.togethernotes.models.App
+import com.example.togethernotes.models.ArtistGenre
+import com.example.togethernotes.repository.ArtistGenreRepository
+import kotlinx.coroutines.launch
+
 lateinit var actualApp: App
+lateinit var artist: Artist
 object Tools {
 
     /**
@@ -41,25 +48,41 @@ object Tools {
         capacity: Int = 5,
         genreList: List<Genres> =  listOf(
             Genres(1, "Prueba"),)){
-        actualApp = if (userRole == "Artist") {
+        actualApp.role = userRole
+        actualApp.mail = email
+        actualApp.password = password
+        actualApp.name = name
+        if (actualApp.role =="Artist")
+        {
+            actualApp=
             Artist(
+                rating=2.0,
+                latitude = 100000.0,
+                longitude = 2000.3,
                 active = true,
                 mail = email,
                 password = password,
                 name = name,
                 role = "Artist",
-                genreList = genreList
                   )
-        } else {
+         }
+
+        else {
             Space(
+                rating=2.0,
+                latitude = 100000.0,
+                longitude = 2000.3,
                 active = true,
                 mail = email,
                 password = password,
-                name = "Nuevo Espacio",
-                role = "Space"
+                name = name,
+                role = "Space",
+                capacity =  50,
                  )
         }
 
+
     }
+
 
 }

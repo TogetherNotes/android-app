@@ -3,8 +3,8 @@
     android:id="@+id/showGenres"
     android:layout_width="350dp"
     android:layout_height="450dp"
-    android:visibility="gone"
     android:layout_marginTop="-420dp"
+    android:visibility="gone"
     android:layout_gravity="center"
     android:background="@drawable/default_rectangle">
     <LinearLayout
@@ -17,7 +17,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewGenres"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="300dp"
                 />
 
             <FrameLayout

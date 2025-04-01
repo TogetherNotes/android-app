@@ -2,6 +2,7 @@ package com.example.togethernotes.activities
 
 import android.annotation.SuppressLint
 import android.graphics.Rect
+import android.health.connect.datatypes.units.Length
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -13,15 +14,20 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.MainActivity
 import com.example.togethernotes.R
 import com.example.togethernotes.adapters.GenresAdapter
+import com.example.togethernotes.models.App
+import com.example.togethernotes.models.ArtistGenre
 import com.example.togethernotes.models.Genres
+import com.example.togethernotes.repository.ArtistGenreRepository
 import com.example.togethernotes.services.genres.GenreRepository
 import com.example.togethernotes.tools.Tools
+import com.example.togethernotes.tools.actualApp
 import kotlinx.coroutines.launch
 
 class CreateArtistActivity : AppCompatActivity() {
@@ -102,7 +108,24 @@ class CreateArtistActivity : AppCompatActivity() {
 
             confirmGenresButton.setOnClickListener {
                 val selectedGenresFromAdapter = genresAdapter.getSelectedGenres()
+                val repository = ArtistGenreRepository()
 
+                for (selectedGenre in selectedGenresFromAdapter)
+                {
+                    var generatedArtisGenre = ArtistGenre(actualApp.id,selectedGenre.id)
+                    lifecycleScope.launch {
+                        try {
+                            val response = repository.addArtistGenre(generatedArtisGenre)
+                            if (response.isSuccessful) {
+                                Toast.makeText(this@CreateArtistActivity, "Se ha insertado con éxito", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this@CreateArtistActivity, "Respuesta vacía", Toast.LENGTH_LONG).show()
+                            }
+                    } catch (e: Exception) {
+                    Toast.makeText(this@CreateArtistActivity, "Exception: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+                        }
+                }
                 if (selectedGenresFromAdapter.isNotEmpty()) {
                     selectedGenres = selectedGenresFromAdapter
                     showGenres.visibility = View.GONE
@@ -114,6 +137,27 @@ class CreateArtistActivity : AppCompatActivity() {
 
         }
 
+    }
+    fun updateArtistGenre(genreList: List<Genres>)
+    {
+        val repository = ArtistGenreRepository()
+
+        for (selectedGenre in genreList)
+        {
+            var generatedArtisGenre = ArtistGenre(actualApp.id,selectedGenre.id)
+            lifecycleScope.launch {
+                try {
+                    val response = repository.addArtistGenre(generatedArtisGenre)
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@CreateArtistActivity, "Se ha insertado con éxito", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@CreateArtistActivity, "Respuesta vacía", Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this@CreateArtistActivity, "Exception: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 
     //función para que cuando selecciones los generos i pulsas fuera del foco se haga invisible la activity
@@ -179,6 +223,7 @@ class CreateArtistActivity : AppCompatActivity() {
                 var  zipcode =0
                 var capacity =0
                 Tools.createUser("Artist", artistMail.text.toString(), artistPassword.text.toString(),artistName.text.toString(), zipcode, capacity, selectedGenres)
+                updateArtistGenre(selectedGenres)
                 // Si todo está correcto, procede con la lógica del registro
                 Toast.makeText(this, "Todos los campos son válidos", Toast.LENGTH_SHORT).show()
                 Tools.startActivity(continueButton, this, MainActivity::class.java)

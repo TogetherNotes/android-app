@@ -1,6 +1,6 @@
 package com.example.togethernotes
 
-import ChatAdapter
+import MessageAdapter
 import Message
 import android.os.Build
 import android.os.Bundle
@@ -13,6 +13,8 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.togethernotes.adapters.ChatAdapter
+import com.example.togethernotes.models.Chat
 import com.example.togethernotes.tools.actualApp
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -46,53 +48,22 @@ class ChatFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        createEventSol()
-        showMessages()
+        showChats()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun showMessages() {
-        var chatRecyclerView = view?.findViewById(R.id.recyclerView) as RecyclerView
-        var adapter: ChatAdapter
-        val localDateTime = LocalDateTime.of(2025, 6, 24, 4, 0) // Año, Mes, Día, Hora, Minuto
-        val messageDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
-        // Lista de mensajes
-        actualApp.id=1
-        val messages = listOf(
-            Message(1,1,"Hola, ¿cómo estáswasddasasdsdaasdsdasdasdsda?", messageDate, false,2),
-            Message(2,2,"Hola, ¿cómo estás?", messageDate, false,2),
-            Message(3,1,"Hola, ¿cómo estás?", messageDate, false,2),
-            Message(1,1,"Hola, ¿cómo estáswasddasasdsdaasdsdasdasdsda?", messageDate, false,2),
-            Message(2,2,"Hola, ¿cómo estás?", messageDate, false,2),
-            Message(3,1,"Hola, ¿cómo estás?", messageDate, false,2),
-            Message(1,1,"Hola, ¿cómo estáswasddasasdsdaasdsdasdasdsda?", messageDate, false,2),
-            Message(2,2,"Hola, ¿cómo estás?", messageDate, false,2),
-            Message(3,1,"Hola, ¿cómo estás?", messageDate, false,2),
-            Message(1,1,"Hola, ¿cómo estáswasddasasdsdaasdsdasdasdsda?", messageDate, false,2),
-            Message(2,2,"Hola, ¿cómo estás?", messageDate, false,2),
-            Message(3,1,"Hola, ¿cómo estás?", messageDate, false,2),
-            Message(1,1,"Hola, ¿cómo estáswasddasasdsdaasdsdasdasdsda?", messageDate, false,2),
-            Message(2,2,"Hola, ¿cómo estás?", messageDate, false,2),
-            Message(3,1,"Hola, ¿cómo estás?", messageDate, false,2),
+    private fun showChats() {
+        val recyclerViewChats = view?.findViewById(R.id.recyclerViewChats) as RecyclerView
+        val chatList = listOf(
+            Chat(id = 1, date = Date(), user1_id = 101, user2_id = 102),
+            Chat(id = 2, date = Date(System.currentTimeMillis() - 86400000), user1_id = 103, user2_id = 104),
+            Chat(id = 3, date = Date(System.currentTimeMillis() - 172800000), user1_id = 105, user2_id = 106)
                              )
 
-        // Configurar el adaptador
-        adapter = ChatAdapter(messages)
-
         // Configurar el RecyclerView
-        chatRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        chatRecyclerView.adapter = adapter
+        val adapter = ChatAdapter(chatList)
+        recyclerViewChats.layoutManager = LinearLayoutManager(requireContext())
+        recyclerViewChats.adapter = adapter
     }
-
-    private fun createEventSol() {
-        var solEventButton = view?.findViewById(R.id.createEventButton) as ImageView
-        var solEventLayout = view?.findViewById(R.id.createEventSol) as FrameLayout
-        solEventButton.setOnClickListener{
-            solEventLayout.visibility  = View.VISIBLE
-        }
-    }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

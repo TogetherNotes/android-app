@@ -35,8 +35,8 @@ class LoginActivity : AppCompatActivity() {
             {
                 actualApp.mail ="artist1@domain.com"
                 actualApp.password = "artist1password"
-
                 actualApp.active = true
+
                 login(actualApp)
                 Tools.startActivityTurned(this, MainActivity::class.java)
             }

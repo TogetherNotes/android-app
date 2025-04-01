@@ -127,6 +127,7 @@ class AccountFragment : Fragment() {
 
             var genreList =""
             var firstLoop = true
+
             for(genres: Genres in  (actualApp as Artist).genreList ){
                 if (firstLoop){
                     genreList +=genres.name
@@ -370,7 +371,7 @@ class AccountFragment : Fragment() {
                 }
                 recyclerViewGenres.adapter = genresAdapter
                 updateGenresButton.setOnClickListener{
-                    (actualApp as Artist).genreList = genresAdapter.getSelectedGenres()
+                  //  (actualApp as Artist).genreList = genresAdapter.getSelectedGenres()
                     showGenres?.visibility = View.GONE
                 }
             }

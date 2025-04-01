@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/event_chat_border"
+    android:padding="8dp">
+
+    <!-- ImageView para la imagen -->
+    <ImageView
+        android:id="@+id/imagenUsuarioChat"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="start|center_vertical" />
+
+    <!-- TextView para el título -->
+    <TextView
+        android:id="@+id/chatUserImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/blue"
+        android:text="Título del evento"
+        android:layout_gravity="start|top"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="8dp" />
+
+    <!-- TextView para el tipo de evento -->
+    <TextView
+        android:id="@+id/ultimoMensajeRecibidio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@color/blue"
+        android:text="Tipo de evento"
+        android:layout_gravity="start|top"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="40dp" />
+
+</FrameLayout>
