@@ -12,9 +12,9 @@ class Space(
    name: String = "",
    notification_id: Int = 0,
    password: String = "",
-   rating: Double = 0.0,
+   rating: Int = 0,
    role: String = "",
    val app_user_id: Int = 0,
    val capacity: Int = 0,
-   val zip_code: String = ""
+   var zip_code: String = ""
            ) : App(id, name, mail, password, role, rating, latitude, longitude, active, language_id)

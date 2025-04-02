@@ -64,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
                         actualApp.name  = response.body()?.name.toString()
                         actualApp.latitude=5.5
                         actualApp.language_id=1
-                        actualApp.rating=1.1
+                        actualApp.rating=1
                         actualApp.longitude=1.1
                         val userInfo = """
                             Nombre: ${actualApp.name}

@@ -22,12 +22,15 @@ import com.example.togethernotes.MainActivity
 import com.example.togethernotes.R
 import com.example.togethernotes.adapters.GenresAdapter
 import com.example.togethernotes.models.App
+import com.example.togethernotes.models.Artist
 import com.example.togethernotes.models.ArtistGenre
 import com.example.togethernotes.models.Genres
 import com.example.togethernotes.repository.ArtistGenreRepository
+import com.example.togethernotes.repository.ArtistRepository
 import com.example.togethernotes.services.genres.GenreRepository
 import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualApp
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 class CreateArtistActivity : AppCompatActivity() {
@@ -108,24 +111,7 @@ class CreateArtistActivity : AppCompatActivity() {
 
             confirmGenresButton.setOnClickListener {
                 val selectedGenresFromAdapter = genresAdapter.getSelectedGenres()
-                val repository = ArtistGenreRepository()
 
-                for (selectedGenre in selectedGenresFromAdapter)
-                {
-                    var generatedArtisGenre = ArtistGenre(actualApp.id,selectedGenre.id)
-                    lifecycleScope.launch {
-                        try {
-                            val response = repository.addArtistGenre(generatedArtisGenre)
-                            if (response.isSuccessful) {
-                                Toast.makeText(this@CreateArtistActivity, "Se ha insertado con éxito", Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(this@CreateArtistActivity, "Respuesta vacía", Toast.LENGTH_LONG).show()
-                            }
-                    } catch (e: Exception) {
-                    Toast.makeText(this@CreateArtistActivity, "Exception: ${e.message}", Toast.LENGTH_LONG).show()
-                }
-                        }
-                }
                 if (selectedGenresFromAdapter.isNotEmpty()) {
                     selectedGenres = selectedGenresFromAdapter
                     showGenres.visibility = View.GONE
@@ -223,12 +209,35 @@ class CreateArtistActivity : AppCompatActivity() {
                 var  zipcode =0
                 var capacity =0
                 Tools.createUser("Artist", artistMail.text.toString(), artistPassword.text.toString(),artistName.text.toString(), zipcode, capacity, selectedGenres)
+
                 updateArtistGenre(selectedGenres)
+
+
+
+                addArtist()
                 // Si todo está correcto, procede con la lógica del registro
                 Toast.makeText(this, "Todos los campos son válidos", Toast.LENGTH_SHORT).show()
                 Tools.startActivity(continueButton, this, MainActivity::class.java)
             }
             errorMessage =""
+        }
+    }
+
+    private fun addArtist() {
+        val repository = ArtistRepository()
+        lifecycleScope.launch {
+            try {
+                val json = Gson().toJson(actualApp as Artist)
+                println(json)
+                val response = repository.registerArtist(actualApp as Artist)
+                if (response.isSuccessful) {
+                    Toast.makeText(this@CreateArtistActivity, "Se ha insertado con éxito", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@CreateArtistActivity, "Respuesta vacía", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@CreateArtistActivity, "Exception: ${e.message}", Toast.LENGTH_LONG).show()
+            }
         }
     }
 }

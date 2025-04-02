@@ -7,8 +7,16 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.MainActivity
 import com.example.togethernotes.R
+import com.example.togethernotes.adapters.GenresAdapter
+import com.example.togethernotes.models.Artist
+import com.example.togethernotes.models.Genres
+import com.example.togethernotes.models.Space
+import com.example.togethernotes.repository.ArtistRepository
 import com.example.togethernotes.tools.Tools
 import android.Manifest
 import android.content.pm.PackageManager
@@ -22,6 +30,9 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import org.osmdroid.views.overlay.Marker
+import com.example.togethernotes.tools.actualApp
+import com.google.gson.Gson
+import kotlinx.coroutines.launch
 
 class CreateSpaceActivity : AppCompatActivity() {
 
@@ -228,6 +239,25 @@ class CreateSpaceActivity : AppCompatActivity() {
             }
             // Reiniciar el mensaje de error
             errorMessage = ""
+        }
+
+    }
+    fun addSpace()
+    {
+        val repository = ArtistRepository()
+        lifecycleScope.launch {
+            try {
+                val json = Gson().toJson(actualApp as Space)
+                println(json)
+                val response = repository.registerArtist(actualApp as Space)
+                if (response.isSuccessful) {
+                    Toast.makeText(this@CreateSpaceActivity, "Se ha insertado con éxito", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@CreateSpaceActivity, "Respuesta vacía", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@CreateSpaceActivity, "Exception: ${e.message}", Toast.LENGTH_LONG).show()
+            }
         }
 
     }

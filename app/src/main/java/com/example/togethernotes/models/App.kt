@@ -6,7 +6,7 @@ open class App(
     var mail: String = "",
     var password: String = "",
     var role: String = "",
-    var rating: Double = 0.0,
+    var rating: Int = 0,
     var latitude: Double = 0.0,
     var longitude: Double = 0.0,
     var active: Boolean = false,

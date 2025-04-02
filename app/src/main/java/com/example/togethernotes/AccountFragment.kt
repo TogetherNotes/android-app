@@ -143,7 +143,8 @@ class AccountFragment : Fragment() {
 
 
     }
-    fun configureAccount() {
+    fun configureAccount()
+    {
         val configureAccountButton = view?.findViewById<ImageView>(R.id.configure_button)
         val showConfigureLayout = view?.findViewById<FrameLayout>(R.id.configUserActivity)
         val principalLayout = view?.findViewById<LinearLayout>(R.id.account_settings)

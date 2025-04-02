@@ -45,41 +45,45 @@ object Tools {
     }
     fun createUser(
         userRole: String, email: String, password: String, name: String, zipCode: Int =0,
-        capacity: Int = 5,
-        genreList: List<Genres> =  listOf(
-            Genres(1, "Prueba"),)){
-        actualApp.role = userRole
-        actualApp.mail = email
-        actualApp.password = password
-        actualApp.name = name
-        if (actualApp.role =="Artist")
+        capacity: Int = 5, genreList: List<Genres> =  listOf(Genres(1, "Prueba")))
+    {
+        var genreListIds : MutableList<Int> = mutableListOf()
+
+        for (genre in genreList) {
+            genreListIds.add(genre.id) // Usamos add() para añadir elementos a la lista
+        }
+        actualApp = App()
+        if (userRole =="Artist")
         {
             actualApp=
             Artist(
-                rating=2.0,
-                latitude = 100000.0,
-                longitude = 2000.3,
+                rating=2,
+                latitude = 43.12345678,
+                longitude = 43.12345678,
                 active = true,
                 mail = email,
                 password = password,
                 name = name,
                 role = "Artist",
+                genre_ids = genreListIds
                   )
-         }
-
+        }
         else {
             Space(
-                rating=2.0,
-                latitude = 100000.0,
-                longitude = 2000.3,
+                rating=2,
+                latitude = 43.12345678,
+                longitude = 43.12345678,
                 active = true,
                 mail = email,
                 password = password,
                 name = name,
                 role = "Space",
                 capacity =  50,
+                zip_code ="08210",
                  )
         }
+
+
 
 
     }
