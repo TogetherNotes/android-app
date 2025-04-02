@@ -37,5 +37,7 @@
     <string name="Choose_genres">Elegir géneros</string>
     <string name="work_accord">Acuerdo de trabajo</string>
     <string name="apply">Aplicar</string>
+    <string name="choose_location">Ubicación</string>
+    <string name="save">Guardar</string>
 
 </resources>
