@@ -7,18 +7,19 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:background="@color/blue"
-    >
+    android:id="@+id/backLayout">
     <include
         layout="@layout/logo_reusable"
         />
+
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="50dp"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp">
 
         <!-- Campo de correo electrónico -->
         <EditText
@@ -43,6 +44,7 @@
             android:inputType="textEmailAddress"
             android:layout_gravity="center"
             android:layout_marginBottom="16dp" />
+
 
         <!-- Campo de contraseña -->
         <EditText
@@ -95,6 +97,50 @@
             android:layout_gravity="center"
             android:inputType="text"
             android:layout_marginBottom="16dp" />
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+
+            <EditText
+                android:id="@+id/location"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/choose_location"
+                android:padding="20dp"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColorHint="@color/hint_color"
+                android:layout_gravity="center"
+                android:focusable="false"
+                android:cursorVisible="false"
+                android:inputType="none"
+                android:layout_marginBottom="16dp" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/mapButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/button_border"/>
+
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="30dp"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="-5dp"
+                    android:textSize="36dp"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:text="···"/>
+            </FrameLayout>
+
+        </LinearLayout>
+
     </LinearLayout>
 
 
@@ -105,7 +151,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        >
+        android:layout_gravity="center">
 
         <!-- Fondo con borde -->
         <ImageView
@@ -127,5 +173,7 @@
 
     </FrameLayout>
 
+    <include
+        layout="@layout/choose_location" />
 
 </LinearLayout>

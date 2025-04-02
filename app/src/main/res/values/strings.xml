@@ -36,5 +36,7 @@
     <string name="Choose_genres">Choose genres</string>
     <string name="work_accord">Work accord</string>
     <string name="apply">Apply</string>
+    <string name="choose_location">Location</string>
+    <string name="save">Save</string>
 
 </resources>

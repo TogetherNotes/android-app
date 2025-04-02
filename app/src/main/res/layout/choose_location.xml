@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chooseLocationLayout"
+    android:layout_width="350dp"
+    android:layout_height="450dp"
+    android:layout_gravity="center"
+    android:layout_marginTop="-500dp"
+    android:visibility="gone"
+    android:background="@drawable/default_rectangle">
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="true" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        tools:ignore="MissingClass">
+
+        <Button
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/saveLocation"
+            android:text="@string/save"
+            android:visibility="visible"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/grey_hint"
+            />
+
+    </LinearLayout>
+</FrameLayout>

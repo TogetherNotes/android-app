@@ -2,20 +2,26 @@ package com.example.togethernotes.activities
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.MainActivity
 import com.example.togethernotes.R
-import com.example.togethernotes.adapters.GenresAdapter
-import com.example.togethernotes.models.Genres
 import com.example.togethernotes.tools.Tools
+import android.Manifest
+import android.content.pm.PackageManager
+import android.widget.Button
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import org.osmdroid.config.Configuration
+import org.osmdroid.views.MapView
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import org.osmdroid.views.overlay.Marker
 
 class CreateSpaceActivity : AppCompatActivity() {
 
@@ -25,18 +31,133 @@ class CreateSpaceActivity : AppCompatActivity() {
     private lateinit var capacity: EditText
     private lateinit var zipCode: EditText
     private lateinit var name: EditText
+    private lateinit var location: EditText
     private lateinit var continueButton: ImageView
-
+    private lateinit var openMapButton: ImageView
+    private lateinit var chooseLocationLayout: View
+    private lateinit var backLayout: View
+    private lateinit var mapView: MapView
+    private lateinit var saveButton: Button
+    private lateinit var myLocationOverlay: MyLocationNewOverlay
+    private lateinit var selectedMarker: Marker
+    private var selectedLocation: GeoPoint? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.create_space)
+        checkPermissions()
 
         initVar()
+        setUpMap()
+        showMap()
         registerControl()
-
+        setupSaveLocationButton()
+        setupMapClickListener()
     }
+
+    private fun setupSaveLocationButton() {
+        saveButton.setOnClickListener {
+            selectedLocation?.let {
+                location.setText("${it.latitude}, ${it.longitude}")
+                chooseLocationLayout.visibility = View.GONE
+            } ?: Toast.makeText(this, "Seleccione un punto en el mapa", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setUpMap() {
+        // Cargar la configuración de OSMDroid
+        Configuration.getInstance().load(applicationContext, getSharedPreferences("osmdroid", MODE_PRIVATE))
+
+        // Configurar la fuente de mapas
+        mapView.setTileSource(TileSourceFactory.MAPNIK)
+
+        // Habilitar controles de zoom y gestos
+        mapView.setBuiltInZoomControls(true)
+        mapView.setMultiTouchControls(true)
+
+        val mapController = mapView.controller
+        mapController.setZoom(15.0)
+
+        // Agregar overlay de ubicación
+        myLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(this), mapView)
+        myLocationOverlay.enableMyLocation()
+        myLocationOverlay.enableFollowLocation()
+        myLocationOverlay.runOnFirstFix {
+            runOnUiThread {
+                val userLocation = myLocationOverlay.myLocation
+                if (userLocation != null) {
+                    mapView.controller.setCenter(GeoPoint(userLocation.latitude, userLocation.longitude))
+                }
+            }
+        }
+
+        // Agregar el overlay de ubicación al mapa
+        mapView.overlays.add(myLocationOverlay)
+    }
+
+    private fun setupMapClickListener() {
+        val eventsReceiver = object : org.osmdroid.events.MapEventsReceiver {
+            override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
+                if (p != null) {
+
+                    if (::selectedMarker.isInitialized) {
+                        mapView.overlays.remove(selectedMarker)
+                    }
+
+
+                    selectedMarker = Marker(mapView).apply {
+                        position = p
+                        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                        title = "Ubicación Seleccionada"
+                    }
+
+                    // Guardar la ubicación seleccionada
+                    selectedLocation = p
+
+                    // Agregar el marcador al mapa
+                    mapView.overlays.add(selectedMarker)
+                    mapView.invalidate() // Refrescar el mapa
+                }
+                return true
+            }
+
+            override fun longPressHelper(p: GeoPoint?): Boolean {
+                return false
+            }
+        }
+
+        val mapEventsOverlay = org.osmdroid.views.overlay.MapEventsOverlay(eventsReceiver)
+        mapView.overlays.add(mapEventsOverlay)
+    }
+
+
+
+    private fun checkPermissions() {
+        val permissions = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.INTERNET
+                                 )
+
+        val permissionsToRequest = permissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, permissionsToRequest.toTypedArray(), 1)
+        }
+    }
+
+    private fun showMap() {
+        openMapButton.setOnClickListener {
+            chooseLocationLayout.visibility = View.VISIBLE
+        }
+        backLayout.setOnClickListener{
+            chooseLocationLayout.visibility = View.GONE
+        }
+    }
+
     fun initVar() {
         spaceMail = findViewById(R.id.spaceMail) // Campo de correo electrónico
         spacePassword = findViewById(R.id.spacePassword) // Campo de contraseña
@@ -45,9 +166,13 @@ class CreateSpaceActivity : AppCompatActivity() {
         zipCode = findViewById(R.id.zipCode) // Campo de ubicación (código postal)
         name = findViewById(R.id.spaceName)
         continueButton = findViewById(R.id.contine_restaurant_button) as ImageView // Botón CREAR COMPTE
+        location = findViewById(R.id.location)
+        openMapButton = findViewById(R.id.mapButton)
+        chooseLocationLayout = findViewById(R.id.chooseLocationLayout)
+        mapView = findViewById(R.id.mapview)
+        saveButton = findViewById(R.id.saveLocation)
+        backLayout = findViewById(R.id.backLayout)
     }
-
-
 
     /**
      * Controla la lógica de validación y registro.
