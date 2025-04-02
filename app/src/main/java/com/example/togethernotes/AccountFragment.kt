@@ -98,9 +98,9 @@ class AccountFragment : Fragment() {
 
 
         val prefs = requireActivity().getSharedPreferences("config", Context.MODE_PRIVATE)
-        val idioma = prefs.getString("idioma", Locale.getDefault().language) ?: "es"
+        val language = prefs.getString("language", Locale.getDefault().language) ?: "es"
 
-        changeLanguage(requireActivity(), idioma)
+        changeLanguage(requireActivity(), language)
     }
 
     override fun onAttach(context: Context) {
