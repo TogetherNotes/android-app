@@ -8,15 +8,10 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.MainActivity
 import com.example.togethernotes.R
-import com.example.togethernotes.adapters.GenresAdapter
-import com.example.togethernotes.models.Artist
 import com.example.togethernotes.models.Genres
 import com.example.togethernotes.models.Space
-import com.example.togethernotes.repository.ArtistRepository
 import com.example.togethernotes.tools.Tools
 import android.Manifest
 import android.content.pm.PackageManager
@@ -53,6 +48,10 @@ class CreateSpaceActivity : AppCompatActivity() {
     private lateinit var myLocationOverlay: MyLocationNewOverlay
     private lateinit var selectedMarker: Marker
     private var selectedLocation: GeoPoint? = null
+    private  lateinit var  selectedGenres: List<Genres>
+    private   var latitude: Double = 0.0
+    private var longitude: Double = 0.0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +71,8 @@ class CreateSpaceActivity : AppCompatActivity() {
         saveButton.setOnClickListener {
             selectedLocation?.let {
                 location.setText("${it.latitude}, ${it.longitude}")
+                latitude = it.latitude
+                longitude = it.longitude
                 chooseLocationLayout.visibility = View.GONE
             } ?: Toast.makeText(this, "Seleccione un punto en el mapa", Toast.LENGTH_SHORT).show()
         }
@@ -236,8 +237,10 @@ class CreateSpaceActivity : AppCompatActivity() {
             } else
             {
 
-                Tools.createUser("Space",spaceMail.text.toString(), spacePassword.text.toString(), name.text.toString(),zipCode.text.toString().toInt(),capacity.text.toString().toInt())
-
+                //Tools.createUser("Space",spaceMail.text.toString(), spacePassword.text.toString(), name.text.toString(),zipCode.text.toString().toInt(),capacity.text.toString().toInt())
+                Tools.createSpace("Space",
+                                  spaceMail.text.toString(),
+                                  spaceConfPassword.text.toString(), name.text.toString(), zipCode.text.toString(), capacity.text.toString().toInt(), latitude, longitude)
                 addSpace()
                 Tools.startActivity(continueButton, this, MainActivity::class.java)
             }

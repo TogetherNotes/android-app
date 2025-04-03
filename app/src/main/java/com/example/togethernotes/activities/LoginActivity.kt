@@ -33,8 +33,8 @@ class LoginActivity : AppCompatActivity() {
         continueButton.setOnClickListener {
             if (mailLogin.text.toString()!= "" && passwordLogin.text.toString()!="")
             {
-                actualApp.mail ="artist1@domain.com"
-                actualApp.password = "artist1password"
+                actualApp.mail =mailLogin.text.toString()
+                actualApp.password = passwordLogin.text.toString()
                 actualApp.active = true
 
                 login(actualApp)
@@ -62,10 +62,10 @@ class LoginActivity : AppCompatActivity() {
                         actualApp.id = response.body()?.id!!
                         actualApp.role = response.body()?.role.toString()
                         actualApp.name  = response.body()?.name.toString()
-                        actualApp.latitude=5.5
+                        actualApp.latitude=44.12345678
                         actualApp.language_id=1
                         actualApp.rating=1
-                        actualApp.longitude=1.1
+                        actualApp.longitude=2.12345678
                         val userInfo = """
                             Nombre: ${actualApp.name}
                             Correo: ${actualApp.mail}

@@ -21,4 +21,12 @@ interface AppService {
     // POST: api/apps/login
     @POST("api/apps/login")
     suspend fun login(@Body creds: App): Response<App>
+
+    @GET("api/apps/location")
+    suspend fun getAppsByLocation(
+        @Query("lat") lat: Double,
+        @Query("lng") lng: Double,
+        @Query("radiusKm") radiusKm: Double
+                                 ): Response<List<App>>
+
 }

@@ -105,12 +105,14 @@
             android:layout_marginTop="-10dp"
             >
             <ImageView
+                android:id = "@+id/discardMatchButton"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 android:background="@drawable/discard_match"
                 android:layout_marginLeft="10dp"
                 />
             <ImageView
+                android:id = "@+id/makeMatchButton"
                 android:layout_width="60dp"
                 android:layout_height="55dp"
                 android:background="@drawable/make_match"
