@@ -38,7 +38,7 @@ class InsideChatActivity : AppCompatActivity() {
     private lateinit var rootLayout: LinearLayout // Nuevo: Contenedor principal
     private var messages = mutableListOf<Message>()
     private var chatId: Int = 1
-    private val serverIp = "10.0.0.99"
+    private val serverIp = "10.0.1.6"
     private val serverPort = 5000
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -54,6 +54,7 @@ class InsideChatActivity : AppCompatActivity() {
 
         val solEventButton = findViewById<ImageView>(R.id.createEventButton)
         val solEventLayout = findViewById<FrameLayout>(R.id.createEventSol)
+
 
         // Configurar RecyclerView
         adapter = MessageAdapter(messages)
@@ -113,39 +114,71 @@ class InsideChatActivity : AppCompatActivity() {
         }
     }
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun receiveMessages() {
         try {
+            val buffer = CharArray(1024)
+            val stringBuilder = StringBuilder() // StringBuilder para ir construyendo el mensaje completo
+
             while (true) {
-                val receivedMessage = inputStream.readLine()
-                if (receivedMessage != null) {
-                    val json = JSONObject(receivedMessage)
-                    val senderId = json.getInt("from")
-                    val content = json.getString("content")
+                val bytesRead = inputStream.read(buffer)
+                if (bytesRead != -1) {
+                    // Agregar lo leído al StringBuilder
+                    stringBuilder.append(String(buffer, 0, bytesRead))
 
-                    val localDateTime = LocalDateTime.now()
-                    val messageDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
+                    // Procesar el mensaje completo (asegúrate de que termine una línea)
+                    var line = stringBuilder.toString()
+                    if (line.contains("\n")) {
+                        // Dividir por líneas
+                        val newMessages = line.split("\n") // Cambié el nombre de la variable a newMessages
 
-                    val newMessage = Message(
-                        id = messages.size + 1,
-                        senderId = senderId,
-                        content = content,
-                        sendAt = messageDate,
-                        isRead = false,
-                        chatId = chatId
-                                            )
+                        // Procesar cada mensaje recibido
+                        for (messageStr in newMessages) {
+                            if (messageStr.isNotBlank()) {
+                                Log.d("SOCKET", "Mensaje recibido: $messageStr")
+                                val json = JSONObject(messageStr)
 
-                    runOnUiThread {
-                        messages.add(newMessage)
-                        adapter.notifyItemInserted(messages.size - 1)
-                        chatRecyclerView.scrollToPosition(messages.size - 1)
+                                val senderId = json.getInt("from")
+                                val content = json.getString("content")
+
+                                val localDateTime = LocalDateTime.now()
+                                val messageDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
+
+                                val newMessage = Message(
+                                    id = messages.size + 1, // Esto se sigue refiriendo a la lista global
+                                    senderId = senderId,
+                                    content = content,
+                                    sendAt = messageDate,
+                                    isRead = false,
+                                    chatId = chatId
+                                                        )
+
+                                // Actualizar la UI en el hilo principal
+                                runOnUiThread {
+                                    messages.add(newMessage)  // Aquí estamos agregando el nuevo mensaje a la lista global
+                                    adapter.notifyItemInserted(messages.size - 1)
+                                    chatRecyclerView.scrollToPosition(messages.size - 1)
+                                }
+                            }
+                        }
+
+                        // Limpiar el StringBuilder para preparar el siguiente conjunto de mensajes
+                        stringBuilder.clear()
                     }
+                } else {
+                    Log.e("SOCKET", "Se ha cerrado la conexión del servidor")
+                    break
                 }
             }
         } catch (e: IOException) {
-            Log.e("SOCKET", "Error recibiendo mensaje: ${e.message}")
+            Log.e("SOCKET", "Error al recibir mensaje: ${e.message}")
         }
     }
+
+
+
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun sendMessage() {
@@ -162,7 +195,8 @@ class InsideChatActivity : AppCompatActivity() {
                 outputStream.println(messageJson.toString())
 
                 val localDateTime = LocalDateTime.now()
-                val messageDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
+                val messageDate =
+                    Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
 
                 val newMessage = Message(
                     id = messages.size + 1,
