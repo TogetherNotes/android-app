@@ -82,9 +82,22 @@ object Tools {
                 zip_code ="08210",
                  )
         }
-
-
-
+    }
+    fun createSpace (userRole: String, email: String, password: String, name: String, zipCode: Int =0,
+                     capacity: Int = 5)
+    {
+        Space(
+            rating=2,
+            latitude = 43.12345678,
+            longitude = 43.12345678,
+            active = true,
+            mail = email,
+            password = password,
+            name = name,
+            role = "Space",
+            capacity =  50,
+            zip_code ="08210",
+             )
 
     }
 

@@ -23,5 +23,5 @@ interface SpaceService {
 
     // POST: api/spaces/register
     @POST("api/spaces/register")
-    suspend fun registerSpace(@Body request: Space): Response<Map<String, Any>>
+    suspend fun registerSpace(@Body request: Space): Response<Space>
 }

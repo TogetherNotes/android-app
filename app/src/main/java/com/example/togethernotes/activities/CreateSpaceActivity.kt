@@ -23,6 +23,7 @@ import android.content.pm.PackageManager
 import android.widget.Button
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.togethernotes.repository.SpaceRepository
 import org.osmdroid.config.Configuration
 import org.osmdroid.views.MapView
 import org.osmdroid.util.GeoPoint
@@ -234,7 +235,10 @@ class CreateSpaceActivity : AppCompatActivity() {
 
             } else
             {
+
                 Tools.createUser("Space",spaceMail.text.toString(), spacePassword.text.toString(), name.text.toString(),zipCode.text.toString().toInt(),capacity.text.toString().toInt())
+
+                addSpace()
                 Tools.startActivity(continueButton, this, MainActivity::class.java)
             }
             // Reiniciar el mensaje de error
@@ -244,12 +248,12 @@ class CreateSpaceActivity : AppCompatActivity() {
     }
     fun addSpace()
     {
-        val repository = ArtistRepository()
+        val repository = SpaceRepository()
         lifecycleScope.launch {
             try {
                 val json = Gson().toJson(actualApp as Space)
                 println(json)
-                val response = repository.registerArtist(actualApp as Space)
+                val response = repository.registerSpace(actualApp as Space)
                 if (response.isSuccessful) {
                     Toast.makeText(this@CreateSpaceActivity, "Se ha insertado con éxito", Toast.LENGTH_SHORT).show()
                 } else {
