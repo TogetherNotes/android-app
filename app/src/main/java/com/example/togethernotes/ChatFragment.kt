@@ -2,17 +2,20 @@ package com.example.togethernotes
 
 import MessageAdapter
 import Message
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.togethernotes.activities.InsideChatActivity
 import com.example.togethernotes.adapters.ChatAdapter
 import com.example.togethernotes.models.Chat
 import com.example.togethernotes.tools.actualApp
@@ -49,6 +52,12 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showChats()
+
+        val testButton = view.findViewById<Button>(R.id.testButton)
+        testButton.setOnClickListener {
+            val intent = Intent(requireContext(), InsideChatActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun showChats() {

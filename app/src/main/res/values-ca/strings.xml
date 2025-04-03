@@ -39,5 +39,7 @@
     <string name="apply">Aplicar</string>
     <string name="choose_location">Ubicació</string>
     <string name="save">Guardar</string>
+    <string name="write_message">Escriu un missatge...</string>
+    <string name="send">Enviar</string>
 
 </resources>
