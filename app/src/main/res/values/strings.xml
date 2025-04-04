@@ -38,5 +38,7 @@
     <string name="apply">Apply</string>
     <string name="choose_location">Location</string>
     <string name="save">Save</string>
+    <string name="write_message">Write a message...</string>
+    <string name="send">Send</string>
 
 </resources>
