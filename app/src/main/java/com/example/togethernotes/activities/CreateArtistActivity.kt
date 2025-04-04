@@ -2,7 +2,6 @@ package com.example.togethernotes.activities
 
 import android.annotation.SuppressLint
 import android.graphics.Rect
-import android.health.connect.datatypes.units.Length
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -14,14 +13,12 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.MainActivity
 import com.example.togethernotes.R
 import com.example.togethernotes.adapters.GenresAdapter
-import com.example.togethernotes.models.App
 import com.example.togethernotes.models.Artist
 import com.example.togethernotes.models.ArtistGenre
 import com.example.togethernotes.models.Genres
@@ -43,6 +40,7 @@ class CreateArtistActivity : AppCompatActivity() {
     private lateinit var recyclerViewGenres: RecyclerView
     private lateinit var genresAdapter: GenresAdapter
     private  lateinit var  selectedGenres: List<Genres>
+    private var selectedLanguageCode: String = "en"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +49,7 @@ class CreateArtistActivity : AppCompatActivity() {
         initVar()
         registerControl()
         selectGenres()
+        getCurrentDeviceLanguage()
     }
     fun initVar()
     {
@@ -64,6 +63,9 @@ class CreateArtistActivity : AppCompatActivity() {
 
 
     }
+
+
+
     @SuppressLint("ClickableViewAccessibility")
     fun selectGenres() {
         val genreRepository = GenreRepository()
@@ -208,7 +210,7 @@ class CreateArtistActivity : AppCompatActivity() {
                 //valores por defecto
                 var  zipcode =0
                 var capacity =0
-                Tools.createUser("Artist", artistMail.text.toString(), artistPassword.text.toString(),artistName.text.toString(), zipcode, capacity, selectedGenres)
+                Tools.createUser("Artist", artistMail.text.toString(), artistPassword.text.toString(),artistName.text.toString(), zipcode, capacity, selectedGenres,selectedLanguageCode)
 
                 updateArtistGenre(selectedGenres)
 
@@ -221,6 +223,11 @@ class CreateArtistActivity : AppCompatActivity() {
             }
             errorMessage =""
         }
+    }
+
+    fun getCurrentDeviceLanguage() {
+        val currentLocale = java.util.Locale.getDefault()
+        selectedLanguageCode = currentLocale.language // Guarda el código de idioma (ej. "es", "en")
     }
 
     private fun addArtist() {

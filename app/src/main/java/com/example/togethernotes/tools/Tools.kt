@@ -11,6 +11,7 @@ import com.example.togethernotes.models.App
 lateinit var actualApp: App
 lateinit var artist: Artist
 lateinit var possibleMatch : App
+val possibleMatchList: MutableList<App> = mutableListOf() // Corregido aquí
 object Tools {
 
     /**
@@ -39,10 +40,35 @@ object Tools {
         context.startActivity(intent)
 
     }
-    fun createUser(
-        userRole: String, email: String, password: String, name: String, zipCode: Int =0,
-        capacity: Int = 5, genreList: List<Genres> =  listOf(Genres(1, "Prueba")))
+    fun detectLanguageCode(selectedLanguageCode: String): Int
     {
+        var code: Int
+        if (selectedLanguageCode=="es")
+        {
+            code = 1
+        }
+        if (selectedLanguageCode=="en")
+        {
+            code =2
+        }
+        else
+        {
+            code=3
+        }
+        return code
+    }
+    fun createUser(
+        userRole: String,
+        email: String,
+        password: String,
+        name: String,
+        zipCode: Int = 0,
+        capacity: Int = 5,
+        genreList: List<Genres> = listOf(Genres(1, "Prueba")),
+        selectedLanguageCode: String
+                  )
+    {
+        var language =detectLanguageCode(selectedLanguageCode)
         var genreListIds : MutableList<Int> = mutableListOf()
 
         for (genre in genreList) {
@@ -61,7 +87,9 @@ object Tools {
                 password = password,
                 name = name,
                 role = "Artist",
-                genre_ids = genreListIds
+                genre_ids = genreListIds,
+                language_id = language
+
                   )
         }
         else {
@@ -76,6 +104,7 @@ object Tools {
                 role = "Space",
                 capacity =  50,
                 zip_code ="08210",
+                language_id = language
                  )
         }
     }

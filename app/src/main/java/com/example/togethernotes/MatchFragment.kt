@@ -20,6 +20,7 @@ import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualApp
 import com.example.togethernotes.tools.possibleMatch
 import com.example.togethernotes.tools.possibleMatch
+import com.example.togethernotes.tools.possibleMatchList
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
@@ -29,6 +30,7 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 private lateinit var mediaPlayer: MediaPlayer
 private lateinit var seekBar: SeekBar
+var searchedMatchesCounter: Int = 0
 
 class MatchFragment : Fragment() {
     private var param1: String? = null
@@ -45,22 +47,30 @@ class MatchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         reprodMusic()
-        findMatch()
-        searchMatch()
-        updateMatchLayout()
+        //searchMatch()
+        //findMatch()
+        //updateMatchLayout()
     }
 
+
     private fun updateMatchLayout() {
+        var possibleMatchTmp = possibleMatchList[searchedMatchesCounter]
+
+        if (possibleMatchTmp != null) {
+
+            Tools.createPossibleUser(possibleMatchTmp.role,possibleMatchTmp.mail,possibleMatchTmp.password,possibleMatchTmp.name,possibleMatchTmp.id)
+            searchedMatchesCounter++
+        }
+
         var posibleMatchName = view?.findViewById(R.id.userNameMatch) as TextView
         posibleMatchName.text = possibleMatch.name
     }
 
     fun findMatch()
     {
-
         var likeButton = view?.findViewById(R.id.makeMatchButton) as ImageView
         likeButton.setOnClickListener{
-
+            updateMatchLayout()
         }
     }
     fun  searchMatch() {
@@ -78,16 +88,10 @@ class MatchFragment : Fragment() {
                     actualAppDef.latitude ?: 0.0, actualAppDef.longitude ?: 0.0, 100000.0)
                 // Convertir el objeto `actualApp` a JSON para depuración
 
-
                 if (response.isSuccessful) {
                     // Añadir los resultados a la lista si la respuesta es exitosa
                     response.body()?.let { possibleMatchList.addAll(it)
-                        val possibleMatchTmp = it[0]
 
-                        if (possibleMatchTmp != null) {
-                            Tools.createPossibleUser(possibleMatchTmp.role,possibleMatchTmp.mail,possibleMatchTmp.password,possibleMatchTmp.name,possibleMatchTmp.id)
-                            updateMatchLayout()
-                        }
                     }
 
 
