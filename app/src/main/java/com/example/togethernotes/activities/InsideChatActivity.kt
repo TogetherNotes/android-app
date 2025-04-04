@@ -16,10 +16,13 @@ import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.R
+import com.example.togethernotes.repository.MessageRepository
 import com.example.togethernotes.tools.actualApp
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.*
 import java.net.Socket
@@ -40,6 +43,7 @@ class InsideChatActivity : AppCompatActivity() {
     private var chatId: Int = 1
     private val serverIp = "10.0.1.6"
     private val serverPort = 5000
+    private val messageRepository = MessageRepository()  // Instancia del repositorio
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,7 +77,6 @@ class InsideChatActivity : AppCompatActivity() {
 
         setupKeyboardListener()
     }
-
 
     /**
      * Detecta cuando el teclado aparece y ajusta el layout
@@ -115,7 +118,6 @@ class InsideChatActivity : AppCompatActivity() {
             Log.e("SOCKET", "Error al conectar: ${e.message}")
         }
     }
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun receiveMessages() {
@@ -162,6 +164,11 @@ class InsideChatActivity : AppCompatActivity() {
                                     adapter.notifyItemInserted(messages.size - 1)
                                     chatRecyclerView.scrollToPosition(messages.size - 1)
                                 }
+
+                                // Marcar mensaje como leído en el backend (si aún no está leído)
+                                if (!newMessage.isRead) {
+                                    markMessageAsRead(newMessage)
+                                }
                             }
                         }
 
@@ -178,8 +185,25 @@ class InsideChatActivity : AppCompatActivity() {
         }
     }
 
-
-
+    // Llamar a la API para marcar el mensaje como leído
+    private fun markMessageAsRead(message: Message) {
+        lifecycleScope.launch {
+            val updatedMessage = Message(
+                id = message.id,
+                senderId = message.senderId,
+                content = message.content,
+                sendAt = message.sendAt,
+                isRead = true, // Cambiamos solo este campo
+                chatId = message.chatId
+                                        )
+            val response = messageRepository.markMessageAsRead(message.id, updatedMessage)
+            if (response.isSuccessful) {
+                // Actualizar el estado del mensaje como leído en la UI
+                message.isRead = true
+                Log.d("Message", "Mensaje marcado como leído: ${message.id}")
+            }
+        }
+    }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
