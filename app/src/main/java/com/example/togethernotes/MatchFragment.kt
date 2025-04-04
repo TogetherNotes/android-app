@@ -47,9 +47,9 @@ class MatchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         reprodMusic()
-        //searchMatch()
-        //findMatch()
-        //updateMatchLayout()
+        searchMatch()
+        findMatch()
+        updateMatchLayout()
     }
 
 
@@ -85,13 +85,13 @@ class MatchFragment : Fragment() {
             try {
                 // Realizar la solicitud a la API
                 val response = appRepository.getAppsByLocation(
-                    actualAppDef.latitude ?: 0.0, actualAppDef.longitude ?: 0.0, 100000.0)
+                    actualAppDef.latitude ?: 0.0, actualAppDef.longitude ?: 0.0, 10000.0)
+
                 // Convertir el objeto `actualApp` a JSON para depuración
 
                 if (response.isSuccessful) {
                     // Añadir los resultados a la lista si la respuesta es exitosa
                     response.body()?.let { possibleMatchList.addAll(it)
-
                     }
 
 

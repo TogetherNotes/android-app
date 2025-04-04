@@ -8,7 +8,7 @@ class Artist(
     rating: Int = 0,
     latitude: Double = 0.0,
     longitude: Double = 0.0,
-    active: Boolean = false,
+    active: Boolean = true,
     language_id: Int = 0,
     id : Int = 0,
     var genre_ids: List<Int>,

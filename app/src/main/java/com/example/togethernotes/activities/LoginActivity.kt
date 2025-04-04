@@ -1,7 +1,9 @@
 package com.example.togethernotes.activities
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
@@ -14,12 +16,17 @@ import com.example.togethernotes.R
 import com.example.togethernotes.models.App
 import com.example.togethernotes.tools.Tools
 import androidx.lifecycle.lifecycleScope
+import com.example.togethernotes.models.Artist
 import com.example.togethernotes.repository.AppRepository
 import com.example.togethernotes.tools.actualApp
+import com.google.gson.Gson
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+
 
 class LoginActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
+    var passApp =App()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -27,61 +34,69 @@ class LoginActivity : AppCompatActivity() {
         val mailLogin = findViewById<EditText>(R.id.mailLogin)
         val passwordLogin = findViewById<EditText>(R.id.passwordLogin)
 
-
         val continueButton = findViewById(R.id.login_button) as ImageView
-        actualApp = App()
         continueButton.setOnClickListener {
             if (mailLogin.text.toString()!= "" && passwordLogin.text.toString()!="")
             {
-                actualApp.mail =mailLogin.text.toString()
-                actualApp.password = passwordLogin.text.toString()
-                actualApp.active = true
+                passApp.mail =mailLogin.text.toString()
+                passApp.password = passwordLogin.text.toString()
 
-                login(actualApp)
+                login(passApp)
                 Tools.startActivityTurned(this, MainActivity::class.java)
             }
             else {
                 Toast.makeText(this@LoginActivity, "MALLLL", Toast.LENGTH_LONG).show()
 
             }
-    //                actualApp.mail = mailLogin.text.toString()
+    //                  actualApp.mail = mailLogin.text.toString()
 
         }
             //TODO cambiar el usuario por la lógica de encontrarlo en la base de datos
         }
-        fun login(creds: App) {
-            val appRepository = AppRepository()
-            val _loginResponse = MutableLiveData<App>()
+    fun login(creds: App) {
+        val appRepository = AppRepository()
+        actualApp = creds
+        lifecycleScope.launch {
+            try {
+                val response = appRepository.login(actualApp)
 
-            lifecycleScope.launch {
-                try {
-                    val response = appRepository.login(creds)
-                    if (response.isSuccessful) {
-                        _loginResponse.value = response.body()
-                        actualApp.active = response.body()?.active!!
-                        actualApp.id = response.body()?.id!!
-                        actualApp.role = response.body()?.role.toString()
-                        actualApp.name  = response.body()?.name.toString()
-                        actualApp.latitude=44.12345678
-                        actualApp.language_id=1
-                        actualApp.rating=1
-                        actualApp.longitude=2.12345678
-                        val userInfo = """
-                            Nombre: ${actualApp.name}
-                            Correo: ${actualApp.mail}
-                            Rol: ${actualApp.role}
-                            Activo: ${actualApp.active}
-                            ID: ${actualApp.id}
-                        """.trimIndent()
-                        Toast.makeText(this@LoginActivity, userInfo, Toast.LENGTH_LONG).show()
-                    } else {
-
-                        Toast.makeText(this@LoginActivity, "Credenciales inválidas", Toast.LENGTH_LONG).show()
+                when {
+                    response.isSuccessful -> {
+                        response.body()?.let { loggedInApp ->
+                            actualApp = loggedInApp
+                            showUserInfo(loggedInApp)
+                        } ?: run {
+                            showError("Respuesta vacía del servidor")
+                        }
                     }
-                } catch (e: Exception) {
-                    Toast.makeText(this@LoginActivity, "Error logging in:", Toast.LENGTH_LONG).show()
-
+                    response.code() == 404 -> {
+                        showError("Credenciales inválidas")
+                    }
+                    else -> {
+                        showError("Error ${response.code()}: ${response.message()}")
+                    }
                 }
+            } catch (e: Exception) {
+                showError("Error inesperado: ${e.message}")
+                e.printStackTrace()
             }
+        }
     }
+
+    private fun showUserInfo(app: App) {
+        val userInfo = """
+            Nombre: ${app.name}
+            Correo: ${app.mail}
+            Rol: ${app.role}
+            Activo: ${app.active}
+            ID: ${app.id}
+        """.trimIndent()
+
+        Toast.makeText(this, userInfo, Toast.LENGTH_LONG).show()
+    }
+
+    private fun showError(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
 }

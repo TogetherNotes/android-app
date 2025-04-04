@@ -11,7 +11,7 @@ import com.example.togethernotes.models.App
 lateinit var actualApp: App
 lateinit var artist: Artist
 lateinit var possibleMatch : App
-val possibleMatchList: MutableList<App> = mutableListOf() // Corregido aquí
+var possibleMatchList = mutableListOf<App>()
 object Tools {
 
     /**
