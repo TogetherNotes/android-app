@@ -1,10 +1,12 @@
+// Chat.kt
 package com.example.togethernotes.models
 
 import java.util.Date
 
 data class Chat(
-    val id: Int = 0,
-    val date: Date = Date(), // Fecha actual por defecto
-    val user1_id: Int = 0,
-    val user2_id: Int = 0
+    val id: Int,
+    val date: Date,
+    val user1_id: Int,
+    val user2_id: Int,
+    var userName: String? = null // Esta propiedad se añadirá temporalmente
                )

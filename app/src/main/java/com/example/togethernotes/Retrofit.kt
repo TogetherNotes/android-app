@@ -8,8 +8,9 @@ object Retrofit {
 
     private val retrofit: Retrofit by lazy {
         val gson = GsonBuilder()
-
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
             .create()
+
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
