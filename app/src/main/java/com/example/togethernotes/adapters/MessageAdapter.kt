@@ -1,3 +1,4 @@
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,15 +19,16 @@ class MessageAdapter(private val messages: List<Message>) : RecyclerView.Adapter
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         val message = messages[position]
+        Log.d("ADAPTER", "Mostrando mensaje: '${message.content}' de ${message.senderId}")
 
-        if (message.id == actualApp.id) {
+
+        if (message.senderId == actualApp.id) {
             // Configurar mensaje enviado
             holder.sentMessageLayout.visibility = View.VISIBLE
             holder.receivedMessageLayout.visibility = View.GONE
 
             holder.sentText.text = message.content
             holder.sentText.visibility = View.VISIBLE
-
 
         } else {
             // Configurar mensaje recibido
@@ -35,12 +37,14 @@ class MessageAdapter(private val messages: List<Message>) : RecyclerView.Adapter
 
             holder.receivedText.text = message.content
             holder.receivedText.visibility = View.VISIBLE
-
-
         }
     }
 
-    override fun getItemCount(): Int = messages.size
+
+    override fun getItemCount(): Int {
+        Log.d("ADAPTER", "Total de mensajes: ${messages.size}")
+        return messages.size
+    }
 
     class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val receivedMessageLayout: LinearLayout = itemView.findViewById(R.id.receivedMessageLayout)
