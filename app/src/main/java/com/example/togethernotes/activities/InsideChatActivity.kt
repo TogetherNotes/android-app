@@ -35,7 +35,7 @@ class InsideChatActivity : AppCompatActivity() {
     private lateinit var chatRecyclerView: RecyclerView
     private lateinit var adapter: MessageAdapter
     private lateinit var messageInput: EditText
-    private lateinit var rootLayout: LinearLayout // Nuevo: Contenedor principal
+    private lateinit var rootLayout: LinearLayout
     private var messages = mutableListOf<Message>()
     private var chatId: Int = 1
     private val serverIp = "10.0.1.6"
@@ -47,31 +47,33 @@ class InsideChatActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.inside_chat_layout)
 
-        rootLayout = findViewById(R.id.rootLayout) // ID del contenedor principal
+        rootLayout = findViewById(R.id.rootLayout)
         chatRecyclerView = findViewById(R.id.recyclerView)
         messageInput = findViewById(R.id.messageInput)
         val sendButton = findViewById<Button>(R.id.sendButton)
-
         val solEventButton = findViewById<ImageView>(R.id.createEventButton)
         val solEventLayout = findViewById<FrameLayout>(R.id.createEventSol)
 
-
-        // Configurar RecyclerView
         adapter = MessageAdapter(messages)
         chatRecyclerView.layoutManager = LinearLayoutManager(this)
         chatRecyclerView.adapter = adapter
-        Log.d("ADAPTER", "Adapter inicializado con ${messages.size} mensajes")
-        // Conectar al servidor en un hilo separado
+
+        // 👉 Recuperar el chat y calcular el receptor
+        chatId = intent.getIntExtra("chat_id", -1)
+        val user1Id = intent.getIntExtra("user1_id", -1)
+        val user2Id = intent.getIntExtra("user2_id", -1)
+        val receiverId = if (actualApp.id == user1Id) user2Id else user1Id
+
         thread {
             connectToServer()
         }
 
-        sendButton.setOnClickListener { sendMessage() }
+        sendButton.setOnClickListener { sendMessage(receiverId) }
         solEventButton.setOnClickListener { solEventLayout.visibility = View.VISIBLE }
 
-        // Ajustar layout cuando aparece el teclado
         setupKeyboardListener()
     }
+
 
     /**
      * Detecta cuando el teclado aparece y ajusta el layout
@@ -181,13 +183,13 @@ class InsideChatActivity : AppCompatActivity() {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun sendMessage() {
+    private fun sendMessage(receiver_id: Int) {
         val messageText = messageInput.text.toString().trim()
         if (messageText.isEmpty()) return
 
         val messageJson = JSONObject()
         messageJson.put("sender_id", actualApp.id)
-        messageJson.put("receiver_id", 2) // Ajusta el ID del receptor
+        messageJson.put("receiver_id", receiver_id) // Ajusta el ID del receptor
         messageJson.put("content", messageText)
 
         thread {
