@@ -66,17 +66,6 @@ class InsideChatActivity : AppCompatActivity() {
             connectToServer()
         }
 
-        messages.add(
-            Message(
-                id = 1,
-                senderId = actualApp.id,
-                content = "Mensaje de prueba",
-                sendAt = Date(),
-                isRead = false,
-                chatId = chatId
-                   )
-                    )
-        adapter.notifyItemInserted(messages.size - 1)
         sendButton.setOnClickListener { sendMessage() }
         solEventButton.setOnClickListener { solEventLayout.visibility = View.VISIBLE }
 
