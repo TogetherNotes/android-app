@@ -10,8 +10,9 @@ import com.example.togethernotes.models.App
 
 var actualApp: App = App()
 lateinit var artist: Artist
-lateinit var possibleMatch : App
+ var possibleMatch : App = App()
 var possibleMatchList = mutableListOf<App>()
+var likedMatchesUsers = mutableListOf<App>()
 object Tools {
 
     /**
@@ -89,7 +90,6 @@ object Tools {
                 role = "Artist",
                 genre_ids = genreListIds,
                 language_id = language
-
                   )
         }
         else {
@@ -135,12 +135,12 @@ object Tools {
              )
     }
 
-    fun createPossibleUser (userRole: String, email: String, password: String, name: String, userId: Int)
+    fun createPossibleUser (userRole: String, email: String, password: String, name: String, userId: Int, rating: Int)
     {
         possibleMatch = App()
         possibleMatch=
             App(
-                rating=2,
+                rating=rating,
                 latitude = 43.12345678,
                 longitude = 43.12345678,
                 active = true,

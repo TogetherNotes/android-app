@@ -1,5 +1,6 @@
 package com.example.togethernotes
 
+import MatchAdapter
 import MessageAdapter
 import Message
 import android.content.Intent
@@ -11,14 +12,24 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.activities.InsideChatActivity
 import com.example.togethernotes.adapters.ChatAdapter
+import com.example.togethernotes.models.App
 import com.example.togethernotes.models.Chat
+import com.example.togethernotes.models.MatchItem
+import com.example.togethernotes.models.TempMatchDto
+import com.example.togethernotes.repository.AppRepository
+import com.example.togethernotes.repository.TempMatchRepository
 import com.example.togethernotes.tools.actualApp
+import com.example.togethernotes.tools.likedMatchesUsers
+import com.example.togethernotes.tools.possibleMatchList
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Date
@@ -52,11 +63,85 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showChats()
-
+        getListYourMatches()
         val testButton = view.findViewById<Button>(R.id.testButton)
         testButton.setOnClickListener {
             val intent = Intent(requireContext(), InsideChatActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun showMatches(tmpMatch:List<TempMatchDto>) {
+        // Datos de ejemplo
+        getLikedUsers(tmpMatch)
+        val matches = mutableListOf<MatchItem>()
+        for (likedUser in likedMatchesUsers)
+        {
+            matches.add(MatchItem(
+                imageUrl = "https://via.placeholder.com/100",
+                name = likedUser.name,
+                description = "Guitarist looking for a venue"
+            ))
+        }
+
+        var recyclerViewMatches = view?.findViewById(R.id.recyclerViewMatches) as RecyclerView
+        // Configurar RecyclerView
+        recyclerViewMatches.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = MatchAdapter(matches)
+        }
+    }
+    fun getLikedUsers(tmpMatch:List<TempMatchDto>)
+    {
+        val appRepository = AppRepository()
+        for (tmp in tmpMatch)
+        {
+            lifecycleScope.launch {
+                try {
+                    val response = appRepository.getAppById(tmp.OtherUserId)
+                    if (response.isSuccessful) {
+                        response.body()?.let {  app ->
+                            possibleMatchList.add(app)
+                            println("Respuesta de la API: $app")}
+                        if (response.body() != null) {
+                            Toast.makeText(requireContext(), "Se ha encontrado exitosamente", Toast.LENGTH_SHORT).show()
+                        }
+                        else
+                        {
+                            Toast.makeText(requireContext(), "No hay ningun usuario liked", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), "Error al buscar usuario liked", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "Error inesperado: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+    fun getListYourMatches(){
+        val tempMatchRepository = TempMatchRepository()
+        lifecycleScope.launch {
+            try {
+                val response = tempMatchRepository.getPendingMatches(actualApp.id)
+                if (response.isSuccessful) {
+                    val pendingMatches = response.body()
+                    if (pendingMatches != null) {
+                        showMatches(pendingMatches)
+                    }
+                    if (pendingMatches.isNullOrEmpty()) {
+                        Toast.makeText(requireContext(), "No hay coincidencias pendientes", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Procesar las coincidencias pendientes
+                        println("Coincidencias pendientes: $pendingMatches")
+                        // Actualizar la UI aquí (por ejemplo, usando un RecyclerView)
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Error al cargar coincidencias", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error inesperado: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

@@ -1,8 +1,10 @@
 package com.example.togethernotes
 
 import android.annotation.SuppressLint
+import android.media.Image
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Im
 import android.view.GestureDetector
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,13 +16,18 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.togethernotes.models.App
+import com.example.togethernotes.models.TempMatch
 import com.example.togethernotes.repository.AppRepository
+import com.example.togethernotes.repository.TempMatchRepository
 import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualApp
+import com.example.togethernotes.tools.possibleMatch
 import com.example.togethernotes.tools.possibleMatchList
 import kotlinx.coroutines.launch
+import retrofit2.Response
 import java.io.IOException
 
 
@@ -52,6 +59,7 @@ class MatchFragment : Fragment() {
         findMatch()
         updateMatchLayout()
     }
+
     @SuppressLint("ClickableViewAccessibility")
     private fun initSwipeListener() {
         val frameLayout = view?.findViewById<FrameLayout>(R.id.matchFrame)
@@ -64,12 +72,14 @@ class MatchFragment : Fragment() {
                     initialX = event.x
                     isDragging = true
                 }
+
                 MotionEvent.ACTION_MOVE -> {
                     if (isDragging) {
                         val deltaX = event.x - initialX
                         frameLayout.translationX = deltaX
                     }
                 }
+
                 MotionEvent.ACTION_UP -> {
                     isDragging = false
                     val finalX = event.x
@@ -95,50 +105,167 @@ class MatchFragment : Fragment() {
 
 
     private fun onSwipeLeft() {
-        showNextMatch()
+        showNextMatch("left")
+
     }
 
     private fun onSwipeRight() {
-        showNextMatch()
+        showNextMatch("right")
+       insertTmpMatchTable()
     }
 
-    private fun showNextMatch() {
+    private fun insertTmpMatchTable() {
+        var spaceLiked = false
+        var artistLiked = false
+        if (actualApp.role =="Space" )
+        {
+            spaceLiked = true
+        }
+        else
+        {
+            artistLiked = true
+        }
+        val newTempMatch = TempMatch(
+            artist_id = actualApp.id,
+            space_id = possibleMatch.id,
+            artist_like = spaceLiked,
+            space_like = artistLiked,
+            status = "pending",
+            request_date = "2023-10-05"
+        )
+        val tempMatchRepository = TempMatchRepository()
+        lifecycleScope.launch {
+            try {
+                // Llamar al repositorio para crear el nuevo registro
+                val response: Response<TempMatch> =
+                    tempMatchRepository.createTempMatch(newTempMatch)
+
+                if (response.isSuccessful) {
+                    // Registro creado exitosamente
+                    val createdMatch = response.body()
+                    Toast.makeText(
+                        requireContext(),
+                        "Registro creado: ${createdMatch?.artist_id}, ${createdMatch?.space_id}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    // Manejar errores específicos de la API
+                    Toast.makeText(
+                        requireContext(),
+                        "Error al crear el registro: ${response.message()}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            } catch (e: Exception) {
+                // Manejar excepciones generales
+                Toast.makeText(
+                    requireContext(),
+                    "Error inesperado: ${e.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+    }
+
+    private fun showNextMatch(direction: String) {
         updateMatchLayout()
-        animateFrameLayout()
+        animateFrameLayout(direction)
     }
 
-    private fun animateFrameLayout() {
+    private fun animateFrameLayout(direction: String) {
         val frameLayout = view?.findViewById<FrameLayout>(R.id.matchFrame)
         frameLayout?.let {
-            println("Ancho del FrameLayout: ${it.width}") // Depuración
-            it.animate()
-                .translationXBy(-it.width.toFloat()) // Mover hacia la izquierda
-                .setDuration(300) // Duración de la animación
-                .withEndAction {
-                    it.translationX = 0f // Restablecer la posición original
+            when (direction) {
+                "left" -> {
+                    // Salida hacia la izquierda
+                    it.animate()
+                        .translationXBy(-it.width.toFloat())
+                        .alpha(0f) // Desvanecer
+                        .setDuration(300)
+                        .withEndAction {
+                            updateMatchLayout()
+
+                            // Entrada desde la derecha
+                            it.translationX = it.width.toFloat()
+                            it.alpha = 0f
+                            it.animate()
+                                .translationX(0f)
+                                .alpha(1f) // Aparecer
+                                .setDuration(300)
+                                .start()
+                        }
+                        .start()
                 }
-                .start()
+                "right" -> {
+                    // Salida hacia la derecha
+                    it.animate()
+                        .translationXBy(it.width.toFloat())
+                        .alpha(0f) // Desvanecer
+                        .setDuration(300)
+                        .withEndAction {
+                            updateMatchLayout()
+
+                            // Entrada desde la izquierda
+                            it.translationX = -it.width.toFloat()
+                            it.alpha = 0f
+                            it.animate()
+                                .translationX(0f)
+                                .alpha(1f) // Aparecer
+                                .setDuration(300)
+                                .start()
+                        }
+                        .start()
+                }
+            }
         }
     }
 
     private fun updateMatchLayout() {
         if (possibleMatchList.isNotEmpty() && searchedMatchesCounter < possibleMatchList.size) {
-            val possibleMatchTmp = possibleMatchList[searchedMatchesCounter]
+             possibleMatch = possibleMatchList[searchedMatchesCounter]
             Tools.createPossibleUser(
-                possibleMatchTmp.role,
-                possibleMatchTmp.mail,
-                possibleMatchTmp.password,
-                possibleMatchTmp.name,
-                possibleMatchTmp.id
+                possibleMatch.role,
+                possibleMatch.mail,
+                possibleMatch.password,
+                possibleMatch.name,
+                possibleMatch.id,
+                possibleMatch.rating,
             )
             searchedMatchesCounter++
             view?.let {
                 val posibleMatchName = it.findViewById<TextView>(R.id.userNameMatch)
-                posibleMatchName.text = possibleMatchTmp.name
+                val userRatingMatch = it.findViewById(R.id.userRatingMatch) as ImageView
+                setStarts(possibleMatch.rating, userRatingMatch)
+                posibleMatchName.text = possibleMatch.name
+
             }
         } else {
+            searchMatch()
             Toast.makeText(requireContext(), "No hay más coincidencias", Toast.LENGTH_SHORT).show()
         }
+    }
+    private fun setStarts(rating: Int, view: ImageView )
+    {
+        when(rating)
+            {
+                1 -> {
+                    view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars1)
+                }
+                2 -> {
+                    view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars2)
+                }
+                3 -> {
+                    view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars3)
+                }
+                4 -> {
+                    view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars4)
+                }
+                5 -> {
+                    view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars5)
+                }
+        }
+
     }
 
     private fun findMatch() {
@@ -149,6 +276,7 @@ class MatchFragment : Fragment() {
     }
 
     private fun searchMatch() {
+        searchedMatchesCounter =0
         val appRepository = AppRepository()
         val actualAppDef = App(
             actualApp.id,

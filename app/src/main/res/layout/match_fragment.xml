@@ -52,6 +52,7 @@
                     android:layout_height="wrap_content"
                     android:text="Usuario guapo" />
                 <ImageView
+                    android:id="@+id/userRatingMatch"
                     android:layout_width="150dp"
                     android:layout_marginLeft="50dp"
                     android:layout_height="match_parent"
