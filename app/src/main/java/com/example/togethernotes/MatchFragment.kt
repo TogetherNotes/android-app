@@ -14,21 +14,16 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.example.togethernotes.models.App
-import com.example.togethernotes.models.Space
 import com.example.togethernotes.repository.AppRepository
-import com.example.togethernotes.repository.SpaceRepository
 import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualApp
-import com.example.togethernotes.tools.possibleMatch
-import com.example.togethernotes.tools.possibleMatch
 import com.example.togethernotes.tools.possibleMatchList
-import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
 import java.io.IOException
+
+
 private lateinit var gestureDetector: GestureDetector
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -51,53 +46,59 @@ class MatchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         reprodMusic()
-       searchMatch()
+        searchMatch()
+        initSwipeListener()
 
-        initGestureDetector()
         findMatch()
         updateMatchLayout()
     }
     @SuppressLint("ClickableViewAccessibility")
-    private fun initGestureDetector()
-    {
-        gestureDetector = GestureDetector(requireContext(), object : GestureDetector.SimpleOnGestureListener() {
-            override fun onFling(
-                e1: MotionEvent?,
-                e2: MotionEvent?,
-                velocityX: Float,
-                velocityY: Float
-            ): Boolean {
-                // Detectar si el movimiento es horizontal
-                if (e1 != null && e2 != null) {
-                    val deltaX = e2.x - e1.x
-                    if (Math.abs(deltaX) > Math.abs(e2.y - e1.y)) { // Movimiento horizontal
-                        if (deltaX > 0) {
-                            // Swipe hacia la derecha
-                            onSwipeRight()
-                        } else {
-                            // Swipe hacia la izquierda
-                            onSwipeLeft()
-                        }
-                        return true
+    private fun initSwipeListener() {
+        val frameLayout = view?.findViewById<FrameLayout>(R.id.matchFrame)
+        var initialX: Float = 0f
+        var isDragging: Boolean = false
+
+        frameLayout?.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    initialX = event.x
+                    isDragging = true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    if (isDragging) {
+                        val deltaX = event.x - initialX
+                        frameLayout.translationX = deltaX
                     }
                 }
-                return false
-            }
-        })
+                MotionEvent.ACTION_UP -> {
+                    isDragging = false
+                    val finalX = event.x
+                    val deltaX = finalX - initialX
 
-        // Asignar el GestureDetector al FrameLayout
-        val frameLayout = view?.findViewById<FrameLayout>(R.id.matchFrame)
-        frameLayout?.setOnTouchListener { _, event ->
-            gestureDetector.onTouchEvent(event)
+                    if (Math.abs(deltaX) > 100) { // Umbral mínimo para considerar un swipe
+                        if (deltaX > 0) {
+                            onSwipeRight()
+                        } else {
+                            onSwipeLeft()
+                        }
+                    } else {
+                        frameLayout.animate()
+                            .translationX(0f)
+                            .setDuration(200)
+                            .start()
+                    }
+                }
+            }
+            true
         }
     }
+
+
     private fun onSwipeLeft() {
-        // Moverse al siguiente match
         showNextMatch()
     }
 
     private fun onSwipeRight() {
-        // Moverse al siguiente match
         showNextMatch()
     }
 
@@ -105,9 +106,11 @@ class MatchFragment : Fragment() {
         updateMatchLayout()
         animateFrameLayout()
     }
+
     private fun animateFrameLayout() {
-        val frameLayout = view?.findViewById<FrameLayout>(R.id.pruebaFragment)
+        val frameLayout = view?.findViewById<FrameLayout>(R.id.matchFrame)
         frameLayout?.let {
+            println("Ancho del FrameLayout: ${it.width}") // Depuración
             it.animate()
                 .translationXBy(-it.width.toFloat()) // Mover hacia la izquierda
                 .setDuration(300) // Duración de la animación
@@ -118,10 +121,8 @@ class MatchFragment : Fragment() {
         }
     }
 
-
-
     private fun updateMatchLayout() {
-        if (possibleMatchList.isNotEmpty()) {
+        if (possibleMatchList.isNotEmpty() && searchedMatchesCounter < possibleMatchList.size) {
             val possibleMatchTmp = possibleMatchList[searchedMatchesCounter]
             Tools.createPossibleUser(
                 possibleMatchTmp.role,
@@ -131,7 +132,6 @@ class MatchFragment : Fragment() {
                 possibleMatchTmp.id
             )
             searchedMatchesCounter++
-
             view?.let {
                 val posibleMatchName = it.findViewById<TextView>(R.id.userNameMatch)
                 posibleMatchName.text = possibleMatchTmp.name
@@ -141,143 +141,117 @@ class MatchFragment : Fragment() {
         }
     }
 
-    fun findMatch()
-    {
-        var likeButton = view?.findViewById(R.id.makeMatchButton) as ImageView
-        likeButton.setOnClickListener{
+    private fun findMatch() {
+        val likeButton = view?.findViewById<ImageView>(R.id.makeMatchButton)
+        likeButton?.setOnClickListener {
             updateMatchLayout()
         }
     }
-    fun  searchMatch() {
+
+    private fun searchMatch() {
         val appRepository = AppRepository()
-        possibleMatch = App()
-        possibleMatchList = mutableListOf<App>()
-        var actualAppDef = App(actualApp.id, actualApp.name, actualApp.mail, actualApp.password,
-                               actualApp.role, actualApp.rating, actualApp.latitude, actualApp.longitude,
-                               actualApp.active,
-                               actualApp.language_id)
+        val actualAppDef = App(
+            actualApp.id,
+            actualApp.name,
+            actualApp.mail,
+            actualApp.password,
+            actualApp.role,
+            actualApp.rating,
+            actualApp.latitude,
+            actualApp.longitude,
+            actualApp.active,
+            actualApp.language_id
+        )
 
         lifecycleScope.launch {
             try {
-                // Realizar la solicitud a la API
                 val response = appRepository.getAppsByLocation(
-                    actualAppDef.latitude ?: 0.0, actualAppDef.longitude ?: 0.0, 10000.0)
-
-                // Convertir el objeto `actualApp` a JSON para depuración
+                    actualAppDef.latitude ?: 0.0,
+                    actualAppDef.longitude ?: 0.0,
+                    10000.0
+                )
 
                 if (response.isSuccessful) {
-                    // Añadir los resultados a la lista si la respuesta es exitosa
                     response.body()?.let { apps ->
+                        possibleMatchList.clear()
                         possibleMatchList.addAll(apps)
                         println("Respuesta de la API: $apps")
                     }
 
-
-                    // Mostrar un mensaje indicando que se encontraron coincidencias
                     if (possibleMatchList.isNotEmpty()) {
                         Toast.makeText(
                             requireContext(),
                             "Se encontraron ${possibleMatchList.size} coincidencias",
                             Toast.LENGTH_LONG
-                                      ).show()
+                        ).show()
                     } else {
                         Toast.makeText(
                             requireContext(),
                             "No se encontraron coincidencias",
                             Toast.LENGTH_LONG
-                                      ).show()
+                        ).show()
                     }
                 } else {
-                    // Manejar errores específicos de la API
                     val errorMessage = response.message() ?: "Error desconocido"
                     Toast.makeText(
                         requireContext(),
                         "Error en la solicitud: $errorMessage",
                         Toast.LENGTH_LONG
-                                  ).show()
+                    ).show()
                 }
             } catch (e: Exception) {
-                // Manejar excepciones generales
                 when (e) {
                     is IOException -> {
-                        // Error de red (por ejemplo, falta de conexión a Internet)
                         Toast.makeText(
                             requireContext(),
                             "Error de red: Verifica tu conexión",
                             Toast.LENGTH_LONG
-                                      ).show()
+                        ).show()
                     }
-
-                    is JsonSyntaxException -> {
-                        // Error al parsear la respuesta JSON
-                        Toast.makeText(
-                            requireContext(),
-                            "Error al procesar la respuesta: Datos incorrectos",
-                            Toast.LENGTH_LONG
-                                      ).show()
-                    }
-
                     else -> {
-                        // Otros errores inesperados
                         Toast.makeText(
                             requireContext(),
                             "Error inesperado: ${e.message}",
                             Toast.LENGTH_LONG
-                                      ).show()
+                        ).show()
                     }
                 }
             }
         }
-
-
-
-
     }
 
-
-    fun reprodMusic()
-    {
-        // Crear el MediaPlayer
+    private fun reprodMusic() {
         mediaPlayer = MediaPlayer.create(requireContext(), R.raw.audio_prueba)
-
-        // Referencia al SeekBar
         seekBar = view?.findViewById(R.id.seekBar) as SeekBar
-        seekBar.max = mediaPlayer.duration // Establecer el valor máximo en milisegundos
+        seekBar.max = mediaPlayer.duration
 
-        // Configurar el SeekBar para permitir arrastre manual
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
-                    mediaPlayer.seekTo(progress) // Cambiar la posición del reproductor
+                    mediaPlayer.seekTo(progress)
                 }
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-
-        // Referencia al botón de Reproducir/Pausar
-        val btnPlayPause = view?.findViewById(R.id.btnPlayPause) as ImageView
-
-
-        btnPlayPause.setOnClickListener {
+        val btnPlayPause = view?.findViewById<ImageView>(R.id.btnPlayPause)
+        btnPlayPause?.setOnClickListener {
             if (mediaPlayer.isPlaying) {
                 mediaPlayer.pause()
-                btnPlayPause.setImageResource(R.drawable.play_image) // Cambia el ícono a "play"
+                btnPlayPause.setImageResource(R.drawable.play_image)
             } else {
                 mediaPlayer.start()
-                btnPlayPause.setImageResource(R.drawable.pause_image) // Cambia el ícono a "pause"
+                btnPlayPause.setImageResource(R.drawable.pause_image)
 
-                // Iniciar el hilo de actualización de la SeekBar
                 Thread {
                     while (mediaPlayer.isPlaying) {
                         val progress = mediaPlayer.currentPosition
                         activity?.runOnUiThread {
-                            seekBar.progress = progress // Actualizar la SeekBar
+                            seekBar.progress = progress
                         }
-                        Thread.sleep(1000) // Esperar 1 segundo
+                        Thread.sleep(1000)
                     }
                 }.start()
             }
@@ -287,7 +261,7 @@ class MatchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-                             ): View? {
+    ): View? {
         return inflater.inflate(R.layout.match_fragment, container, false)
     }
 
