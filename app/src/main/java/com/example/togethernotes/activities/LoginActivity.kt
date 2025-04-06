@@ -1,26 +1,19 @@
 package com.example.togethernotes.activities
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.togethernotes.MainActivity
 import com.example.togethernotes.R
 import com.example.togethernotes.models.App
 import com.example.togethernotes.tools.Tools
 import androidx.lifecycle.lifecycleScope
-import com.example.togethernotes.models.Artist
 import com.example.togethernotes.repository.AppRepository
 import com.example.togethernotes.tools.actualApp
-import com.google.gson.Gson
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
@@ -38,10 +31,10 @@ class LoginActivity : AppCompatActivity() {
         continueButton.setOnClickListener {
             if (mailLogin.text.toString()!= "" && passwordLogin.text.toString()!="")
             {
-                passApp.mail =mailLogin.text.toString()
-                passApp.password = passwordLogin.text.toString()
+                val mail =mailLogin.text.toString()
+                val password= passwordLogin.text.toString()
 
-                login(passApp)
+                login(mail, password)
                 Tools.startActivityTurned(this, MainActivity::class.java)
             }
             else {
@@ -53,18 +46,19 @@ class LoginActivity : AppCompatActivity() {
         }
             //TODO cambiar el usuario por la lógica de encontrarlo en la base de datos
         }
-    fun login(creds: App) {
+    fun login(mail: String, password: String) {
         val appRepository = AppRepository()
-        actualApp = creds
+
         lifecycleScope.launch {
             try {
-                val response = appRepository.login(actualApp)
+                val response = appRepository.login(mail,password)
 
                 when {
                     response.isSuccessful -> {
                         response.body()?.let { loggedInApp ->
                             actualApp = loggedInApp
                             showUserInfo(loggedInApp)
+                            Tools.startActivityTurned(this@LoginActivity, MainActivity::class.java)
                         } ?: run {
                             showError("Respuesta vacía del servidor")
                         }

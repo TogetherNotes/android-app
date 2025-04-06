@@ -10,5 +10,5 @@ open class App(
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
     val active: Boolean = true,
-    val language_id: Int = 0
+    val language_id: Int = 1
               )

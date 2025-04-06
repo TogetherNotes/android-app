@@ -8,7 +8,7 @@ import com.example.togethernotes.models.Genres
 import com.example.togethernotes.models.Space
 import com.example.togethernotes.models.App
 
-lateinit var actualApp: App
+var actualApp: App = App()
 lateinit var artist: Artist
 lateinit var possibleMatch : App
 var possibleMatchList = mutableListOf<App>()

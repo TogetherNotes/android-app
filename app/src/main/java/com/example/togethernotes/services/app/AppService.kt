@@ -20,7 +20,10 @@ interface AppService {
 
     // POST: api/apps/login
     @POST("api/apps/login")
-    suspend fun login(@Body creds: App): Response<App>
+    suspend fun login(
+        @Query("mail") mail: String,
+        @Query("password") password: String
+    ): Response<App>
 
     @GET("api/apps/location")
     suspend fun getAppsByLocation(

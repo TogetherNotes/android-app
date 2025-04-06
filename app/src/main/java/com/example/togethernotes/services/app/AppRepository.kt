@@ -23,8 +23,8 @@ class AppRepository {
         return appService.updateApp(id, app)
     }
 
-    suspend fun login(creds: App): Response<App> {
-        return appService.login(creds)
+    suspend fun login(mail: String, password: String): Response<App> {
+        return appService.login(mail,password)
     }
     suspend fun getAppsByLocation(lat: Double, lng: Double, radiusKm: Double): Response<List<App>> {
         return appService.getAppsByLocation(lat, lng, radiusKm)

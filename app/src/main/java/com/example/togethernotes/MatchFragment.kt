@@ -1,11 +1,15 @@
 package com.example.togethernotes
 
+import android.annotation.SuppressLint
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.GestureDetector
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
@@ -25,7 +29,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
 import java.io.IOException
-
+private lateinit var gestureDetector: GestureDetector
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 private lateinit var mediaPlayer: MediaPlayer
@@ -47,23 +51,94 @@ class MatchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         reprodMusic()
-        searchMatch()
+       searchMatch()
+
+        initGestureDetector()
         findMatch()
         updateMatchLayout()
     }
+    @SuppressLint("ClickableViewAccessibility")
+    private fun initGestureDetector()
+    {
+        gestureDetector = GestureDetector(requireContext(), object : GestureDetector.SimpleOnGestureListener() {
+            override fun onFling(
+                e1: MotionEvent?,
+                e2: MotionEvent?,
+                velocityX: Float,
+                velocityY: Float
+            ): Boolean {
+                // Detectar si el movimiento es horizontal
+                if (e1 != null && e2 != null) {
+                    val deltaX = e2.x - e1.x
+                    if (Math.abs(deltaX) > Math.abs(e2.y - e1.y)) { // Movimiento horizontal
+                        if (deltaX > 0) {
+                            // Swipe hacia la derecha
+                            onSwipeRight()
+                        } else {
+                            // Swipe hacia la izquierda
+                            onSwipeLeft()
+                        }
+                        return true
+                    }
+                }
+                return false
+            }
+        })
+
+        // Asignar el GestureDetector al FrameLayout
+        val frameLayout = view?.findViewById<FrameLayout>(R.id.matchFrame)
+        frameLayout?.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+        }
+    }
+    private fun onSwipeLeft() {
+        // Moverse al siguiente match
+        showNextMatch()
+    }
+
+    private fun onSwipeRight() {
+        // Moverse al siguiente match
+        showNextMatch()
+    }
+
+    private fun showNextMatch() {
+        updateMatchLayout()
+        animateFrameLayout()
+    }
+    private fun animateFrameLayout() {
+        val frameLayout = view?.findViewById<FrameLayout>(R.id.pruebaFragment)
+        frameLayout?.let {
+            it.animate()
+                .translationXBy(-it.width.toFloat()) // Mover hacia la izquierda
+                .setDuration(300) // Duración de la animación
+                .withEndAction {
+                    it.translationX = 0f // Restablecer la posición original
+                }
+                .start()
+        }
+    }
+
 
 
     private fun updateMatchLayout() {
-        var possibleMatchTmp = possibleMatchList[searchedMatchesCounter]
-
-        if (possibleMatchTmp != null) {
-
-            Tools.createPossibleUser(possibleMatchTmp.role,possibleMatchTmp.mail,possibleMatchTmp.password,possibleMatchTmp.name,possibleMatchTmp.id)
+        if (possibleMatchList.isNotEmpty()) {
+            val possibleMatchTmp = possibleMatchList[searchedMatchesCounter]
+            Tools.createPossibleUser(
+                possibleMatchTmp.role,
+                possibleMatchTmp.mail,
+                possibleMatchTmp.password,
+                possibleMatchTmp.name,
+                possibleMatchTmp.id
+            )
             searchedMatchesCounter++
-        }
 
-        var posibleMatchName = view?.findViewById(R.id.userNameMatch) as TextView
-        posibleMatchName.text = possibleMatch.name
+            view?.let {
+                val posibleMatchName = it.findViewById<TextView>(R.id.userNameMatch)
+                posibleMatchName.text = possibleMatchTmp.name
+            }
+        } else {
+            Toast.makeText(requireContext(), "No hay más coincidencias", Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun findMatch()
@@ -76,11 +151,12 @@ class MatchFragment : Fragment() {
     fun  searchMatch() {
         val appRepository = AppRepository()
         possibleMatch = App()
-        var possibleMatchList = mutableListOf<App>()
+        possibleMatchList = mutableListOf<App>()
         var actualAppDef = App(actualApp.id, actualApp.name, actualApp.mail, actualApp.password,
                                actualApp.role, actualApp.rating, actualApp.latitude, actualApp.longitude,
                                actualApp.active,
                                actualApp.language_id)
+
         lifecycleScope.launch {
             try {
                 // Realizar la solicitud a la API
@@ -91,7 +167,9 @@ class MatchFragment : Fragment() {
 
                 if (response.isSuccessful) {
                     // Añadir los resultados a la lista si la respuesta es exitosa
-                    response.body()?.let { possibleMatchList.addAll(it)
+                    response.body()?.let { apps ->
+                        possibleMatchList.addAll(apps)
+                        println("Respuesta de la API: $apps")
                     }
 
 
