@@ -1,17 +1,12 @@
 package com.example.togethernotes
 
-import MessageAdapter
-import Message
+import MatchAdapter
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
@@ -22,8 +17,6 @@ import com.example.togethernotes.activities.InsideChatActivity
 import com.example.togethernotes.adapters.ChatAdapter
 import com.example.togethernotes.repository.AppRepository
 import com.example.togethernotes.services.chat.ChatRepository
-import com.example.togethernotes.models.App
-import com.example.togethernotes.models.Chat
 import com.example.togethernotes.models.MatchItem
 import com.example.togethernotes.models.TempMatchDto
 import com.example.togethernotes.repository.TempMatchRepository
@@ -33,10 +26,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.togethernotes.tools.likedMatchesUsers
 import com.example.togethernotes.tools.possibleMatchList
-import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.util.Date
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -67,7 +56,7 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showChats()
-        getListYourMatches()
+        //getListYourMatches()
 
     }
 

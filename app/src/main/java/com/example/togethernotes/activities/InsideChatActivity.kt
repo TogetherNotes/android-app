@@ -7,7 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.ViewTreeObserver
+
 import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -43,6 +43,7 @@ class InsideChatActivity : AppCompatActivity() {
     private var chatId: Int = 1
     private val serverIp = "10.0.1.6"
     private val serverPort = 5000
+    private val mensajesLeidosIds = mutableSetOf<Int>()
     private val messageRepository = MessageRepository()  // Instancia del repositorio
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -143,20 +144,25 @@ class InsideChatActivity : AppCompatActivity() {
                                 Log.d("SOCKET", "Mensaje recibido: $messageStr")
                                 val json = JSONObject(messageStr)
 
+                                val messageId = json.getInt("message_id") // 👈 asegúrate que el servidor lo manda
                                 val senderId = json.getInt("from")
                                 val content = json.getString("content")
+                                val isRead = json.optBoolean("is_read", false) // 👈 Usá esto
+
 
                                 val localDateTime = LocalDateTime.now()
                                 val messageDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
 
                                 val newMessage = Message(
-                                    id = messages.size + 1, // Esto se sigue refiriendo a la lista global
+                                    id = messageId,
                                     senderId = senderId,
                                     content = content,
                                     sendAt = messageDate,
-                                    isRead = false,
+                                    isRead = isRead,  // ✅ Usar el valor real
                                     chatId = chatId
                                                         )
+
+
 
                                 // Actualizar la UI en el hilo principal
                                 runOnUiThread {
@@ -166,9 +172,10 @@ class InsideChatActivity : AppCompatActivity() {
                                 }
 
                                 // Marcar mensaje como leído en el backend (si aún no está leído)
-                                if (!newMessage.isRead) {
+                                if (!newMessage.isRead && newMessage.senderId != actualApp.id) {
                                     markMessageAsRead(newMessage)
                                 }
+
                             }
                         }
 
@@ -187,23 +194,24 @@ class InsideChatActivity : AppCompatActivity() {
 
     // Llamar a la API para marcar el mensaje como leído
     private fun markMessageAsRead(message: Message) {
-        lifecycleScope.launch {
-            val updatedMessage = Message(
-                id = message.id,
-                senderId = message.senderId,
-                content = message.content,
-                sendAt = message.sendAt,
-                isRead = true, // Cambiamos solo este campo
-                chatId = message.chatId
-                                        )
-            val response = messageRepository.markMessageAsRead(message.id, updatedMessage)
-            if (response.isSuccessful) {
-                // Actualizar el estado del mensaje como leído en la UI
-                message.isRead = true
-                Log.d("Message", "Mensaje marcado como leído: ${message.id}")
+        thread {
+            try {
+                val readAckJson = JSONObject()
+                readAckJson.put("type", "read_ack")
+                readAckJson.put("message_id", message.id)
+                outputStream.println(readAckJson.toString())
+                Log.d("SOCKET", "Mensaje leído enviado por socket: ${message.id}")
+            } catch (e: Exception) {
+                Log.e("SOCKET", "Error enviando read_ack: ${e.message}")
             }
         }
+
+        // Actualizar en UI
+        runOnUiThread {
+            message.isRead = true
+        }
     }
+
 
 
     @RequiresApi(Build.VERSION_CODES.O)
