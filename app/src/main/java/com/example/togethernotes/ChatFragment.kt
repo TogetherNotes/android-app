@@ -1,5 +1,7 @@
 package com.example.togethernotes
 
+import MessageAdapter
+import Message
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
