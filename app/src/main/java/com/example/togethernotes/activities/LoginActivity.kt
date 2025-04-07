@@ -71,6 +71,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
             } catch (e: Exception) {
+
                 showError("Error inesperado: ${e.message}")
                 e.printStackTrace()
             }
