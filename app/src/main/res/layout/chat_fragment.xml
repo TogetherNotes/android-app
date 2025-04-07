@@ -67,5 +67,8 @@
         android:text="test"
         android:id="@+id/testButton"/>
 
+    <include
+        layout = "@layout/accept_match_layout"
+        />
 
 </LinearLayout>

@@ -7,12 +7,14 @@ import com.example.togethernotes.models.Artist
 import com.example.togethernotes.models.Genres
 import com.example.togethernotes.models.Space
 import com.example.togethernotes.models.App
+import com.example.togethernotes.models.TempMatch
+import com.example.togethernotes.models.TempMatchDto
 
 var actualApp: App = App()
 lateinit var artist: Artist
  var possibleMatch : App = App()
 var possibleMatchList = mutableListOf<App>()
-var likedMatchesUsers = mutableListOf<App>()
+var pendingMatchList = mutableListOf<TempMatchDto>()
 object Tools {
 
     /**

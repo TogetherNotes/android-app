@@ -11,8 +11,8 @@ interface AppService {
     suspend fun getAllApps(): Response<List<App>>
 
     // GET: api/apps/{id}
-    @GET("api/apps/{id}")
-    suspend fun getAppById(@Path("id") id: Int): Response<App>
+    @GET("api/apps/Getapp")
+    suspend fun getAppById(@Query("id") id: Int): Response<App>
 
     // PUT: api/apps/{id}
     @PUT("api/apps/{id}")

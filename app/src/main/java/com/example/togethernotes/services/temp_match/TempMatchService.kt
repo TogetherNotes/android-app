@@ -37,6 +37,6 @@ interface TempMatchService {
         @Path("space_id") spaceId: Int
     ): Response<TempMatch>
     // GET: api/temp_match/pending/{userId}
-    @GET("api/temp_match/pending/{userId}")
-    suspend fun getPendingMatches(@Path("userId") userId: Int): Response<List<TempMatchDto>>
+    @GET("api/temp_match/pending")
+    suspend fun getPendingMatches(@Query("userId") userId: Int): Response<List<TempMatchDto>>
 }

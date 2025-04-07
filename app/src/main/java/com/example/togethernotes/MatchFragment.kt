@@ -242,7 +242,7 @@ class MatchFragment : Fragment() {
             }
         } else {
             searchMatch()
-            Toast.makeText(requireContext(), "No hay más coincidencias", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(requireContext(), "No hay más coincidencias", Toast.LENGTH_SHORT).show()
         }
     }
     private fun setStarts(rating: Int, view: ImageView )
@@ -307,11 +307,7 @@ class MatchFragment : Fragment() {
                     }
 
                     if (possibleMatchList.isNotEmpty()) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Se encontraron ${possibleMatchList.size} coincidencias",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        //Toast.makeText( requireContext(), "Se encontraron ${possibleMatchList.size} coincidencias", Toast.LENGTH_LONG ).show()
                     } else {
                         Toast.makeText(
                             requireContext(),
