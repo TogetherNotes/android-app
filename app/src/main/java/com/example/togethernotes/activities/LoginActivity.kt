@@ -38,7 +38,7 @@ class LoginActivity : AppCompatActivity() {
                 Tools.startActivityTurned(this, MainActivity::class.java)
             }
             else {
-                Toast.makeText(this@LoginActivity, "MALLLL", Toast.LENGTH_LONG).show()
+             //   Toast.makeText(this@LoginActivity, "MALLLL", Toast.LENGTH_LONG).show()
 
             }
     //                  actualApp.mail = mailLogin.text.toString()
@@ -87,11 +87,11 @@ class LoginActivity : AppCompatActivity() {
             ID: ${app.id}
         """.trimIndent()
 
-        Toast.makeText(this, userInfo, Toast.LENGTH_LONG).show()
+    //    Toast.makeText(this, userInfo, Toast.LENGTH_LONG).show()
     }
 
     private fun showError(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        //Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
 }

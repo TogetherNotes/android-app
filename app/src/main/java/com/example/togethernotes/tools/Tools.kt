@@ -17,6 +17,8 @@ var actualApp: App = App()
 lateinit var artist: Artist
  var possibleMatch : App = App()
 var possibleMatchList = mutableListOf<App>()
+var likedMatchList = mutableListOf<App>()
+
 var pendingMatchList = mutableListOf<TempMatchDto>()
 object Tools {
 

@@ -148,26 +148,14 @@ class MatchFragment : Fragment() {
                 if (response.isSuccessful) {
                     // Registro creado exitosamente
                     val createdMatch = response.body()
-                    Toast.makeText(
-                        requireContext(),
-                        "Registro creado: ${createdMatch?.artist_id}, ${createdMatch?.space_id}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                   // Toast.makeText(requireContext(), "Registro creado: ${createdMatch?.artist_id}, ${createdMatch?.space_id}", Toast.LENGTH_LONG).show()
                 } else {
                     // Manejar errores específicos de la API
-                    Toast.makeText(
-                        requireContext(),
-                        "Error al crear el registro: ${response.message()}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    //Toast.makeText(requireContext(), "Error al crear el registro: ${response.message()}", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 // Manejar excepciones generales
-                Toast.makeText(
-                    requireContext(),
-                    "Error inesperado: ${e.message}",
-                    Toast.LENGTH_LONG
-                ).show()
+               // Toast.makeText(requireContext(), "Error inesperado: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
 
@@ -228,7 +216,7 @@ class MatchFragment : Fragment() {
     }
 
     private fun updateMatchLayout() {
-        if (possibleMatchList.isNotEmpty() && searchedMatchesCounter < possibleMatchList.size) {
+        if (possibleMatchList.isNotEmpty() && searchedMatchesCounter < possibleMatchList.size && possibleMatchList[searchedMatchesCounter].role != actualApp.role ) {
              possibleMatch = possibleMatchList[searchedMatchesCounter]
             Tools.createPossibleUser(
                 possibleMatch.role,
@@ -315,35 +303,19 @@ class MatchFragment : Fragment() {
                     if (possibleMatchList.isNotEmpty()) {
                         //Toast.makeText( requireContext(), "Se encontraron ${possibleMatchList.size} coincidencias", Toast.LENGTH_LONG ).show()
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "No se encontraron coincidencias",
-                            Toast.LENGTH_LONG
-                        ).show()
+                       // Toast.makeText(requireContext(), "No se encontraron coincidencias", Toast.LENGTH_LONG).show()
                     }
                 } else {
                     val errorMessage = response.message() ?: "Error desconocido"
-                    Toast.makeText(
-                        requireContext(),
-                        "Error en la solicitud: $errorMessage",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    // Toast.makeText(requireContext(), "Error en la solicitud: $errorMessage", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 when (e) {
                     is IOException -> {
-                        Toast.makeText(
-                            requireContext(),
-                            "Error de red: Verifica tu conexión",
-                            Toast.LENGTH_LONG
-                        ).show()
+                   //     Toast.makeText(requireContext(), "Error de red: Verifica tu conexión", Toast.LENGTH_LONG).show()
                     }
                     else -> {
-                        Toast.makeText(
-                            requireContext(),
-                            "Error inesperado: ${e.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
+                       // Toast.makeText(requireContext(), "Error inesperado: ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 }
             }

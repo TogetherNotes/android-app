@@ -4,7 +4,7 @@
     android:layout_width="350dp"
     android:layout_height="220dp"
     android:layout_gravity="center"
-    android:layout_marginTop="-510dp"
+    android:layout_marginTop="-150dp"
     android:visibility="gone"
     android:background="@drawable/default_rectangle">
     <LinearLayout
