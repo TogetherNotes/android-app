@@ -29,6 +29,7 @@ import com.example.togethernotes.models.TempMatchDto
 import com.example.togethernotes.repository.AppRepository
 import com.example.togethernotes.repository.MatchRepository
 import com.example.togethernotes.repository.TempMatchRepository
+import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualApp
 import com.example.togethernotes.tools.pendingMatchList
 import com.example.togethernotes.tools.possibleMatchList
@@ -118,7 +119,8 @@ class ChatFragment : Fragment() {
         acceptMatchLout.visibility = View.VISIBLE
 
         buttonAcceptMatch.setOnClickListener{
-
+            updateMatchTable(matchItem)
+            updateTempMatch(matchItem)
         }
 
 
@@ -141,13 +143,15 @@ class ChatFragment : Fragment() {
             }
 
         val matchRepository = MatchRepository()
+        var request_date= Tools.getCurrentFormattedDate()
+
         lifecycleScope.launch {
             try {
                 // Crear un nuevo objeto Match
                 val newMatch = Match(
                     artist_id = artistRoleId, // ID del artista
                     space_id = spaceRoleId,  // ID del espacio
-                    match_date = "2023-10-15" // Fecha del match
+                    match_date = request_date // Fecha del match
                                     )
 
                 // Llamar al repositorio para enviar la solicitud POST
