@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
@@ -24,12 +26,13 @@ import com.example.togethernotes.models.TempMatchDto
 import com.example.togethernotes.repository.AppRepository
 import com.example.togethernotes.repository.MatchRepository
 import com.example.togethernotes.repository.TempMatchRepository
+import com.example.togethernotes.services.chat.ChatRepository
 import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.example.togethernotes.tools.likedMatchesUsers
+//import com.example.togethernotes.tools.likedMatchesUsers
 import com.example.togethernotes.tools.possibleMatchList
 import com.example.togethernotes.tools.pendingMatchList
 import com.example.togethernotes.tools.possibleMatchList
@@ -174,13 +177,14 @@ class ChatFragment : Fragment() {
 
         buttonAcceptMatch.setOnClickListener{
             updateMatchTable(matchItem)
-            updateTempMatch(matchItem)
+            //updateTempMatch(matchItem)
         }
 
 
         // Mostrar un mensaje en pantalla
         Toast.makeText(requireContext(), "Seleccionaste a ${matchItem.name}", Toast.LENGTH_SHORT).show()
     }
+    /*
     fun updateTempMatch(matchItem: MatchItem)
     {
         val matchRepository = TempMatchRepository()
@@ -216,6 +220,8 @@ class ChatFragment : Fragment() {
             }
         }
     }
+
+     */
     fun updateMatchTable(matchItem:MatchItem)
     {
             if (actualApp.role =="Artist")
