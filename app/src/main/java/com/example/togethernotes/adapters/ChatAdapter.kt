@@ -11,7 +11,8 @@ import com.example.togethernotes.models.Chat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class ChatAdapter(private val chatList: List<Chat>) :
+// ChatAdapter.kt
+class ChatAdapter(private val chatList: List<Chat>, private val onClick: (Chat) -> Unit) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
 
     // ViewHolder para cada elemento del RecyclerView
@@ -33,12 +34,17 @@ class ChatAdapter(private val chatList: List<Chat>) :
         // Configurar la imagen (puedes usar Glide o Picasso para cargar imágenes reales)
         holder.imagenUsuarioChat.setImageResource(R.drawable.user)
 
-        // Mostrar el nombre del usuario (simulado aquí como "Usuario X")
-        holder.chatUserImage.text = "Usuario ${chat.user1_id}"
+        // Mostrar el nombre del otro usuario
+        holder.chatUserImage.text = chat.userName
 
         // Mostrar la fecha formateada
         val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         holder.ultimoMensajeRecibido.text = dateFormat.format(chat.date)
+
+        // Manejar el clic en el elemento de la lista
+        holder.itemView.setOnClickListener {
+            onClick(chat)
+        }
     }
 
     override fun getItemCount(): Int {

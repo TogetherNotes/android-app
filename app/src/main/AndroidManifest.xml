@@ -34,6 +34,7 @@
         <activity
             android:name=".activities.RoleTypeActivity"
             android:exported="false" />
+
         <activity
             android:name=".activities.InitialActivity"
             android:exported="true">
@@ -47,7 +48,8 @@
             android:name=".MainActivity"
             android:exported="true" />
         <activity
-            android:name=".activities.InsideChatActivity" />
+            android:name=".activities.InsideChatActivity"
+            />
 
     </application>
 

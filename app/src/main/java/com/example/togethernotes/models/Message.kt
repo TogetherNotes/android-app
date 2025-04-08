@@ -1,10 +1,10 @@
 import java.util.*
 
-class Message(
+data class Message(
     val id: Int,
     val senderId: Int,
     val content: String,
     val sendAt: Date,
-    val isRead: Boolean,
+    var isRead: Boolean,
     val chatId: Int
 )

@@ -1,17 +1,12 @@
 package com.example.togethernotes
 
 import MatchAdapter
-import MessageAdapter
-import Message
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
@@ -31,6 +26,11 @@ import com.example.togethernotes.repository.MatchRepository
 import com.example.togethernotes.repository.TempMatchRepository
 import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualApp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import com.example.togethernotes.tools.likedMatchesUsers
+import com.example.togethernotes.tools.possibleMatchList
 import com.example.togethernotes.tools.pendingMatchList
 import com.example.togethernotes.tools.possibleMatchList
 import kotlinx.coroutines.async
@@ -39,6 +39,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Date
+
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -70,11 +71,63 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showChats()
-        getListYourMatches()
-        val testButton = view.findViewById<Button>(R.id.testButton)
-        testButton.setOnClickListener {
-            val intent = Intent(requireContext(), InsideChatActivity::class.java)
-            startActivity(intent)
+        //getListYourMatches()
+
+    }
+
+    // ChatFragment.kt
+    private fun showChats() {
+        val userId = actualApp.id
+        val recyclerViewChats = view?.findViewById<RecyclerView>(R.id.recyclerViewChats) ?: return
+
+        lifecycleScope.launch {
+            try {
+                // Obtener los chats del repositorio
+                val response = withContext(Dispatchers.IO) {
+                    ChatRepository().getChatsByUserId(userId)
+                }
+
+                if (response.isSuccessful) {
+                    val chatList = response.body() ?: emptyList()
+
+                    // Usamos el AppRepository para obtener el nombre de los usuarios
+                    val userRepository = AppRepository()
+
+                    val chatListWithNames = chatList.map { chat ->
+                        val otherUserId = if (chat.user1_id == userId) chat.user2_id else chat.user1_id
+
+                        // Obtenemos el nombre del otro usuario
+                        val userResponse = userRepository.getAppById(otherUserId)
+
+                        // Asignamos el nombre si la respuesta fue exitosa
+                        val userName = if (userResponse.isSuccessful) {
+                            userResponse.body()?.name ?: "Desconocido"
+                        } else {
+                            "Desconocido"
+                        }
+
+                        // Añadimos el nombre al chat
+                        chat.copy(userName = userName)
+                    }
+
+                    // Configuramos el adapter con los chats con nombre
+                    val adapter = ChatAdapter(chatListWithNames) { chat ->
+                        val intent = Intent(requireContext(), InsideChatActivity::class.java)
+                        intent.putExtra("chat_id", chat.id)
+                        intent.putExtra("user1_id", chat.user1_id)
+                        intent.putExtra("user2_id", chat.user2_id)
+                        intent.putExtra("receiver_name", chat.userName) // 👈 Añadí esto
+                        startActivity(intent)
+                    }
+
+                    recyclerViewChats.layoutManager = LinearLayoutManager(requireContext())
+                    recyclerViewChats.adapter = adapter
+                } else {
+                    Toast.makeText(requireContext(), "Error cargando chats", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -256,19 +309,6 @@ class ChatFragment : Fragment() {
         showMatches(pendingMatchList)
     }
 
-    private fun showChats() {
-        val recyclerViewChats = view?.findViewById(R.id.recyclerViewChats) as RecyclerView
-        val chatList = listOf(
-            Chat(id = 1, date = Date(), user1_id = 101, user2_id = 102),
-            Chat(id = 2, date = Date(System.currentTimeMillis() - 86400000), user1_id = 103, user2_id = 104),
-            Chat(id = 3, date = Date(System.currentTimeMillis() - 172800000), user1_id = 105, user2_id = 106)
-                             )
-
-        // Configurar el RecyclerView
-        val adapter = ChatAdapter(chatList)
-        recyclerViewChats.layoutManager = LinearLayoutManager(requireContext())
-        recyclerViewChats.adapter = adapter
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
