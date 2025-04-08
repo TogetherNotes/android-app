@@ -72,7 +72,7 @@ class InsideChatActivity : AppCompatActivity() {
 
         thread { connectToServer() }
 
-        findViewById<Button>(R.id.sendButton).setOnClickListener {
+        findViewById<ImageView>(R.id.sendButton).setOnClickListener {
             sendMessage(receiverId)
         }
 
