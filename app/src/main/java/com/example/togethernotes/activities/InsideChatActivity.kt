@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.R
+import com.example.togethernotes.tools.CryptoUtil
 import com.example.togethernotes.repository.MessageRepository
 import com.example.togethernotes.tools.actualApp
 import kotlinx.coroutines.launch
@@ -110,8 +111,6 @@ class InsideChatActivity : AppCompatActivity() {
         }
     }
 
-
-
     @RequiresApi(Build.VERSION_CODES.O)
     private fun connectToServer() {
         try {
@@ -168,14 +167,17 @@ class InsideChatActivity : AppCompatActivity() {
         try {
             val json = JSONObject(messageStr)
 
+            // Decrypt the message
+            val decryptedText = CryptoUtil.decrypt(json.getString("content"))
+
             val newMessage = Message(
                 id = json.getInt("message_id"),
                 senderId = json.getInt("from"),
-                content = json.getString("content"),
+                content = decryptedText, // show decrypted content
                 sendAt = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()),
                 isRead = json.optBoolean("is_read", false),
                 chatId = chatId
-                                    )
+            )
 
             if (newMessage.chatId == chatId) {
                 runOnUiThread {
@@ -217,10 +219,13 @@ class InsideChatActivity : AppCompatActivity() {
         val messageText = messageInput.text.toString().trim()
         if (messageText.isEmpty()) return
 
+        // Encrypt the message before sending
+        val encryptedText = CryptoUtil.encrypt(messageText)
+
         val messageJson = JSONObject().apply {
             put("sender_id", actualApp.id)
             put("receiver_id", receiverId)
-            put("content", messageText)
+            put("content", encryptedText) // send encrypted content
         }
 
         thread {
@@ -230,11 +235,11 @@ class InsideChatActivity : AppCompatActivity() {
                 val newMessage = Message(
                     id = messages.size + 1,
                     senderId = actualApp.id,
-                    content = messageText,
+                    content = messageText, // Show decrypted text in UI
                     sendAt = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()),
                     isRead = false,
                     chatId = chatId
-                                        )
+                )
 
                 runOnUiThread {
                     messages.add(newMessage)
