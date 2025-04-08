@@ -63,5 +63,8 @@
 
 
 
+    <include
+        layout = "@layout/accept_match_layout"
+        />
 
 </LinearLayout>

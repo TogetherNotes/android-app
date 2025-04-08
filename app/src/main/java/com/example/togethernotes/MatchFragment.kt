@@ -29,6 +29,9 @@ import com.example.togethernotes.tools.possibleMatchList
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 private lateinit var gestureDetector: GestureDetector
@@ -125,13 +128,15 @@ class MatchFragment : Fragment() {
         {
             artistLiked = true
         }
+
+        var request_date= Tools.getCurrentFormattedDate()
         val newTempMatch = TempMatch(
             artist_id = actualApp.id,
             space_id = possibleMatch.id,
             artist_like = spaceLiked,
             space_like = artistLiked,
             status = "pending",
-            request_date = "2023-10-05"
+            request_date = request_date
         )
         val tempMatchRepository = TempMatchRepository()
         lifecycleScope.launch {
@@ -167,6 +172,7 @@ class MatchFragment : Fragment() {
         }
 
     }
+
 
     private fun showNextMatch(direction: String) {
         updateMatchLayout()
@@ -242,7 +248,7 @@ class MatchFragment : Fragment() {
             }
         } else {
             searchMatch()
-            Toast.makeText(requireContext(), "No hay más coincidencias", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(requireContext(), "No hay más coincidencias", Toast.LENGTH_SHORT).show()
         }
     }
     private fun setStarts(rating: Int, view: ImageView )
@@ -307,11 +313,7 @@ class MatchFragment : Fragment() {
                     }
 
                     if (possibleMatchList.isNotEmpty()) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Se encontraron ${possibleMatchList.size} coincidencias",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        //Toast.makeText( requireContext(), "Se encontraron ${possibleMatchList.size} coincidencias", Toast.LENGTH_LONG ).show()
                     } else {
                         Toast.makeText(
                             requireContext(),

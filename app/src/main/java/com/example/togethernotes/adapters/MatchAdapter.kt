@@ -5,8 +5,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.R
 import com.example.togethernotes.models.MatchItem
 
-class MatchAdapter(private val matches: List<MatchItem>) :
-    RecyclerView.Adapter<MatchViewHolder>() {
+class MatchAdapter(
+    private val matches: List<MatchItem>,
+    private val onItemClick: (MatchItem) -> Unit // Callback para manejar clics
+                  ) : RecyclerView.Adapter<MatchViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MatchViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -17,6 +19,11 @@ class MatchAdapter(private val matches: List<MatchItem>) :
     override fun onBindViewHolder(holder: MatchViewHolder, position: Int) {
         val matchItem = matches[position]
         holder.bind(matchItem)
+
+        // Configurar el listener para el clic en el elemento
+        holder.itemView.setOnClickListener {
+            onItemClick(matchItem) // Llamar al callback con el elemento seleccionado
+        }
     }
 
     override fun getItemCount(): Int {

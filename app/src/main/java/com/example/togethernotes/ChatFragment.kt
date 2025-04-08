@@ -15,17 +15,31 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.activities.InsideChatActivity
 import com.example.togethernotes.adapters.ChatAdapter
-import com.example.togethernotes.repository.AppRepository
-import com.example.togethernotes.services.chat.ChatRepository
+import com.example.togethernotes.models.App
+import com.example.togethernotes.models.Chat
+import com.example.togethernotes.models.Match
 import com.example.togethernotes.models.MatchItem
+import com.example.togethernotes.models.TempMatch
 import com.example.togethernotes.models.TempMatchDto
+import com.example.togethernotes.repository.AppRepository
+import com.example.togethernotes.repository.MatchRepository
 import com.example.togethernotes.repository.TempMatchRepository
+import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.togethernotes.tools.likedMatchesUsers
 import com.example.togethernotes.tools.possibleMatchList
+import com.example.togethernotes.tools.pendingMatchList
+import com.example.togethernotes.tools.possibleMatchList
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.Date
+
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -43,7 +57,8 @@ class ChatFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-
+    private var artistRoleId =0
+    private var spaceRoleId =0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -120,49 +135,155 @@ class ChatFragment : Fragment() {
         // Datos de ejemplo
         getLikedUsers(tmpMatch)
         val matches = mutableListOf<MatchItem>()
-        for (likedUser in likedMatchesUsers)
+
+
+        for (likedUser in possibleMatchList)
         {
+
             matches.add(MatchItem(
                 imageUrl = "https://via.placeholder.com/100",
                 name = likedUser.name,
-                description = "Guitarist looking for a venue"
-                                 ))
+                description = "Guitarist looking for a venue",
+                tempMatch = TempMatchDto(likedUser.id,"25-04-2005")
+            ))
         }
 
-        var recyclerViewMatches = view?.findViewById(R.id.recyclerViewMatches) as RecyclerView
+        val recyclerViewMatches = view?.findViewById<RecyclerView>(R.id.recyclerViewMatches)
         // Configurar RecyclerView
-        recyclerViewMatches.apply {
+        recyclerViewMatches?.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = MatchAdapter(matches)
+            adapter = MatchAdapter(matches) { selectedMatch ->
+                // Manejar el clic en un elemento
+                onMatchItemClick(selectedMatch)
+            }
         }
     }
+
+    // Función para manejar el clic en un elemento
+
+
+    private fun onMatchItemClick(matchItem: MatchItem) {
+        // Aquí puedes realizar cualquier acción con el elemento seleccionado
+        println("Elemento seleccionado: ${matchItem.name}")
+        println("ID del usuario: ${matchItem.tempMatch.OtherUserId}")
+        println("Fecha de solicitud: ${matchItem.tempMatch.request_date}")
+        var acceptMatchLout = view?.findViewById(R.id.acceptMatchLayout) as FrameLayout
+        var buttonAcceptMatch = view?.findViewById(R.id.acceptMatchButton) as ImageView
+        var declineAcceptMatch = view?.findViewById(R.id.declinedMatchButton) as ImageView
+        acceptMatchLout.visibility = View.VISIBLE
+
+        buttonAcceptMatch.setOnClickListener{
+            updateMatchTable(matchItem)
+            updateTempMatch(matchItem)
+        }
+
+
+        // Mostrar un mensaje en pantalla
+        Toast.makeText(requireContext(), "Seleccionaste a ${matchItem.name}", Toast.LENGTH_SHORT).show()
+    }
+    fun updateTempMatch(matchItem: MatchItem)
+    {
+        val matchRepository = TempMatchRepository()
+        var request_date= Tools.getCurrentFormattedDate()
+
+        lifecycleScope.launch {
+            try {
+                // Crear un nuevo objeto Match
+                val newMatch = TempMatch(
+                    artist_id = artistRoleId, // ID del artista
+                    space_id = spaceRoleId,  // ID del espacio
+                    artist_like = true, // Fecha del match)
+                    space_like = true,
+                    status = "accepted",
+                    request_date =request_date
+                                        )
+
+
+                // Llamar al repositorio para enviar la solicitud POST
+                val response = matchRepository.createMatch(newMatch)
+
+                if (response.isSuccessful) {
+                    // Si la solicitud fue exitosa, obtener el match creado
+                    val createdMatch = response.body()
+                    println("Match creado exitosamente: $createdMatch")
+                } else {
+                    // Si hubo un error, imprimir el mensaje de error
+                    println("Error al crear el match: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                // Manejar errores inesperados
+                println("Error inesperado: ${e.message}")
+            }
+        }
+    }
+    fun updateMatchTable(matchItem:MatchItem)
+    {
+            if (actualApp.role =="Artist")
+            {
+                artistRoleId = actualApp.id
+                spaceRoleId = matchItem.tempMatch.OtherUserId
+            }
+            else
+            {
+                artistRoleId = matchItem.tempMatch.OtherUserId
+                spaceRoleId = actualApp.id
+            }
+
+        val matchRepository = MatchRepository()
+        var request_date= Tools.getCurrentFormattedDate()
+
+        lifecycleScope.launch {
+            try {
+                // Crear un nuevo objeto Match
+                val newMatch = Match(
+                    artist_id = artistRoleId, // ID del artista
+                    space_id = spaceRoleId,  // ID del espacio
+                    match_date = request_date // Fecha del match
+                                    )
+
+                // Llamar al repositorio para enviar la solicitud POST
+                val response = matchRepository.createMatch(newMatch)
+
+                if (response.isSuccessful) {
+                    // Si la solicitud fue exitosa, obtener el match creado
+                    val createdMatch = response.body()
+                    println("Match creado exitosamente: $createdMatch")
+                } else {
+                    // Si hubo un error, imprimir el mensaje de error
+                    println("Error al crear el match: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                // Manejar errores inesperados
+                println("Error inesperado: ${e.message}")
+            }
+        }
+    }
+
     fun getLikedUsers(tmpMatch:List<TempMatchDto>)
     {
         val appRepository = AppRepository()
-        for (tmp in tmpMatch)
-        {
-            lifecycleScope.launch {
-                try {
-                    val response = appRepository.getAppById(tmp.OtherUserId)
-                    if (response.isSuccessful) {
-                        response.body()?.let {  app ->
-                            possibleMatchList.add(app)
-                            println("Respuesta de la API: $app")}
-                        if (response.body() != null) {
-                            Toast.makeText(requireContext(), "Se ha encontrado exitosamente", Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            val deferredRequests = tmpMatch.map { tmp ->
+                async {
+                    try {
+                        val response = appRepository.getAppById(tmp.OtherUserId)
+                        if (response.isSuccessful) {
+                            response.body()?.let { app ->
+                                possibleMatchList.add(app)
+                                println("Respuesta de la API: $app")
+                            }
+                        } else {
+                            Toast.makeText(requireContext(), "Error al buscar usuario liked", Toast.LENGTH_SHORT).show()
                         }
-                        else
-                        {
-                            Toast.makeText(requireContext(), "No hay ningun usuario liked", Toast.LENGTH_SHORT).show()
-                        }
-                    } else {
-                        Toast.makeText(requireContext(), "Error al buscar usuario liked", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "Error inesperado: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
-                } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Error inesperado: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
+            // Espera a que todas las solicitudes terminen
+            deferredRequests.awaitAll()
         }
+
     }
     fun getListYourMatches(){
         val tempMatchRepository = TempMatchRepository()
@@ -170,16 +291,13 @@ class ChatFragment : Fragment() {
             try {
                 val response = tempMatchRepository.getPendingMatches(actualApp.id)
                 if (response.isSuccessful) {
-                    val pendingMatches = response.body()
-                    if (pendingMatches != null) {
-                        showMatches(pendingMatches)
-                    }
-                    if (pendingMatches.isNullOrEmpty()) {
+                    pendingMatchList = response.body() as MutableList<TempMatchDto>
+                    if (pendingMatchList.isNullOrEmpty()) {
                         Toast.makeText(requireContext(), "No hay coincidencias pendientes", Toast.LENGTH_SHORT).show()
                     } else {
                         // Procesar las coincidencias pendientes
-                        println("Coincidencias pendientes: $pendingMatches")
-                        // Actualizar la UI aquí (por ejemplo, usando un RecyclerView)
+                        println("Coincidencias pendientes: $pendingMatchList")
+                        // Actualizar la UI
                     }
                 } else {
                     Toast.makeText(requireContext(), "Error al cargar coincidencias", Toast.LENGTH_SHORT).show()
@@ -188,6 +306,7 @@ class ChatFragment : Fragment() {
                 Toast.makeText(requireContext(), "Error inesperado: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
+        showMatches(pendingMatchList)
     }
 
 

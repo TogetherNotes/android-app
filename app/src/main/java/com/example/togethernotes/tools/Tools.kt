@@ -7,12 +7,17 @@ import com.example.togethernotes.models.Artist
 import com.example.togethernotes.models.Genres
 import com.example.togethernotes.models.Space
 import com.example.togethernotes.models.App
+import com.example.togethernotes.models.TempMatch
+import com.example.togethernotes.models.TempMatchDto
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 var actualApp: App = App()
 lateinit var artist: Artist
  var possibleMatch : App = App()
 var possibleMatchList = mutableListOf<App>()
-var likedMatchesUsers = mutableListOf<App>()
+var pendingMatchList = mutableListOf<TempMatchDto>()
 object Tools {
 
     /**
@@ -26,6 +31,14 @@ object Tools {
         view.setOnClickListener {
             startActivityTurned(context, targetActivity)
         }
+    }
+    fun getCurrentFormattedDate(): String {
+        // Define el formato deseado: (YYYY)-(MM)-(DD)
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        // Obtiene la fecha actual
+        val currentDate = Date()
+        // Formatea la fecha según el patrón definido
+        return dateFormat.format(currentDate)
     }
 
 

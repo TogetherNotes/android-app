@@ -41,5 +41,6 @@
     <string name="write_message">Write a message...</string>
     <string name="send">Send</string>
     <string name="your_matches">YOUR MATCHES</string>
+    <string name="accept_x_match">Accept x Match</string>
 
 </resources>
