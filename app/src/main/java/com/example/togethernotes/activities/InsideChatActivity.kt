@@ -7,16 +7,10 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-
-import android.widget.Button
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
+import android.widget.*
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.R
@@ -32,19 +26,31 @@ import java.util.*
 import kotlin.concurrent.thread
 
 class InsideChatActivity : AppCompatActivity() {
+
+    companion object {
+        private const val DEFAULT_CHAT_ID = -1
+        private const val DEFAULT_USER_ID = -1
+        private const val DEFAULT_RECEIVER_NAME = "Desconocido"
+        private const val SERVER_IP = "10.0.1.6"
+        private const val SERVER_PORT = 5000
+        private const val TAG_SOCKET = "SOCKET"
+    }
+
     private lateinit var socket: Socket
     private lateinit var outputStream: PrintWriter
     private lateinit var inputStream: BufferedReader
+
     private lateinit var chatRecyclerView: RecyclerView
     private lateinit var adapter: MessageAdapter
     private lateinit var messageInput: EditText
     private lateinit var rootLayout: LinearLayout
-    private var messages = mutableListOf<Message>()
-    private var chatId: Int = 1
-    private val serverIp = "10.0.1.6"
-    private val serverPort = 5000
+    private lateinit var usernameChat: TextView
+
+    private val messages = mutableListOf<Message>()
+    private val messageRepository = MessageRepository()
     private val mensajesLeidosIds = mutableSetOf<Int>()
-    private val messageRepository = MessageRepository()  // Instancia del repositorio
+
+    private var chatId: Int = DEFAULT_CHAT_ID
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,36 +58,42 @@ class InsideChatActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.inside_chat_layout)
 
+        initViews()
+        setupRecyclerView()
+        setupKeyboardListener()
+
+        chatId = intent.getIntExtra("chat_id", DEFAULT_CHAT_ID)
+        val user1Id = intent.getIntExtra("user1_id", DEFAULT_USER_ID)
+        val user2Id = intent.getIntExtra("user2_id", DEFAULT_USER_ID)
+        val receiverId = if (actualApp.id == user1Id) user2Id else user1Id
+
+        val receiverName = intent.getStringExtra("receiver_name") ?: DEFAULT_RECEIVER_NAME
+        usernameChat.text = receiverName
+
+        thread { connectToServer() }
+
+        findViewById<Button>(R.id.sendButton).setOnClickListener {
+            sendMessage(receiverId)
+        }
+
+        findViewById<ImageView>(R.id.createEventButton).setOnClickListener {
+            findViewById<FrameLayout>(R.id.createEventSol).visibility = View.VISIBLE
+        }
+    }
+
+    private fun initViews() {
         rootLayout = findViewById(R.id.rootLayout)
         chatRecyclerView = findViewById(R.id.recyclerView)
         messageInput = findViewById(R.id.messageInput)
-        val sendButton = findViewById<Button>(R.id.sendButton)
-        val solEventButton = findViewById<ImageView>(R.id.createEventButton)
-        val solEventLayout = findViewById<FrameLayout>(R.id.createEventSol)
+        usernameChat = findViewById(R.id.usernameChat)
+    }
 
+    private fun setupRecyclerView() {
         adapter = MessageAdapter(messages)
         chatRecyclerView.layoutManager = LinearLayoutManager(this)
         chatRecyclerView.adapter = adapter
-
-        // 👉 Recuperar el chat y calcular el receptor
-        chatId = intent.getIntExtra("chat_id", -1)
-        val user1Id = intent.getIntExtra("user1_id", -1)
-        val user2Id = intent.getIntExtra("user2_id", -1)
-        val receiverId = if (actualApp.id == user1Id) user2Id else user1Id
-
-        thread {
-            connectToServer()
-        }
-
-        sendButton.setOnClickListener { sendMessage(receiverId) }
-        solEventButton.setOnClickListener { solEventLayout.visibility = View.VISIBLE }
-
-        setupKeyboardListener()
     }
 
-    /**
-     * Detecta cuando el teclado aparece y ajusta el layout
-     */
     private fun setupKeyboardListener() {
         rootLayout.viewTreeObserver.addOnGlobalLayoutListener {
             val rect = Rect()
@@ -89,12 +101,10 @@ class InsideChatActivity : AppCompatActivity() {
             val screenHeight = rootLayout.height
             val keypadHeight = screenHeight - rect.bottom
 
-            if (keypadHeight > screenHeight * 0.15) {
-                // Si el teclado está visible, subimos la vista
-                rootLayout.translationY = -keypadHeight.toFloat()
+            rootLayout.translationY = if (keypadHeight > screenHeight * 0.15) {
+                -keypadHeight.toFloat()
             } else {
-                // Si el teclado está oculto, restauramos la posición
-                rootLayout.translationY = 0f
+                0f
             }
         }
     }
@@ -102,24 +112,22 @@ class InsideChatActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun connectToServer() {
         try {
-            socket = Socket(serverIp, serverPort)
+            socket = Socket(SERVER_IP, SERVER_PORT)
             outputStream = PrintWriter(socket.getOutputStream(), true)
             inputStream = BufferedReader(InputStreamReader(socket.getInputStream()))
-            Log.d("SOCKET", "Conectado al servidor")
 
-            // Enviar mensaje de autenticación
-            val authJson = JSONObject()
-            authJson.put("type", "auth")
-            authJson.put("userId", actualApp.id)
-            authJson.put("chatId", chatId) // 👈 Añade esto
+            log(TAG_SOCKET, "Conectado al servidor")
+
+            val authJson = JSONObject().apply {
+                put("type", "auth")
+                put("userId", actualApp.id)
+                put("chatId", chatId)
+            }
+
             outputStream.println(authJson.toString())
-
-            outputStream.println(authJson.toString())
-
-            // Iniciar recepción de mensajes
             receiveMessages()
         } catch (e: Exception) {
-            Log.e("SOCKET", "Error al conectar: ${e.message}")
+            log(TAG_SOCKET, "Error al conectar: ${e.message}")
         }
     }
 
@@ -127,118 +135,100 @@ class InsideChatActivity : AppCompatActivity() {
     private fun receiveMessages() {
         try {
             val buffer = CharArray(1024)
-            val stringBuilder = StringBuilder() // StringBuilder para ir construyendo el mensaje completo
+            val stringBuilder = StringBuilder()
 
             while (true) {
                 val bytesRead = inputStream.read(buffer)
                 if (bytesRead != -1) {
-                    // Agregar lo leído al StringBuilder
                     stringBuilder.append(String(buffer, 0, bytesRead))
+                    val fullMessage = stringBuilder.toString()
 
-                    // Procesar el mensaje completo (asegúrate de que termine una línea)
-                    var line = stringBuilder.toString()
-                    if (line.contains("\n")) {
-                        // Dividir por líneas
-                        val newMessages = line.split("\n") // Cambié el nombre de la variable a newMessages
-
-                        // Procesar cada mensaje recibido
+                    if (fullMessage.contains("\n")) {
+                        val newMessages = fullMessage.split("\n")
                         for (messageStr in newMessages) {
-                            if (messageStr.isNotBlank()) {
-                                Log.d("SOCKET", "Mensaje recibido: $messageStr")
-                                val json = JSONObject(messageStr)
-
-                                val messageId = json.getInt("message_id")
-                                val senderId = json.getInt("from")
-                                val content = json.getString("content")
-                                val isRead = json.optBoolean("is_read", false) // Usar esto
-
-                                val localDateTime = LocalDateTime.now()
-                                val messageDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
-
-                                val newMessage = Message(
-                                    id = messageId,
-                                    senderId = senderId,
-                                    content = content,
-                                    sendAt = messageDate,
-                                    isRead = isRead,
-                                    chatId = chatId
-                                                        )
-
-                                // Solo agregar el mensaje si corresponde al chatId de la conversación actual
-                                if (newMessage.chatId == chatId) {
-                                    // Actualizar la UI en el hilo principal
-                                    runOnUiThread {
-                                        messages.add(newMessage)  // Aquí estamos agregando el nuevo mensaje a la lista global
-                                        adapter.notifyItemInserted(messages.size - 1)
-                                        chatRecyclerView.scrollToPosition(messages.size - 1)
-                                    }
-
-                                    // Marcar mensaje como leído en el backend (si aún no está leído)
-                                    if (!newMessage.isRead && newMessage.senderId != actualApp.id) {
-                                        markMessageAsRead(newMessage)
-                                    }
-                                }
-                            }
+                            if (messageStr.isNotBlank()) processIncomingMessage(messageStr)
                         }
-
                         stringBuilder.clear()
                     }
                 } else {
-                    Log.e("SOCKET", "Se ha cerrado la conexión del servidor")
+                    log(TAG_SOCKET, "Conexión cerrada por el servidor")
                     break
                 }
             }
         } catch (e: IOException) {
-            Log.e("SOCKET", "Error al recibir mensaje: ${e.message}")
+            log(TAG_SOCKET, "Error al recibir mensaje: ${e.message}")
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun processIncomingMessage(messageStr: String) {
+        try {
+            val json = JSONObject(messageStr)
 
-    // Llamar a la API para marcar el mensaje como leído
+            val newMessage = Message(
+                id = json.getInt("message_id"),
+                senderId = json.getInt("from"),
+                content = json.getString("content"),
+                sendAt = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()),
+                isRead = json.optBoolean("is_read", false),
+                chatId = chatId
+                                    )
+
+            if (newMessage.chatId == chatId) {
+                runOnUiThread {
+                    messages.add(newMessage)
+                    adapter.notifyItemInserted(messages.size - 1)
+                    chatRecyclerView.scrollToPosition(messages.size - 1)
+                }
+
+                if (!newMessage.isRead && newMessage.senderId != actualApp.id) {
+                    markMessageAsRead(newMessage)
+                }
+            }
+        } catch (e: Exception) {
+            log(TAG_SOCKET, "Error procesando mensaje: ${e.message}")
+        }
+    }
+
     private fun markMessageAsRead(message: Message) {
         thread {
             try {
-                val readAckJson = JSONObject()
-                readAckJson.put("type", "read_ack")
-                readAckJson.put("message_id", message.id)
+                val readAckJson = JSONObject().apply {
+                    put("type", "read_ack")
+                    put("message_id", message.id)
+                }
                 outputStream.println(readAckJson.toString())
-                Log.d("SOCKET", "Mensaje leído enviado por socket: ${message.id}")
+                log(TAG_SOCKET, "Mensaje leído enviado: ${message.id}")
             } catch (e: Exception) {
-                Log.e("SOCKET", "Error enviando read_ack: ${e.message}")
+                log(TAG_SOCKET, "Error enviando read_ack: ${e.message}")
             }
         }
 
-        // Actualizar en UI
         runOnUiThread {
             message.isRead = true
         }
     }
 
-
-
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun sendMessage(receiver_id: Int) {
+    private fun sendMessage(receiverId: Int) {
         val messageText = messageInput.text.toString().trim()
         if (messageText.isEmpty()) return
 
-        val messageJson = JSONObject()
-        messageJson.put("sender_id", actualApp.id)
-        messageJson.put("receiver_id", receiver_id) // Ajusta el ID del receptor
-        messageJson.put("content", messageText)
+        val messageJson = JSONObject().apply {
+            put("sender_id", actualApp.id)
+            put("receiver_id", receiverId)
+            put("content", messageText)
+        }
 
         thread {
             try {
                 outputStream.println(messageJson.toString())
 
-                val localDateTime = LocalDateTime.now()
-                val messageDate =
-                    Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
-
                 val newMessage = Message(
                     id = messages.size + 1,
                     senderId = actualApp.id,
                     content = messageText,
-                    sendAt = messageDate,
+                    sendAt = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()),
                     isRead = false,
                     chatId = chatId
                                         )
@@ -250,18 +240,21 @@ class InsideChatActivity : AppCompatActivity() {
                     messageInput.text.clear()
                 }
             } catch (e: Exception) {
-                Log.e("SOCKET", "Error enviando mensaje: ${e.message}")
+                log(TAG_SOCKET, "Error enviando mensaje: ${e.message}")
             }
         }
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
         try {
             socket.close()
         } catch (e: IOException) {
-            Log.e("SOCKET", "Error al cerrar socket: ${e.message}")
+            log(TAG_SOCKET, "Error al cerrar socket: ${e.message}")
         }
+    }
+
+    private fun log(tag: String, message: String) {
+        Log.d(tag, message)
     }
 }

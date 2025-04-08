@@ -101,6 +101,7 @@ class ChatFragment : Fragment() {
                         intent.putExtra("chat_id", chat.id)
                         intent.putExtra("user1_id", chat.user1_id)
                         intent.putExtra("user2_id", chat.user2_id)
+                        intent.putExtra("receiver_name", chat.userName) // 👈 Añadí esto
                         startActivity(intent)
                     }
 

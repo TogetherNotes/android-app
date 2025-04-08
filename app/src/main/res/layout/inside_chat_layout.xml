@@ -19,11 +19,12 @@
         android:layout_marginTop="-35dp">
 
         <TextView
+            android:id="@+id/usernameChat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:fontFamily="@font/inter_18pt_bold"
-            android:text="Mohamed"
+            android:text=""
             android:layout_gravity="center|top"
             android:textColor="@color/white"
             android:layout_marginBottom="10dp" />
