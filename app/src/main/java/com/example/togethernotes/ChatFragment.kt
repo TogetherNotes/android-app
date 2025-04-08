@@ -56,7 +56,8 @@ class ChatFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-
+    private var artistRoleId =0
+    private var spaceRoleId =0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -127,10 +128,43 @@ class ChatFragment : Fragment() {
         // Mostrar un mensaje en pantalla
         Toast.makeText(requireContext(), "Seleccionaste a ${matchItem.name}", Toast.LENGTH_SHORT).show()
     }
+    fun updateTempMatch(matchItem: MatchItem)
+    {
+        val matchRepository = TempMatchRepository()
+        var request_date= Tools.getCurrentFormattedDate()
+
+        lifecycleScope.launch {
+            try {
+                // Crear un nuevo objeto Match
+                val newMatch = TempMatch(
+                    artist_id = artistRoleId, // ID del artista
+                    space_id = spaceRoleId,  // ID del espacio
+                    artist_like = true, // Fecha del match)
+                    space_like = true,
+                    status = "accepted",
+                    request_date =request_date
+                                        )
+
+
+                // Llamar al repositorio para enviar la solicitud POST
+                val response = matchRepository.createMatch(newMatch)
+
+                if (response.isSuccessful) {
+                    // Si la solicitud fue exitosa, obtener el match creado
+                    val createdMatch = response.body()
+                    println("Match creado exitosamente: $createdMatch")
+                } else {
+                    // Si hubo un error, imprimir el mensaje de error
+                    println("Error al crear el match: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                // Manejar errores inesperados
+                println("Error inesperado: ${e.message}")
+            }
+        }
+    }
     fun updateMatchTable(matchItem:MatchItem)
     {
-            var artistRoleId:Int
-            var spaceRoleId:Int =0
             if (actualApp.role =="Artist")
             {
                 artistRoleId = actualApp.id
