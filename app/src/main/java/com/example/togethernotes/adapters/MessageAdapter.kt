@@ -2,6 +2,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -47,8 +48,8 @@ class MessageAdapter(private val messages: List<Message>) : RecyclerView.Adapter
     }
 
     class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val receivedMessageLayout: LinearLayout = itemView.findViewById(R.id.receivedMessageLayout)
-        val sentMessageLayout: LinearLayout = itemView.findViewById(R.id.sentMessageLayout)
+        val receivedMessageLayout: FrameLayout = itemView.findViewById(R.id.receivedMessageLayout)
+        val sentMessageLayout: FrameLayout = itemView.findViewById(R.id.sentMessageLayout)
 
         val receivedText: TextView = itemView.findViewById(R.id.receivedText)
         val sentText: TextView = itemView.findViewById(R.id.sentText)

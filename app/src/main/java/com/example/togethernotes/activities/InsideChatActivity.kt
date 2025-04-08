@@ -94,20 +94,23 @@ class InsideChatActivity : AppCompatActivity() {
         chatRecyclerView.adapter = adapter
     }
 
-    private fun setupKeyboardListener() {
+      private fun setupKeyboardListener() {
+        var messageContainer = findViewById(R.id.messageContainer) as LinearLayout
         rootLayout.viewTreeObserver.addOnGlobalLayoutListener {
             val rect = Rect()
             rootLayout.getWindowVisibleDisplayFrame(rect)
             val screenHeight = rootLayout.height
             val keypadHeight = screenHeight - rect.bottom
 
-            rootLayout.translationY = if (keypadHeight > screenHeight * 0.15) {
+            messageContainer.translationY = if (keypadHeight > screenHeight * 0.15) {
                 -keypadHeight.toFloat()
             } else {
                 0f
             }
         }
     }
+
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun connectToServer() {
