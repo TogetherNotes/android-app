@@ -111,6 +111,9 @@ class InsideChatActivity : AppCompatActivity() {
             val authJson = JSONObject()
             authJson.put("type", "auth")
             authJson.put("userId", actualApp.id)
+            authJson.put("chatId", chatId) // 👈 Añade esto
+            outputStream.println(authJson.toString())
+
             outputStream.println(authJson.toString())
 
             // Iniciar recepción de mensajes
@@ -144,11 +147,10 @@ class InsideChatActivity : AppCompatActivity() {
                                 Log.d("SOCKET", "Mensaje recibido: $messageStr")
                                 val json = JSONObject(messageStr)
 
-                                val messageId = json.getInt("message_id") // 👈 asegúrate que el servidor lo manda
+                                val messageId = json.getInt("message_id")
                                 val senderId = json.getInt("from")
                                 val content = json.getString("content")
-                                val isRead = json.optBoolean("is_read", false) // 👈 Usá esto
-
+                                val isRead = json.optBoolean("is_read", false) // Usar esto
 
                                 val localDateTime = LocalDateTime.now()
                                 val messageDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
@@ -158,28 +160,27 @@ class InsideChatActivity : AppCompatActivity() {
                                     senderId = senderId,
                                     content = content,
                                     sendAt = messageDate,
-                                    isRead = isRead,  // ✅ Usar el valor real
+                                    isRead = isRead,
                                     chatId = chatId
                                                         )
 
+                                // Solo agregar el mensaje si corresponde al chatId de la conversación actual
+                                if (newMessage.chatId == chatId) {
+                                    // Actualizar la UI en el hilo principal
+                                    runOnUiThread {
+                                        messages.add(newMessage)  // Aquí estamos agregando el nuevo mensaje a la lista global
+                                        adapter.notifyItemInserted(messages.size - 1)
+                                        chatRecyclerView.scrollToPosition(messages.size - 1)
+                                    }
 
-
-                                // Actualizar la UI en el hilo principal
-                                runOnUiThread {
-                                    messages.add(newMessage)  // Aquí estamos agregando el nuevo mensaje a la lista global
-                                    adapter.notifyItemInserted(messages.size - 1)
-                                    chatRecyclerView.scrollToPosition(messages.size - 1)
+                                    // Marcar mensaje como leído en el backend (si aún no está leído)
+                                    if (!newMessage.isRead && newMessage.senderId != actualApp.id) {
+                                        markMessageAsRead(newMessage)
+                                    }
                                 }
-
-                                // Marcar mensaje como leído en el backend (si aún no está leído)
-                                if (!newMessage.isRead && newMessage.senderId != actualApp.id) {
-                                    markMessageAsRead(newMessage)
-                                }
-
                             }
                         }
 
-                        // Limpiar el StringBuilder para preparar el siguiente conjunto de mensajes
                         stringBuilder.clear()
                     }
                 } else {
@@ -191,6 +192,7 @@ class InsideChatActivity : AppCompatActivity() {
             Log.e("SOCKET", "Error al recibir mensaje: ${e.message}")
         }
     }
+
 
     // Llamar a la API para marcar el mensaje como leído
     private fun markMessageAsRead(message: Message) {
@@ -252,6 +254,7 @@ class InsideChatActivity : AppCompatActivity() {
             }
         }
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
