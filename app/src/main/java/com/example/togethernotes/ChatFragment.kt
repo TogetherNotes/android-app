@@ -20,8 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.activities.InsideChatActivity
 import com.example.togethernotes.adapters.ChatAdapter
-import com.example.togethernotes.models.App
-import com.example.togethernotes.models.Chat
 import com.example.togethernotes.models.Match
 import com.example.togethernotes.models.MatchItem
 import com.example.togethernotes.models.TempMatch
@@ -29,18 +27,19 @@ import com.example.togethernotes.models.TempMatchDto
 import com.example.togethernotes.repository.AppRepository
 import com.example.togethernotes.repository.MatchRepository
 import com.example.togethernotes.repository.TempMatchRepository
+import com.example.togethernotes.services.chat.ChatRepository
 import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualApp
 import com.example.togethernotes.tools.likedMatchList
 import com.example.togethernotes.tools.pendingMatchList
 import com.example.togethernotes.tools.possibleMatchList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.util.Date
+
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -285,48 +284,88 @@ class ChatFragment : Fragment() {
         }
     }
 
-        private fun showChats() {
-            /*
-            val recyclerViewChats = view?.findViewById(R.id.recyclerViewChats) as RecyclerView
-            val chatList = listOf(
-                Chat(id = 1, date = Date(), user1_id = 101, user2_id = 102),
-                Chat(id = 2, date = Date(System.currentTimeMillis() - 86400000), user1_id = 103, user2_id = 104),
-                Chat(id = 3, date = Date(System.currentTimeMillis() - 172800000), user1_id = 105, user2_id = 106)
-                                 )
+    private fun showChats() {
+        val userId = actualApp.id
+        val recyclerViewChats = view?.findViewById<RecyclerView>(R.id.recyclerViewChats) ?: return
 
-            // Configurar el RecyclerView
-           val adapter = ChatAdapter(chatList)
-            recyclerViewChats.layoutManager = LinearLayoutManager(requireContext())
-            recyclerViewChats.adapter = adapter
-
-             */
-        }
-
-        override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
-                                 ): View? {
-            // Inflate the layout for this fragment
-            return inflater.inflate(R.layout.chat_fragment, container, false)
-        }
-
-        companion object {
-            /**
-             * Use this factory method to create a new instance of
-             * this fragment using the provided parameters.
-             *
-             * @param param1 Parameter 1.
-             * @param param2 Parameter 2.
-             * @return A new instance of fragment SegundoFragment.
-             */
-            // TODO: Rename and change types and number of parameters
-            @JvmStatic
-            fun newInstance(param1: String, param2: String) =
-                ChatFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
-                    }
+        lifecycleScope.launch {
+            try {
+                // Obtener los chats del repositorio
+                val response = withContext(Dispatchers.IO) {
+                    ChatRepository().getChatsByUserId(userId)
                 }
+
+                if (response.isSuccessful) {
+                    val chatList = response.body() ?: emptyList()
+
+                    // Usamos el AppRepository para obtener el nombre de los usuarios
+                    val userRepository = AppRepository()
+
+                    val chatListWithNames = chatList.map { chat ->
+                        val otherUserId =
+                            if (chat.user1_id == userId) chat.user2_id else chat.user1_id
+
+                        // Obtenemos el nombre del otro usuario
+                        val userResponse = userRepository.getAppById(otherUserId)
+
+                        // Asignamos el nombre si la respuesta fue exitosa
+                        val userName = if (userResponse.isSuccessful) {
+                            userResponse.body()?.name ?: "Desconocido"
+                        } else {
+                            "Desconocido"
+                        }
+
+                        // Añadimos el nombre al chat
+                        chat.copy(userName = userName)
+                    }
+
+                    // Configuramos el adapter con los chats con nombre
+                    val adapter = ChatAdapter(chatListWithNames) { chat ->
+                        val intent = Intent(requireContext(), InsideChatActivity::class.java)
+                        intent.putExtra("chat_id", chat.id)
+                        intent.putExtra("user1_id", chat.user1_id)
+                        intent.putExtra("user2_id", chat.user2_id)
+                        intent.putExtra("receiver_name", chat.userName) // 👈 Añadí esto
+                        startActivity(intent)
+                    }
+
+                    recyclerViewChats.layoutManager = LinearLayoutManager(requireContext())
+                    recyclerViewChats.adapter = adapter
+                } else {
+                    Toast.makeText(requireContext(), "Error cargando chats", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+                             ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.chat_fragment, container, false)
+    }
+
+    companion object {
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param param1 Parameter 1.
+         * @param param2 Parameter 2.
+         * @return A new instance of fragment SegundoFragment.
+         */
+        // TODO: Rename and change types and number of parameters
+        @JvmStatic
+        fun newInstance(param1: String, param2: String) =
+            ChatFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
+                }
+            }
+    }
+}
