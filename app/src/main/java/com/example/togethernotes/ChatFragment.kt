@@ -1,15 +1,12 @@
 package com.example.togethernotes
 
 import MatchAdapter
-import MessageAdapter
-import Message
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
@@ -20,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.activities.InsideChatActivity
 import com.example.togethernotes.adapters.ChatAdapter
+import com.example.togethernotes.models.Chat
 import com.example.togethernotes.models.Match
 import com.example.togethernotes.models.MatchItem
 import com.example.togethernotes.models.TempMatch
@@ -30,16 +28,16 @@ import com.example.togethernotes.repository.TempMatchRepository
 import com.example.togethernotes.services.chat.ChatRepository
 import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualApp
+import com.example.togethernotes.tools.chatListName
 import com.example.togethernotes.tools.likedMatchList
 import com.example.togethernotes.tools.pendingMatchList
-import com.example.togethernotes.tools.possibleMatchList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
-
+import java.util.Date
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -59,6 +57,7 @@ class ChatFragment : Fragment() {
     private var param2: String? = null
     private var artistRoleId =0
     private var spaceRoleId =0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -81,35 +80,32 @@ class ChatFragment : Fragment() {
        */
     }
 
-    private fun showMatches(tmpMatch:List<TempMatchDto>) {
-        // Datos de ejemplo
+    private fun showMatches(tmpMatch: List<TempMatchDto>) {
         getLikedUsers(tmpMatch)
+
         val matches = mutableListOf<MatchItem>()
-
-
-        for (likedUser in likedMatchList)
-        {
-
-            matches.add(MatchItem(
-                imageUrl = "https://via.placeholder.com/100",
-                name = likedUser.name,
-                description = "Guitarist looking for a venue",
-                tempMatch = TempMatchDto(likedUser.id,"25-04-2005")
-                                 ))
+        for (likedUser in likedMatchList) {
+            matches.add(
+                MatchItem(
+                    imageUrl = "https://via.placeholder.com/100",
+                    name = likedUser.name,
+                    description = "Guitarist looking for a venue",
+                    tempMatch = TempMatchDto(likedUser.id, "25-04-2005")
+                         )
+                       )
         }
 
         val recyclerViewMatches = view?.findViewById<RecyclerView>(R.id.recyclerViewMatches)
-        // Configurar RecyclerView
         recyclerViewMatches?.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = MatchAdapter(matches) { selectedMatch ->
-                // Manejar el clic en un elemento
                 onMatchItemClick(selectedMatch)
             }
+            (adapter as? MatchAdapter)?.notifyDataSetChanged() // Notifica cambios en el adaptador
         }
     }
 
-    // Función para manejar el clic en un elemento
+    // Función para manejar el  clic en un elemento
 
 
     private fun onMatchItemClick(matchItem: MatchItem) {
@@ -125,6 +121,10 @@ class ChatFragment : Fragment() {
         buttonAcceptMatch.setOnClickListener{
             updateMatchTable(matchItem)
             updateTempMatch(matchItem)
+            postChat(matchItem)
+            Toast.makeText(requireContext(), "Match Creado", Toast.LENGTH_SHORT).show()
+        }
+        declineAcceptMatch.setOnClickListener{
             acceptMatchLout.visibility = View.GONE
             Toast.makeText(requireContext(), "Match Creado", Toast.LENGTH_SHORT).show()
         }
@@ -133,6 +133,33 @@ class ChatFragment : Fragment() {
         // Mostrar un mensaje en pantalla
         Toast.makeText(requireContext(), "Seleccionaste a ${matchItem.name}", Toast.LENGTH_SHORT).show()
     }
+
+    fun postChat(matchItem: MatchItem)
+    {
+        val matchRepository = ChatRepository()
+        val chatCreated = Chat(0, Date(), actualApp.id, matchItem.tempMatch.OtherUserId, matchItem.name)
+        lifecycleScope.launch {
+            try {
+                // Crear un nuevo objeto Match
+                // Llamar al repositorio para enviar la solicitud POST
+                val response = matchRepository.createChat(chatCreated)
+                if (response.isSuccessful) {
+                    // Si la solicitud fue exitosa, obtener el match creado
+                    val createdChat = response.body()
+                    println("Match creado exitosamente: $createdChat")
+                } else {
+                    // Si hubo un error, imprimir el mensaje de error
+                    println("Error al crear el match: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                // Manejar errores inesperados
+                println("Error inesperado: ${e.message}")
+            }
+        }
+        chatListName.add(chatCreated)
+
+    }
+
     fun updateTempMatch(matchItem: MatchItem)
     {
         val matchRepository = TempMatchRepository()
@@ -232,8 +259,8 @@ class ChatFragment : Fragment() {
             // Espera a que todas las solicitudes terminen
             deferredRequests.awaitAll()
         }
-
     }
+
     fun getListYourMatches() {
         val tempMatchRepository = TempMatchRepository()
         var userId = actualApp.id
@@ -301,9 +328,8 @@ class ChatFragment : Fragment() {
                     // Usamos el AppRepository para obtener el nombre de los usuarios
                     val userRepository = AppRepository()
 
-                    val chatListWithNames = chatList.map { chat ->
-                        val otherUserId =
-                            if (chat.user1_id == userId) chat.user2_id else chat.user1_id
+                    chatListName = chatList.map { chat ->
+                        val otherUserId = if (chat.user1_id == userId) chat.user2_id else chat.user1_id
 
                         // Obtenemos el nombre del otro usuario
                         val userResponse = userRepository.getAppById(otherUserId)
@@ -317,10 +343,10 @@ class ChatFragment : Fragment() {
 
                         // Añadimos el nombre al chat
                         chat.copy(userName = userName)
-                    }
+                    }.toMutableList()
 
                     // Configuramos el adapter con los chats con nombre
-                    val adapter = ChatAdapter(chatListWithNames) { chat ->
+                    val adapter = ChatAdapter(chatListName) { chat ->
                         val intent = Intent(requireContext(), InsideChatActivity::class.java)
                         intent.putExtra("chat_id", chat.id)
                         intent.putExtra("user1_id", chat.user1_id)

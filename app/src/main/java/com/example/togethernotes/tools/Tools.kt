@@ -7,6 +7,7 @@ import com.example.togethernotes.models.Artist
 import com.example.togethernotes.models.Genres
 import com.example.togethernotes.models.Space
 import com.example.togethernotes.models.App
+import com.example.togethernotes.models.Chat
 import com.example.togethernotes.models.TempMatch
 import com.example.togethernotes.models.TempMatchDto
 import java.text.SimpleDateFormat
@@ -18,8 +19,9 @@ lateinit var artist: Artist
  var possibleMatch : App = App()
 var possibleMatchList = mutableListOf<App>()
 var likedMatchList = mutableListOf<App>()
-
+var chatListName = mutableListOf<Chat>()
 var pendingMatchList = mutableListOf<TempMatchDto>()
+var chatInstalledExecuted =0
 object Tools {
 
     /**

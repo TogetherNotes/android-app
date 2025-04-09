@@ -31,6 +31,7 @@ import retrofit2.Response
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.IllegalFormatException
 import java.util.Locale
 
 
@@ -55,10 +56,10 @@ class MatchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         reprodMusic()
         searchMatch()
         initSwipeListener()
-
         findMatch()
         updateMatchLayout()
     }
@@ -264,7 +265,11 @@ class MatchFragment : Fragment() {
 
     private fun findMatch() {
         val likeButton = view?.findViewById<ImageView>(R.id.makeMatchButton)
+        val rejectButton = view?.findViewById<ImageView>(R.id.discardMatchButton)
         likeButton?.setOnClickListener {
+            updateMatchLayout()
+        }
+        rejectButton?.setOnClickListener{
             updateMatchLayout()
         }
     }
@@ -324,6 +329,12 @@ class MatchFragment : Fragment() {
 
     private fun reprodMusic() {
         mediaPlayer = MediaPlayer.create(requireContext(), R.raw.audio_prueba)
+        val btnPlayPause = view?.findViewById<ImageView>(R.id.btnPlayPause)
+        if(actualApp.role== "Artist")
+        {
+            seekBar.visibility = View.GONE
+            btnPlayPause?.visibility = View.GONE
+        }
         seekBar = view?.findViewById(R.id.seekBar) as SeekBar
         seekBar.max = mediaPlayer.duration
 
@@ -338,7 +349,6 @@ class MatchFragment : Fragment() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        val btnPlayPause = view?.findViewById<ImageView>(R.id.btnPlayPause)
         btnPlayPause?.setOnClickListener {
             if (mediaPlayer.isPlaying) {
                 mediaPlayer.pause()
