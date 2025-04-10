@@ -18,6 +18,7 @@ import android.content.pm.PackageManager
 import android.widget.Button
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.togethernotes.models.Artist
 import com.example.togethernotes.repository.SpaceRepository
 import org.osmdroid.config.Configuration
 import org.osmdroid.views.MapView
@@ -258,6 +259,7 @@ class CreateSpaceActivity : AppCompatActivity() {
                 println(json)
                 val response = repository.registerSpace(actualApp as Space)
                 if (response.isSuccessful) {
+                    (actualApp as Space).id= response.body()!!.app_id
                     Toast.makeText(this@CreateSpaceActivity, "Se ha insertado con éxito", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(this@CreateSpaceActivity, "Respuesta vacía", Toast.LENGTH_LONG).show()

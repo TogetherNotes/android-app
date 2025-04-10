@@ -3,6 +3,7 @@ package com.example.togethernotes.repository
 import com.example.togethernotes.Retrofit
 import com.example.togethernotes.api.ArtistService
 import com.example.togethernotes.models.Artist
+import com.example.togethernotes.models.RegisterResponse
 import retrofit2.Response
 
 class ArtistRepository {
@@ -23,7 +24,7 @@ class ArtistRepository {
         return artistService.updateArtist(id, artist)
     }
 
-    suspend fun registerArtist(data: Artist): Response<Artist> {
+    suspend fun registerArtist(data: Artist): Response<RegisterResponse> {
         return artistService.registerArtist(data)
     }
 }

@@ -1,6 +1,7 @@
 package com.example.togethernotes.repository
 
 import com.example.togethernotes.Retrofit
+import com.example.togethernotes.models.RegisterResponse
 import com.example.togethernotes.models.Space
 import com.example.togethernotes.services.space.SpaceService
 import retrofit2.Response
@@ -24,7 +25,7 @@ class SpaceRepository {
     }
     */
 
-    suspend fun registerSpace(data: Space): Response<Space> {
+    suspend fun registerSpace(data: Space): Response<RegisterResponse> {
         return spaceService.registerSpace(data)
     }
 

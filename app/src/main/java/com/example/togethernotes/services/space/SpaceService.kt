@@ -1,5 +1,6 @@
 package com.example.togethernotes.services.space
 
+import com.example.togethernotes.models.RegisterResponse
 import com.example.togethernotes.models.Space
 import retrofit2.Response
 import retrofit2.http.*
@@ -23,5 +24,5 @@ interface SpaceService {
 
     // POST: api/spaces/register
     @POST("api/spaces/register")
-    suspend fun registerSpace(@Body request: Space): Response<Space>
+    suspend fun registerSpace(@Body request: Space): Response<RegisterResponse>
 }

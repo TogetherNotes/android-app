@@ -56,8 +56,17 @@ class MatchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if(actualApp.role== "Artist" ||actualApp.role== "artist")
+        {
+            val btnPlayPause = view?.findViewById<ImageView>(R.id.btnPlayPause)
+            seekBar = view?.findViewById(R.id.seekBar) as SeekBar
+            seekBar.visibility = View.GONE
+            btnPlayPause?.visibility = View.GONE
+        }
+        else{
+            reprodMusic()
 
-        reprodMusic()
+        }
         searchMatch()
         initSwipeListener()
         findMatch()
@@ -330,11 +339,7 @@ class MatchFragment : Fragment() {
     private fun reprodMusic() {
         mediaPlayer = MediaPlayer.create(requireContext(), R.raw.audio_prueba)
         val btnPlayPause = view?.findViewById<ImageView>(R.id.btnPlayPause)
-        if(actualApp.role== "Artist")
-        {
-            seekBar.visibility = View.GONE
-            btnPlayPause?.visibility = View.GONE
-        }
+
         seekBar = view?.findViewById(R.id.seekBar) as SeekBar
         seekBar.max = mediaPlayer.duration
 

@@ -1,7 +1,7 @@
 package com.example.togethernotes.models
 
 open class App(
-    val id: Int = 0,
+    var id: Int = 0,
     val name: String = "",
     var mail: String = "",
     var password: String = "",

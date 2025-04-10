@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 class LoginActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     var passApp =App()
+    var credentailsCorrect = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -33,9 +34,12 @@ class LoginActivity : AppCompatActivity() {
             {
                 val mail =mailLogin.text.toString()
                 val password= passwordLogin.text.toString()
-
                 login(mail, password)
-                Tools.startActivityTurned(this, MainActivity::class.java)
+                if (credentailsCorrect == false)
+                {
+                    mailLogin.text.clear()
+                    passwordLogin.text.clear()
+                }
             }
             else {
              //   Toast.makeText(this@LoginActivity, "MALLLL", Toast.LENGTH_LONG).show()
@@ -57,10 +61,12 @@ class LoginActivity : AppCompatActivity() {
                     response.isSuccessful -> {
                         response.body()?.let { loggedInApp ->
                             actualApp = loggedInApp
+                            credentailsCorrect = true
                             showUserInfo(loggedInApp)
                             Tools.startActivityTurned(this@LoginActivity, MainActivity::class.java)
                         } ?: run {
                             showError("Respuesta vacía del servidor")
+                            Toast.makeText(this@LoginActivity, "Credenciales inválidas", Toast.LENGTH_LONG).show()
                         }
                     }
                     response.code() == 404 -> {

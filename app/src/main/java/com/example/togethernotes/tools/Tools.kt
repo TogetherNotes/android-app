@@ -99,7 +99,7 @@ object Tools {
             Artist(
                 rating=2,
                 latitude = 43.12345678,
-                longitude = 43.12345678,
+                longitude = 2.19140000,
                 active = true,
                 mail = email,
                 password = password,

@@ -238,6 +238,7 @@ class CreateArtistActivity : AppCompatActivity() {
                 println(json)
                 val response = repository.registerArtist(actualApp as Artist)
                 if (response.isSuccessful) {
+                    (actualApp as Artist).id= response.body()!!.app_id
                     Toast.makeText(this@CreateArtistActivity, "Se ha insertado con éxito", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(this@CreateArtistActivity, "Respuesta vacía", Toast.LENGTH_LONG).show()

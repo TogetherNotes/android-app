@@ -357,6 +357,7 @@ class ChatFragment : Fragment() {
 
                     recyclerViewChats.layoutManager = LinearLayoutManager(requireContext())
                     recyclerViewChats.adapter = adapter
+
                 } else {
                     Toast.makeText(requireContext(), "Error cargando chats", Toast.LENGTH_SHORT)
                         .show()

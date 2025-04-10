@@ -1,6 +1,7 @@
 package com.example.togethernotes.api
 
 import com.example.togethernotes.models.Artist
+import com.example.togethernotes.models.RegisterResponse
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -23,5 +24,5 @@ interface ArtistService {
 
     // POST: api/artists/register
     @POST("api/artists/register")
-    suspend fun registerArtist(@Body data: Artist): Response<Artist>
+    suspend fun registerArtist(@Body data: Artist): Response<RegisterResponse>
 }
