@@ -42,5 +42,8 @@
     <string name="send">Send</string>
     <string name="your_matches">YOUR MATCHES</string>
     <string name="accept_x_match">Accept x Match</string>
+    <string name="accepted">Accepted</string>
+    <string name="refused">refused</string>
+    <string name="event_title">event title</string>
 
 </resources>

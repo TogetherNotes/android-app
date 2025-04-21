@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="8dp">
     <!-- Mensaje recibido (izquierda) -->
@@ -60,4 +60,284 @@
             android:scaleType="centerCrop"
             android:visibility="gone" />
     </FrameLayout>
+
+    <!-- Cita enviado (derecha) -->
+    <FrameLayout
+        android:id="@+id/sentEventLaout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/sent_message_background"
+        android:visibility="gone"
+        android:padding="8dp"
+        android:layout_gravity="end">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+                >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Solicitud de cita"
+                android:layout_gravity="center"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="10dp"
+                />
+            <TextView
+                android:id="@+id/sentEventTextEnviado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mensaje enviado"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:layout_marginEnd="8dp" />
+            <CheckBox
+                android:id="@+id/checkContratoEnviado"
+                android:layout_width="140dp"
+                android:layout_height="40dp"
+                android:layout_gravity="left"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:text="@string/work_accord"
+                android:textColor="@color/white"
+                android:textSize="14dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fecha seleccionada"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/inter_18pt_bold"
+                    android:textColor="@color/white"
+                    android:layout_marginRight="10dp"
+                    />
+
+                <TextView
+                    android:id="@+id/textViewFechaEnviado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15/08/2025"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/inter_18pt_bold"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintTop_toBottomOf="@id/prueba"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
+            </LinearLayout>
+            <!-- DatePicker -->
+            <LinearLayout
+                android:id="@+id/refusedByUserEnviado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/refused"
+                    android:textSize="14sp"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/inter_18pt_bold"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="60dp"
+                    />
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="16dp"
+                    android:background="@drawable/discard_match"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/acceptedByUserEnviado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/accepted"
+                    android:textSize="14sp"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/inter_18pt_bold"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="60dp"
+                    />
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/accepted_by_user"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Mensaje recibido (izquierda) -->
+    <FrameLayout
+        android:id="@+id/receivedEventLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/received_message_background"
+        android:padding="8dp"
+        android:visibility="gone"
+        android:layout_gravity="start">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Solicitud de cita"
+                android:layout_gravity="center"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="10dp"
+                />
+            <TextView
+                android:id="@+id/sentEventText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mensaje enviado"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_marginEnd="8dp" />
+            <CheckBox
+                android:id="@+id/checkContrato"
+                android:layout_width="140dp"
+                android:layout_height="40dp"
+                android:layout_gravity="left"
+                android:fontFamily="@font/inter_18pt_bold"
+                android:text="@string/work_accord"
+                android:textColor="@color/black"
+                android:textSize="14dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fecha seleccionada"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/inter_18pt_bold"
+                    android:textColor="@color/black"
+                    android:layout_marginRight="10dp"
+                    />
+
+                <TextView
+                    android:id="@+id/textViewFecha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15/08/2025"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/inter_18pt_bold"
+                    android:textColor="@android:color/black"
+                    app:layout_constraintTop_toBottomOf="@id/prueba"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
+            </LinearLayout>
+            <!-- DatePicker -->
+
+            <LinearLayout
+                android:id="@+id/decideEventUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                >
+
+                <ImageView
+                    android:id="@+id/sentEventButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/discard_match"
+                    android:layout_marginRight="145dp"
+                    />
+                <ImageView
+                    android:id="@+id/acceptEventButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/make_match"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/acceptedByUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/accepted"
+                    android:textSize="14sp"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/inter_18pt_bold"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="40dp"
+                    />
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/accepted_by_user"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/refusedByUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/refused"
+                    android:textSize="14sp"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/inter_18pt_bold"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="45dp"
+                    />
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="16dp"
+                    android:background="@drawable/discard_match"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
 </FrameLayout>

@@ -4,7 +4,8 @@ import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 object Retrofit {
-    private const val BASE_URL = "http://10.0.0.99/dam01/"
+    //private const val BASE_URL = "http://10.0.0.99/dam01/"
+    private const val BASE_URL = "http://192.168.1.128/WebApplicationTgtNotes/"
 
     private val retrofit: Retrofit by lazy {
         val gson = GsonBuilder()

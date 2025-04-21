@@ -26,7 +26,7 @@ class AppRepository {
     suspend fun login(mail: String, password: String): Response<App> {
         return appService.login(mail,password)
     }
-    suspend fun getAppsByLocation(lat: Double, lng: Double, radiusKm: Double): Response<List<App>> {
-        return appService.getAppsByLocation(lat, lng, radiusKm)
+    suspend fun getAppsByLocation(lat: Double, lng: Double, radiusKm: Double, userId: Int): Response<List<App>> {
+        return appService.getAppsByLocation(lat, lng, radiusKm,userId)
     }
 }

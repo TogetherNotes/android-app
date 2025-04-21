@@ -35,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.Date
@@ -122,6 +123,8 @@ class ChatFragment : Fragment() {
             updateMatchTable(matchItem)
             updateTempMatch(matchItem)
             postChat(matchItem)
+            acceptMatchLout.visibility = View.GONE
+
             Toast.makeText(requireContext(), "Match Creado", Toast.LENGTH_SHORT).show()
         }
         declineAcceptMatch.setOnClickListener{
@@ -235,10 +238,12 @@ class ChatFragment : Fragment() {
         }
     }
 
-    fun getLikedUsers(tmpMatch:List<TempMatchDto>)
-    {
+    fun getLikedUsers(tmpMatch: List<TempMatchDto>) {
         val appRepository = AppRepository()
         lifecycleScope.launch {
+            // Limpiar la lista antes de agregar nuevos elementos
+            likedMatchList.clear()
+
             val deferredRequests = tmpMatch.map { tmp ->
                 async {
                     try {
@@ -267,12 +272,15 @@ class ChatFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 // Realizar la solicitud HTTP para obtener las coincidencias pendientes
-                val response = tempMatchRepository.getPendingMatches(userId)
-
+                val response = runBlocking {
+                    tempMatchRepository.getPendingMatches(userId)
+                }
                 if (response.isSuccessful) {
                     // Procesar la respuesta y actualizar la lista de coincidencias pendientes
                     response.body()?.let { matches ->
-                        pendingMatchList.clear() // Limpiar la lista antes de agregar nuevos elementos
+                        // Limpiar la lista antes de agregar nuevos elementos
+                        pendingMatchList.clear()
+
                         pendingMatchList.addAll(matches)
                         println("Coincidencias pendientes: $pendingMatchList")
                         // Mostrar las coincidencias en la UI
@@ -283,7 +291,7 @@ class ChatFragment : Fragment() {
                             requireContext(),
                             "No hay coincidencias pendientes",
                             Toast.LENGTH_SHORT
-                                      ).show()
+                        ).show()
                     }
                 } else {
                     // Manejar el caso de una respuesta no exitosa
@@ -298,13 +306,14 @@ class ChatFragment : Fragment() {
                             requireContext(),
                             "Error de red: Verifica tu conexión",
                             Toast.LENGTH_LONG
-                                      ).show()
+                        ).show()
                     }
-
                     else -> {
                         Toast.makeText(
-                            requireContext(), "Error inesperado: ${e.message}", Toast.LENGTH_LONG
-                                      ).show()
+                            requireContext(),
+                            "Error inesperado: ${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }

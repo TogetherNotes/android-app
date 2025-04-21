@@ -29,9 +29,9 @@ class ContractsAdapter(
         val evento = listaEventos[position]
 
         // Vincular los datos con las vistas
-        holder.imagenEvento.setImageResource(evento.imagen)
-        holder.tituloEvento.text = evento.titulo
-        holder.tipoEvento.text = evento.tipo
+        //holder.imagenEvento.setImageResource(evento.imagen)
+        holder.tituloEvento.text = evento.title
+        holder.tipoEvento.text = evento.meet_type
 
         // Configurar el listener de clics
         holder.itemView.setOnClickListener {

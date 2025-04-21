@@ -44,7 +44,20 @@ object Tools {
         // Formatea la fecha según el patrón definido
         return dateFormat.format(currentDate)
     }
+    fun splitMessage(message: String): List<String>
+    {
 
+        val limpio = message.removePrefix("$$--")
+
+        val partes = limpio.split("$$--")
+
+        val titulo = partes.getOrNull(0) ?: ""
+        val tipoContrato = partes.getOrNull(1) ?: ""
+        val fecha = partes.getOrNull(2) ?: ""
+        val aceptado = partes.getOrNull(3) ?: ""
+
+        return listOf(titulo, tipoContrato, fecha)
+    }
 
 
     /**

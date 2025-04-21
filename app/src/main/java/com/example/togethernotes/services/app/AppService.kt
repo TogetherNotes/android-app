@@ -29,7 +29,8 @@ interface AppService {
     suspend fun getAppsByLocation(
         @Query("lat") lat: Double,
         @Query("lng") lng: Double,
-        @Query("radiusKm") radiusKm: Double
-                                 ): Response<List<App>>
+        @Query("radiusKm") radiusKm: Double,
+        @Query("userId") userId: Int
+    ): Response<List<App>>
 
 }

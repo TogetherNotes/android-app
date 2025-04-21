@@ -102,30 +102,27 @@ class calendarFragment : Fragment() {
                 end_hour = "22:00",
                 init_hour = "20:00",
                 space_id = 5,
-                work = WorkType.work,
-                imagen = R.drawable.user,
-                titulo = "Evento 1",
-                tipo = "Concierto"
+                meet_type = WorkType.work.toString(),
+                title = "Evento 1",
+                status = "Pendiente"
                     ),
             Contract(
                 artist_id = 102,
                 end_hour = "02:00",
                 init_hour = "23:00",
                 space_id = 7,
-                work = WorkType.work,
-                imagen = R.drawable.user,
-                titulo = "Evento 2",
-                tipo = "Festival"
+                meet_type = WorkType.work.toString(),
+                title = "Evento 1",
+                status = "Pendiente"
                     ),
             Contract(
                 artist_id = 103,
                 end_hour = "19:30",
                 init_hour = "18:00",
                 space_id = 3,
-                work = WorkType.meeting,
-                imagen = R.drawable.user,
-                titulo = "Evento 3",
-                tipo = "Teatro"
+                meet_type = WorkType.work.toString(),
+                title = "Evento 1",
+                status = "Pendiente"
                     )
                              )
 
@@ -135,7 +132,7 @@ class calendarFragment : Fragment() {
             finishTask.visibility = View.VISIBLE
             recyclerViewEventos.visibility = View.GONE
 
-            nombreTreaFinishContract.text= selectedEvent.titulo
+            nombreTreaFinishContract.text= selectedEvent.title
             getUserStars()
             // Ejemplo de uso de findViewById en el fragmento
         }

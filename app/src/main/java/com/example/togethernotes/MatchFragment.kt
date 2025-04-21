@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.togethernotes.models.App
+import com.example.togethernotes.models.Space
 import com.example.togethernotes.models.TempMatch
 import com.example.togethernotes.repository.AppRepository
 import com.example.togethernotes.repository.TempMatchRepository
@@ -26,7 +27,9 @@ import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualApp
 import com.example.togethernotes.tools.possibleMatch
 import com.example.togethernotes.tools.possibleMatchList
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
+import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale
 import retrofit2.Response
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -130,27 +133,35 @@ class MatchFragment : Fragment() {
     private fun insertTmpMatchTable() {
         var spaceLiked = false
         var artistLiked = false
+        var spaceId:Int
+        var artistId:Int
         if (actualApp.role =="Space" )
         {
             spaceLiked = true
+            spaceId = actualApp.id
+            artistId = possibleMatch.id
         }
         else
         {
             artistLiked = true
+            spaceId = actualApp.id
+            artistId = possibleMatch.id
         }
 
         var request_date= Tools.getCurrentFormattedDate()
         val newTempMatch = TempMatch(
-            artist_id = actualApp.id,
-            space_id = possibleMatch.id,
-            artist_like = spaceLiked,
-            space_like = artistLiked,
+            artist_id = artistId,
+            space_id = spaceId,
+            artist_like = artistLiked,
+            space_like = spaceLiked,
             status = "pending",
             request_date = request_date
         )
         val tempMatchRepository = TempMatchRepository()
         lifecycleScope.launch {
             try {
+                val json = Gson().toJson(newTempMatch)
+                println(json)
                 // Llamar al repositorio para crear el nuevo registro
                 val response: Response<TempMatch> =
                     tempMatchRepository.createTempMatch(newTempMatch)
@@ -226,28 +237,34 @@ class MatchFragment : Fragment() {
     }
 
     private fun updateMatchLayout() {
-        if (possibleMatchList.isNotEmpty() && searchedMatchesCounter < possibleMatchList.size && possibleMatchList[searchedMatchesCounter].role != actualApp.role ) {
-             possibleMatch = possibleMatchList[searchedMatchesCounter]
-            Tools.createPossibleUser(
-                possibleMatch.role,
-                possibleMatch.mail,
-                possibleMatch.password,
-                possibleMatch.name,
-                possibleMatch.id,
-                possibleMatch.rating,
-            )
-            searchedMatchesCounter++
-            view?.let {
-                val posibleMatchName = it.findViewById<TextView>(R.id.userNameMatch)
-                val userRatingMatch = it.findViewById(R.id.userRatingMatch) as ImageView
-                setStarts(possibleMatch.rating, userRatingMatch)
-                posibleMatchName.text = possibleMatch.name
-
+        if (possibleMatchList.isNotEmpty() && searchedMatchesCounter < possibleMatchList.size) {
+            val invalidSubList = possibleMatchList.subList(searchedMatchesCounter, possibleMatchList.size)
+            for (possibleMatch in invalidSubList) {
+                if (possibleMatch.role != actualApp.role) {
+                    Tools.createPossibleUser(
+                        possibleMatch.role,
+                        possibleMatch.mail,
+                        possibleMatch.password,
+                        possibleMatch.name,
+                        possibleMatch.id,
+                        possibleMatch.rating,
+                    )
+                    searchedMatchesCounter++
+                    view?.let {
+                        val posibleMatchName = it.findViewById<TextView>(R.id.userNameMatch)
+                        val userRatingMatch = it.findViewById(R.id.userRatingMatch) as ImageView
+                        setStarts(possibleMatch.rating, userRatingMatch)
+                        posibleMatchName.text = possibleMatch.name
+                    }
+                    break
+                }
             }
-        } else {
-            searchMatch()
+        }
+        else {
+
             //Toast.makeText(requireContext(), "No hay más coincidencias", Toast.LENGTH_SHORT).show()
         }
+
     }
     private fun setStarts(rating: Int, view: ImageView )
     {
@@ -304,7 +321,8 @@ class MatchFragment : Fragment() {
                 val response = appRepository.getAppsByLocation(
                     actualAppDef.latitude ?: 0.0,
                     actualAppDef.longitude ?: 0.0,
-                    10000.0
+                    10000.0,
+                    actualAppDef.id
                 )
 
                 if (response.isSuccessful) {

@@ -3,12 +3,11 @@ package com.example.togethernotes.models
 
 data class Contract(
     val artist_id: Int,
-    val end_hour: String,
-    val init_hour: String,
     val space_id: Int,
-    val work: WorkType,
-    val imagen: Int = 0, // Valor predeterminado
-    val titulo: String = "", // Valor predeterminado
-    val tipo: String = "" // Valor predeterminado
-                   )
+    val meet_type: String,
+    val status: String,
+    val init_hour: String, // Considera usar un tipo más adecuado si es posible
+    val end_hour: String,  // Considera usar un tipo más adecuado si es posible
+    val title: String
+)
 
