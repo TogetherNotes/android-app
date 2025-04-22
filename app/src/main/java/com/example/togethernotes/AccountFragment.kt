@@ -11,6 +11,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -60,7 +61,9 @@ class AccountFragment : Fragment() {
     private var editGenresActivate: Boolean = false
     private lateinit var userGenres: TextView
     private lateinit var  selectedLanguage: LinearLayout
-
+    companion object {
+        private const val REQUEST_CODE_AUDIO_PICKER = 200 // Código de solicitud único
+    }
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -77,16 +80,6 @@ class AccountFragment : Fragment() {
         return inflater.inflate(R.layout.account_fragment, container, false)
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AccountFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -279,8 +272,22 @@ class AccountFragment : Fragment() {
                 profileImageView.setImageDrawable(roundedBitmapDrawable)
             }
         }
+        if (requestCode == REQUEST_CODE_AUDIO_PICKER && resultCode == Activity.RESULT_OK) {
+            val selectedAudioUri = data?.data // Obtener el URI del archivo de audio
+            if (selectedAudioUri != null) {
+                handleSelectedAudio(selectedAudioUri)
+            } else {
+                Toast.makeText(requireContext(), "No se seleccionó ningún archivo", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
+    private fun handleSelectedAudio(audioUri: Uri) {
+        // Guardar el URI del archivo de audio en una variable
+        val rawAudioUri = audioUri
+        Log.d("RAW_AUDIO_URI", "URI del archivo de audio: $rawAudioUri")
 
+        // Aquí puedes usar la variable `rawAudioUri` según tus necesidades
+    }
     @SuppressLint("ClickableViewAccessibility")
     fun detectFocus(mainLayout: LinearLayout, showGenres: FrameLayout){
         var windowClosed: Boolean
@@ -310,6 +317,7 @@ class AccountFragment : Fragment() {
         }
     }
 
+
     private fun editUserInfo(){
         configureButton = view?.findViewById(R.id.configure_button) as ImageView
         val editRectangle = view?.findViewById<FrameLayout>(R.id.nonDimmedArea) as FrameLayout
@@ -321,7 +329,7 @@ class AccountFragment : Fragment() {
         var principalLayout = view?.findViewById(R.id.account_settings) as LinearLayout
         val showGenres = view?.findViewById<FrameLayout>(R.id.showGenres)
         var updateGenresButton = view?.findViewById(R.id.confirm_genres_button) as ImageView
-
+        val updateArtistAudio = view?.findViewById(R.id.insertAudio) as Button
 
         showName.setText(actualApp.name)
 
@@ -337,6 +345,7 @@ class AccountFragment : Fragment() {
             if(actualApp.role == "Artist")
             {
                 showGenre.visibility = View.VISIBLE
+                updateArtistAudio.visibility = View.VISIBLE
             }
             else if (actualApp.role =="Space")
             {
@@ -370,12 +379,23 @@ class AccountFragment : Fragment() {
                   //  (actualApp as Artist).genreList = genresAdapter.getSelectedGenres()
                     showGenres?.visibility = View.GONE
                 }
+                updateArtistAudio.setOnClickListener{
+                    openAudioPicker()
+
+                }
             }
 
         }
 
 
     }
+    private fun openAudioPicker() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "audio/*" // Filtrar solo archivos de audio
+        }
+        startActivityForResult(intent, REQUEST_CODE_AUDIO_PICKER)
+    }
+
 
     //TODO cuando tengamos la clase del Usuario hacer los update
     private fun editUserNewInfo()

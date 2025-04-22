@@ -39,6 +39,15 @@
                 android:textColor="@color/white"
                 android:backgroundTint="@color/grey_hint"
                 />
+            <Button
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/insertAudio"
+                android:text="@string/select_audio"
+                android:visibility="gone"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/grey_hint"
+                />
             <!-- Texto sobre el fondo -->
             <EditText
                 android:id="@+id/editCapacity"
