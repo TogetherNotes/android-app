@@ -7,17 +7,25 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
+
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.R
 import com.example.togethernotes.adapters.OnMessageClickListener
 import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MessageAdapter(private val messages: List<Message>,
                      private val listener: OnMessageClickListener?= null
 ) : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
+    private val additionalContentMap = mutableMapOf<Int, String>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
+
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_message, parent, false)
         return MessageViewHolder(view)
@@ -79,13 +87,16 @@ class MessageAdapter(private val messages: List<Message>,
                 holder.acceptButton.setOnClickListener {
                     holder.acceptEventByUser.visibility = View.VISIBLE
                     holder.decideEventUser.visibility = View.GONE
-                    message.content += "$$--accepted"
+                    messages[position].content += "$$--accepted"
+                    notifyItemChanged(position)
+
                     listener?.onAcceptButtonClick(message, position)
                 }
                 holder.discardButton.setOnClickListener {
                     holder.refuseEventByUser.visibility = View.VISIBLE
                     holder.decideEventUser.visibility = View.GONE
                     message.content += "$$--refused"
+                    notifyItemChanged(position)
                     listener?.onDiscardButtonClick(message, position)
                 }
 
@@ -103,7 +114,37 @@ class MessageAdapter(private val messages: List<Message>,
 
     }
 
-
+    fun addAdditionalContent(position: Int, newContent: String) {
+        additionalContentMap[position] = newContent
+        notifyItemChanged(position)
+    }
+    /*
+    fun updateMessage() {
+        val adapterScope = CoroutineScope(Dispatchers.Main)
+        var messageRepository = MessageAdapter()
+        fun updateMessage() {
+            adapterScope.launch {
+                try {
+                    val response = contractRepository.createContract(contractToAdd)
+                    if (response.isSuccessful) {
+                        Toast.makeText(
+                            context, // Necesitarás un contexto, asegúrate de pasarlo también
+                            "Se ha insertado con éxito", Toast.LENGTH_SHORT
+                                      ).show()
+                    } else {
+                        Toast.makeText(
+                            context, "Respuesta vacía", Toast.LENGTH_LONG
+                                      ).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        context, "Exception: ${e.message}", Toast.LENGTH_LONG
+                                  ).show()
+                }
+            }
+        }
+    }
+    */
 
     override fun getItemCount(): Int {
         Log.d("ADAPTER", "Total de mensajes: ${messages.size}")

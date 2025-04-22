@@ -38,7 +38,7 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
         private const val DEFAULT_CHAT_ID = -1
         private const val DEFAULT_USER_ID = -1
         private const val DEFAULT_RECEIVER_NAME = "Desconocido"
-        private const val SERVER_IP = "192.168.1.128"
+        private const val SERVER_IP = "10.0.1.171"
         private const val SERVER_PORT = 5000
         private const val TAG_SOCKET = "SOCKET"
     }
@@ -313,6 +313,12 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
     }
 
     override fun onAcceptButtonClick(message: Message, position: Int) {
+        val updatedContent = "${message.content}$$--accepted"
+        messages[position] = message.copy(content = updatedContent)
+
+        // Notificar al adaptador sobre el cambio
+        adapter.notifyItemChanged(position)
+
         var list =Tools.splitMessage(message.content)
         var messageType:String
         if (list.get(1) == "check")
