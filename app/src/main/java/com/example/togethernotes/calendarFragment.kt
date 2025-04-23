@@ -16,13 +16,18 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.models.Contract
 import com.example.togethernotes.models.WorkType
+import com.example.togethernotes.repository.ContractRepository
+import com.example.togethernotes.repository.MessageRepository
+import com.example.togethernotes.tools.actualApp
+import kotlinx.coroutines.launch
 
 class calendarFragment : Fragment() {
-
+    private lateinit var eventList: List<Contract>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -75,20 +80,16 @@ class calendarFragment : Fragment() {
                                 )
             val monthName = months[monthOfYear]
 
-            // Mostrar la fecha seleccionada en un Toast
-            selectedDay.text = "$dayOfWeek, $dayOfMonth de $monthName"
+            val formattedDate = String.format("%04d-%02d-%02d", year, monthOfYear + 1, dayOfMonth)
 
-
-            // Inicializar el adaptador con eventos ficticios
-            initContractAdapter(recyclerViewEventos,year,monthOfYear,dayOfMonth)
+            // Inicializar el adaptador con la fecha formateada
+            initContractAdapter(recyclerViewEventos, formattedDate)
         }
     }
 
     private fun initContractAdapter(
         recyclerViewEventos: RecyclerView,
-        year: Int,
-        monthOfYear: Int,
-        dayOfMonth: Int
+        date: String
     ) {
 
         // Crear una lista de eventos (puedes reemplazar esto con datos reales)
@@ -96,6 +97,7 @@ class calendarFragment : Fragment() {
         val nombreTreaFinishContract = view?.findViewById(R.id.nombreTreaFinishContract) as TextView
         val finishTaskButton = view?.findViewById(R.id.confirm_finish_contract) as ImageView
         val calendarFragment = view?.findViewById(R.id.calendarFragment) as LinearLayout
+
         val listaEventos = listOf(
             Contract(
                 artist_id = 101,
@@ -138,6 +140,34 @@ class calendarFragment : Fragment() {
         }
         detectFocus(calendarFragment,finishTask,recyclerViewEventos)
     }
+
+    fun getContractsByDate(date: String)
+    {
+        var contractRepository = ContractRepository()
+        lifecycleScope.launch {
+            try {
+                val response = contractRepository.getContractsByDate(actualApp.id, date)
+                if (response.isSuccessful) {
+
+                    Toast.makeText(
+                        requireContext(), // Necesitarás un contexto, asegúrate de pasarlo también
+                        "Se ha modificado", Toast.LENGTH_SHORT
+                                  ).show()
+                } else {
+                    Toast.makeText(
+                        requireContext(), // Necesitarás un contexto, asegúrate de pasarlo también
+                        "Se ha modificado", Toast.LENGTH_SHORT
+                                  ).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(
+                    requireContext(), // Necesitarás un contexto, asegúrate de pasarlo también
+                    "Se ha modificado", Toast.LENGTH_SHORT
+                              ).show()
+            }
+        }
+    }
+
     fun recordFinishedTask()
     {
         val finishTask = view?.findViewById(R.id.finishTask) as FrameLayout

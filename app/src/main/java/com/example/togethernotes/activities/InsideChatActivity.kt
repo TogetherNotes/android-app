@@ -2,6 +2,7 @@ package com.example.togethernotes.activities
 
 import Message
 import MessageAdapter
+import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
@@ -22,6 +23,7 @@ import com.example.togethernotes.tools.CryptoUtil
 import com.example.togethernotes.repository.MessageRepository
 import com.example.togethernotes.tools.Tools
 import com.example.togethernotes.tools.actualApp
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.*
@@ -29,6 +31,8 @@ import java.net.Socket
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -135,7 +139,7 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
     }
 
     private fun setupRecyclerView() {
-        adapter = MessageAdapter(messages)
+        adapter = MessageAdapter(messages,this)
         chatRecyclerView.layoutManager = LinearLayoutManager(this)
         chatRecyclerView.adapter = adapter
     }
@@ -312,6 +316,7 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
         Log.d(tag, message)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onAcceptButtonClick(message: Message, position: Int) {
         val updatedContent = "${message.content}$$--accepted"
         messages[position] = message.copy(content = updatedContent)
@@ -329,12 +334,10 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
         {
             messageType = "meeting"
         }
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-
-        var contractToAdd = Contract(actualApp.id,message.senderId,messageType,"todo",
-            dateFormat.toString(),dateFormat.toString(),list.get(0))
+        val dateTimeOffset = list.get(2)+"T00:00:00Z"
+        var contractToAdd = Contract(actualApp.id, message.senderId, messageType, "todo",
+                                     dateTimeOffset, dateTimeOffset, list[0])
         val contractRepository = ContractRepository()
-
         lifecycleScope.launch {
             try {
                 val response = contractRepository.createContract(contractToAdd)
@@ -356,8 +359,38 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
                 ).show()
             }
         }
-    }
+        updateMessage(messages[position])
 
-    override fun onDiscardButtonClick(message: Message, position: Int) {
+    }
+    @SuppressLint("SuspiciousIndentation")
+    fun updateMessage(message: Message) {
+        val encryptedText = CryptoUtil.encrypt(message.content)
+
+        message.content = encryptedText
+        var messageRepository = MessageRepository()
+            lifecycleScope.launch {
+                try {
+                    val response = messageRepository.markMessageAsRead(message.id,message)
+                    if (response.isSuccessful) {
+                        Toast.makeText(
+                            this@InsideChatActivity, // Necesitarás un contexto, asegúrate de pasarlo también
+                            "Se ha modificado", Toast.LENGTH_SHORT
+                                      ).show()
+                    } else {
+                        Toast.makeText(
+                            this@InsideChatActivity, "Respuesta vacía", Toast.LENGTH_LONG
+                                      ).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        this@InsideChatActivity, "Exception: ${e.message}", Toast.LENGTH_LONG
+                                  ).show()
+                }
+            }
+        }
+
+    override fun onDiscardButtonClick(message: Message, position: Int)
+    {
+
     }
 }

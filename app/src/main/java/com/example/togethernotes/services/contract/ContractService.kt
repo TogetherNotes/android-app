@@ -37,4 +37,10 @@ interface ContractService {
         @Path("init_hour") initHour: String,
         @Path("end_hour") endHour: String
     ): Response<Contract>
+
+    @GET("api/contracts/by-date")
+    suspend fun getContractsByDate(
+        @Query("userId") userId: Int,
+        @Query("date") date: String // Asumimos que la fecha se envía como String en formato ISO 8601 (YYYY-MM-DD)
+      ): Response<List<Contract>>
 }

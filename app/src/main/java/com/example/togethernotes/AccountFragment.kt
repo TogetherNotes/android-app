@@ -382,14 +382,14 @@ class AccountFragment : Fragment() {
                 updateGenresButton.setOnClickListener{
                   //  (actualApp as Artist).genreList = genresAdapter.getSelectedGenres()
                     showGenres?.visibility = View.GONE
+
                 }
 
             }
 
         }
-
-
     }
+
     private fun openAudioPicker() {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             type = "audio/*" // Filtrar solo archivos de audio

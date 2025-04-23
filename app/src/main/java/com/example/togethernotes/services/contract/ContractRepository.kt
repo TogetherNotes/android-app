@@ -30,4 +30,9 @@ class ContractRepository {
     suspend fun deleteContract(artistId: Int, spaceId: Int, initHour: String, endHour: String): Response<Contract> {
         return contractService.deleteContract(artistId, spaceId, initHour, endHour)
     }
+    suspend fun getContractsByDate(userId: Int, date: String): Response<List<Contract>> {
+        return contractService.getContractsByDate(userId, date)
+    }
+
+
 }

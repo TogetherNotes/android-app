@@ -79,15 +79,16 @@ class MessageAdapter(private val messages: List<Message>,
                     chech = true
                 }
                 holder.checkContrato.isChecked = chech
-                if(partes.getOrNull(3)=="accepted")
-                    holder.acceptEventByUserEnviado.visibility = View.VISIBLE
+                if(partes.getOrNull(3)=="accepted") {
+                    holder.acceptEventByUser.visibility = View.VISIBLE
+                    holder.decideEventUser.visibility = View.GONE
+                }
                 else if(partes.getOrNull(3)=="refused")
                     holder.refuseEventByUserEnviado.visibility = View.VISIBLE
                 // Configurar listener para el botón "Aceptar"
                 holder.acceptButton.setOnClickListener {
                     holder.acceptEventByUser.visibility = View.VISIBLE
                     holder.decideEventUser.visibility = View.GONE
-                    messages[position].content += "$$--accepted"
                     notifyItemChanged(position)
 
                     listener?.onAcceptButtonClick(message, position)
