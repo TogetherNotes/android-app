@@ -149,7 +149,7 @@ class AccountFragment : Fragment() {
 
         configureAccountButton?.setOnClickListener {
             showConfigureLayout?.visibility = View.VISIBLE
-            if (actualApp.role == "artist") {
+            if (actualApp.role == "Artist") {
                 detectFocus(principalLayout!!, showConfigureLayout!!)
             }
 
@@ -346,6 +346,10 @@ class AccountFragment : Fragment() {
             {
                 showGenre.visibility = View.VISIBLE
                 updateArtistAudio.visibility = View.VISIBLE
+                updateArtistAudio.setOnClickListener{
+                    openAudioPicker()
+
+                }
             }
             else if (actualApp.role =="Space")
             {
@@ -358,7 +362,7 @@ class AccountFragment : Fragment() {
             }
 
         }
-        if(actualApp.role =="artist")
+        if(actualApp.role =="Artist")
         {
             showGenre.setOnClickListener{
                 editGenresActivate = true
@@ -379,10 +383,7 @@ class AccountFragment : Fragment() {
                   //  (actualApp as Artist).genreList = genresAdapter.getSelectedGenres()
                     showGenres?.visibility = View.GONE
                 }
-                updateArtistAudio.setOnClickListener{
-                    openAudioPicker()
 
-                }
             }
 
         }
@@ -392,8 +393,16 @@ class AccountFragment : Fragment() {
     private fun openAudioPicker() {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             type = "audio/*" // Filtrar solo archivos de audio
+            addCategory(Intent.CATEGORY_OPENABLE) // Asegurarse de que los archivos sean abribles
         }
-        startActivityForResult(intent, REQUEST_CODE_AUDIO_PICKER)
+
+        // Verificar si hay aplicaciones disponibles para manejar este intent
+        if (intent.resolveActivity(requireActivity().packageManager) != null) {
+            startActivityForResult(intent, REQUEST_CODE_AUDIO_PICKER)
+        } else {
+            Log.e("AudioPicker", "No se encontró ninguna aplicación para seleccionar audio.")
+            Toast.makeText(requireContext(), "No hay aplicaciones disponibles para seleccionar audio", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
