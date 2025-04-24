@@ -1,15 +1,14 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/calendarFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".ChatFragment"
-    android:background="@color/blue">
+    android:background="@color/blue"
+    tools:context=".ChatFragment">
 
-
-
+    <!-- Otros elementos del layout -->
     <include
         layout="@layout/logo_reusable"
         android:layout_marginTop="10dp"
@@ -20,9 +19,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="-25dp"
-        >
-        <!-- Título "Settings" -->
+        android:layout_marginTop="-25dp">
+
+        <!-- Título -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -39,20 +38,19 @@
             android:layout_height="1dp"
             android:background="@color/gold"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="20dp" />
     </LinearLayout>
 
     <include
         layout="@layout/calendar_activity"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
-    />
+        android:layout_height="240dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/show_day"
             android:layout_width="wrap_content"
@@ -62,26 +60,30 @@
             android:layout_marginBottom="10dp"
             android:textColor="@color/white"
             android:fontFamily="@font/inter_18pt_bold"
-            android:text="Mon, 17, Aug"
+            android:text="Mon, 17, Aug" />
 
-            />
         <View
             android:layout_width="wrap_content"
             android:layout_height="1dp"
             android:background="@color/grey_hint"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="20dp" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewEventos"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-        />
+            android:layout_height="wrap_content" />
     </LinearLayout>
+
+    <!-- Incluir el FrameLayout centrado -->
     <include
         layout="@layout/finish_contract_activity"
-        />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 </LinearLayout>

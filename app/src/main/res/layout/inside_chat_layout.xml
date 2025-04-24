@@ -1,18 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/rootLayout"
     android:background="@color/blue"
     tools:context=".ChatFragment"
-    android:paddingTop="20dp"
-    >
+    android:paddingTop="20dp">
 
     <!-- Logo -->
-    <include layout="@layout/logo_reusable"
-       />
+    <include
+        layout="@layout/logo_reusable" />
 
     <!-- Contenedor del nombre y el botón de eventos -->
     <LinearLayout
@@ -48,7 +47,12 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp" />
 
-        <include layout="@layout/create_user_event" />
+        <!-- Incluir el FrameLayout centrado -->
+        <include
+            layout="@layout/create_user_event"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
     </LinearLayout>
 
     <!-- Contenedor principal -->
@@ -63,8 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/messageContainer"
-            android:layout_alignParentTop="true"/>
-
+            android:layout_alignParentTop="true" />
 
         <!-- Contenedor del input y botón -->
         <LinearLayout
@@ -88,7 +91,7 @@
                 android:textColorHint="@color/white"
                 android:textColor="@color/white"
                 android:background="@color/transparent"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
             <!-- Botón de enviar -->
             <ImageView
@@ -101,8 +104,7 @@
                 android:padding="10dp"
                 android:layout_marginLeft="8dp"
                 android:backgroundTint="@color/gold"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white" />
         </LinearLayout>
     </RelativeLayout>
-
 </LinearLayout>
