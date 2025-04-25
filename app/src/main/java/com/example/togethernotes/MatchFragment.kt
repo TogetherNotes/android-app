@@ -43,7 +43,9 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 private lateinit var mediaPlayer: MediaPlayer
 private lateinit var seekBar: SeekBar
+private lateinit var matchImage: ImageView
 private lateinit var possibleMatchBefore: App
+
 var searchedMatchesCounter: Int = 0
 
 class MatchFragment : Fragment() {
@@ -60,6 +62,7 @@ class MatchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        matchImage = view.findViewById(R.id.matchImage)
         if(actualApp.role== "Artist" ||actualApp.role== "artist")
         {
             val btnPlayPause = view?.findViewById<ImageView>(R.id.btnPlayPause)
@@ -255,30 +258,37 @@ class MatchFragment : Fragment() {
             var canCreate = false
             for (possibleMatch in invalidSubList) {
                 if (possibleMatch.role != actualApp.role) {
-                    if (possibleMatchBefore != null) {
-                        if (possibleMatch != possibleMatchBefore) {
-                            canCreate = true
-                        }
-                    }
-                    if (canCreate) {
-                        Tools.createPossibleUser(
-                            possibleMatch.role,
-                            possibleMatch.mail,
-                            possibleMatch.password,
-                            possibleMatch.name,
-                            possibleMatch.id,
-                            possibleMatch.rating,
-                                                )
-                        possibleMatchBefore = possibleMatch
-                        searchedMatchesCounter++
-                        view?.let {
 
-                            val posibleMatchName = it.findViewById<TextView>(R.id.userNameMatch)
-                            val userRatingMatch = it.findViewById(R.id.userRatingMatch) as ImageView
-                            setStarts(possibleMatch.rating, userRatingMatch)
-                            posibleMatchName.text = possibleMatch.name
-                        }
-                        break
+                  if (possibleMatchBefore != null) {
+    if (possibleMatch != possibleMatchBefore) {
+        canCreate = true
+    }
+}
+if (canCreate) {
+    Tools.createPossibleUser(
+        possibleMatch.role,
+        possibleMatch.mail,
+        possibleMatch.password,
+        possibleMatch.name,
+        possibleMatch.id,
+        possibleMatch.rating,
+    )
+    possibleMatchBefore = possibleMatch
+    searchedMatchesCounter++
+    view?.let {
+        val posibleMatchName = it.findViewById<TextView>(R.id.userNameMatch)
+        val userRatingMatch = it.findViewById(R.id.userRatingMatch) as ImageView
+        setStarts(possibleMatch.rating, userRatingMatch)
+        posibleMatchName.text = possibleMatch.name
+
+        lifecycleScope.launch {
+            Tools.setProfileImageFromFTP(possibleMatch.id, matchImage, requireContext())
+        }
+    }
+    break
+}
+
+                  
                     }
                 }
             }

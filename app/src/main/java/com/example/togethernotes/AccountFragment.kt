@@ -8,9 +8,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.graphics.Color
+import android.graphics.BitmapFactory
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -37,6 +36,16 @@ import com.example.togethernotes.adapters.GenresAdapter
 import com.example.togethernotes.models.Artist
 import com.example.togethernotes.tools.actualApp
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.apache.commons.net.ftp.FTP
+import org.apache.commons.net.ftp.FTPClient
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.util.Locale
 
 
@@ -62,7 +71,7 @@ class AccountFragment : Fragment() {
     private lateinit var userGenres: TextView
     private lateinit var  selectedLanguage: LinearLayout
     companion object {
-        private const val REQUEST_CODE_AUDIO_PICKER = 200 // Código de solicitud único
+        private const val REQUEST_CODE_AUDIO_PICKER = 200
     }
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -89,7 +98,71 @@ class AccountFragment : Fragment() {
         configUserInfo()
         configureAccount()
 
+        loadUserImage()
     }
+
+    private fun loadUserImage() {
+        val userId = actualApp.id
+        val path = "/Images/$userId/image.jpg"
+
+        // Descargar la imagen en segundo plano
+        CoroutineScope(Dispatchers.IO).launch {
+            val imageBitmap = downloadImageFromFTP(path)
+
+            withContext(Dispatchers.Main) {
+                if (imageBitmap != null) {
+
+                    Glide.with(this@AccountFragment)
+                        .load(imageBitmap)
+                        .placeholder(R.drawable.user_default)
+                        .error(R.drawable.user_default)
+                        .circleCrop()
+                        .into(profileImageView)
+                } else {
+
+                    Glide.with(this@AccountFragment)
+                        .load(R.drawable.user_default)
+                        .circleCrop()
+                        .into(profileImageView)
+                }
+            }
+        }
+    }
+
+    private fun downloadImageFromFTP(path: String): Bitmap? {
+        val ftpClient = FTPClient()
+        var bitmap: Bitmap? = null
+
+        try {
+            ftpClient.connect("10.0.0.99")
+            val loginSuccess = ftpClient.login("dam01", "pepe")
+            if (!loginSuccess) {
+                Log.e("FTP", "Error de autenticación")
+                return null
+            }
+
+            ftpClient.enterLocalPassiveMode()
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE)
+
+            val inputStream = ftpClient.retrieveFileStream(path)
+            if (inputStream != null) {
+                bitmap = BitmapFactory.decodeStream(inputStream)
+                inputStream.close()
+
+                ftpClient.completePendingCommand()
+            }
+
+            ftpClient.logout()
+            ftpClient.disconnect()
+
+        } catch (e: Exception) {
+            Log.e("FTP", "Error descargando la imagen", e)
+        }
+
+        return bitmap
+    }
+
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -107,6 +180,7 @@ class AccountFragment : Fragment() {
         principalName = view?.findViewById(R.id.userPrincipalName) as TextView
         showRol = view?.findViewById(R.id.userRol) as TextView
         principalName.text = actualApp.name
+
         /*
         userGenres = view?.findViewById(R.id.userArtistGenres) as TextView
         if(actualApp.role =="Artist")
@@ -237,12 +311,79 @@ class AccountFragment : Fragment() {
         if (takePictureIntent.resolveActivity(packageManager) != null) {
             Log.d("Camera", "Starting camera intent")
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+
         } else {
             Log.e("Camera", "No se encontró una aplicación de cámara disponible.")
             Toast.makeText(requireContext(), "No se puede abrir la cámara", Toast.LENGTH_SHORT).show()
         }
     }
 
+
+    fun uploadImageToFtp(bitmap: Bitmap, userId: String) {
+        // Lanza una coroutine en el hilo principal
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                // Mueve la operación de red a un hilo de fondo
+                withContext(Dispatchers.IO) {
+                    // Crear y configurar el cliente FTP
+                    val ftpClient = FTPClient()
+
+                    try {
+                        // Conectar al servidor FTP
+                        Log.d("FTP", "Conectando al servidor FTP...")
+                        ftpClient.connect("10.0.0.99")  // Dirección del servidor FTP
+                        if (ftpClient.isConnected) {
+                            Log.d("FTP", "Conexión exitosa")
+                        }
+
+                        // Iniciar sesión en el servidor FTP
+                        val loginSuccess = ftpClient.login("dam01", "pepe")
+                        if (loginSuccess) {
+                            Log.d("FTP", "Login exitoso")
+                        } else {
+                            Log.e("FTP", "Error en el login")
+                        }
+
+                        // Establecer modo pasivo para la transferencia
+                        ftpClient.enterLocalPassiveMode()
+
+                        // Establecer el tipo de archivo binario para la carga
+                        ftpClient.setFileType(FTP.BINARY_FILE_TYPE)
+
+                        // Preparar la imagen para subirla
+                        val baos = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                        val inputStream = ByteArrayInputStream(baos.toByteArray())
+
+                        // Crear el directorio en el servidor si no existe
+                        val path = "/Images/$userId"
+                        if (!ftpClient.changeWorkingDirectory(path)) {
+                            ftpClient.makeDirectory(path)
+                            ftpClient.changeWorkingDirectory(path)
+                        }
+
+                        // Subir la imagen
+                        val success = ftpClient.storeFile("image.jpg", inputStream)
+                        if (success) {
+                            Log.d("FTP", "Imagen subida con éxito")
+                        } else {
+                            Log.e("FTP", "Error al subir la imagen")
+                        }
+
+                        // Cerrar la conexión FTP
+                        inputStream.close()
+                        ftpClient.logout()
+                        ftpClient.disconnect()
+                    } catch (e: IOException) {
+                        Log.e("FTP", "Error en la conexión o la transferencia de archivos", e)
+                    }
+                }
+            } catch (e: Exception) {
+                // Maneja cualquier excepción que ocurra durante el proceso
+                Log.e("FTP", "Error durante la carga de la imagen", e)
+            }
+        }
+    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
@@ -270,10 +411,14 @@ class AccountFragment : Fragment() {
                 val roundedBitmapDrawable: RoundedBitmapDrawable = RoundedBitmapDrawableFactory.create(resources, scaledBitmap)
                 roundedBitmapDrawable.isCircular = true
                 profileImageView.setImageDrawable(roundedBitmapDrawable)
+
+                //  SUBIR IMAGEN AL FTP
+                uploadImageToFtp(scaledBitmap, actualApp.id.toString())
             }
         }
+
         if (requestCode == REQUEST_CODE_AUDIO_PICKER && resultCode == Activity.RESULT_OK) {
-            val selectedAudioUri = data?.data // Obtener el URI del archivo de audio
+            val selectedAudioUri = data?.data
             if (selectedAudioUri != null) {
                 handleSelectedAudio(selectedAudioUri)
             } else {
@@ -281,6 +426,7 @@ class AccountFragment : Fragment() {
             }
         }
     }
+
     private fun handleSelectedAudio(audioUri: Uri) {
         // Guardar el URI del archivo de audio en una variable
         val rawAudioUri = audioUri
