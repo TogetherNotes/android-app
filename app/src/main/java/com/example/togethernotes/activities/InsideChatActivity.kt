@@ -319,7 +319,7 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
     private fun log(tag: String, message: String) {
         Log.d(tag, message)
     }
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "SuspiciousIndentation")
     fun detectFocus(mainLayout: LinearLayout, showGenres: FrameLayout){
         var windowClosed: Boolean
         windowClosed = false

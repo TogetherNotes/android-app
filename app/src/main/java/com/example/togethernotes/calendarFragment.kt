@@ -105,15 +105,21 @@ class calendarFragment : Fragment() {
 
             nombreTreaFinishContract.text= selectedEvent.title
             getUserStars()
+            selectedEvent.status ="finished"
+            updateContract(finishTaskButton,selectedEvent,finishTask)
+
             // Ejemplo de uso de findViewById en el fragmento
         }
         if (recyclerViewEventos != null) {
             detectFocus(calendarFragment,finishTask,recyclerViewEventos)
         }
-       // updateContract(finishTaskButton)
     }
-    /*
-    fun updateContract(finishTaskButton: ImageView)
+
+    fun updateContract(
+        finishTaskButton: ImageView,
+        selectedEvent: Contract,
+        finishTask: FrameLayout
+                      )
     {
         finishTaskButton.setOnClickListener {
             var repository = ContractRepository()
@@ -121,7 +127,7 @@ class calendarFragment : Fragment() {
                 try {
                     // Crear un nuevo objeto Match
                     // Llamar al repositorio para enviar la solicitud POST
-                    val response = matchRepository.updateTempMatch(artistRoleId, spaceRoleId, newMatch)
+                    val response = repository.updateContract(selectedEvent.artist_id,selectedEvent.space_id,selectedEvent)
 
                     if (response.isSuccessful) {
                         // Si la solicitud fue exitosa, obtener el match creado
@@ -136,9 +142,11 @@ class calendarFragment : Fragment() {
                     println("Error inesperado: ${e.message}")
                 }
             }
+            finishTask.visibility = View.GONE
+
         }
     }
-    */
+
 
     fun getContractsByDate(date: String) {
         val contractRepository = ContractRepository()

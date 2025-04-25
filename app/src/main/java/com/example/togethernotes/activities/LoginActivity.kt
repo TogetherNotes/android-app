@@ -66,11 +66,11 @@ class LoginActivity : AppCompatActivity() {
                             Tools.startActivityTurned(this@LoginActivity, MainActivity::class.java)
                         } ?: run {
                             showError("Respuesta vacía del servidor")
-                            Toast.makeText(this@LoginActivity, "Credenciales inválidas", Toast.LENGTH_LONG).show()
                         }
                     }
                     response.code() == 404 -> {
-                        showError("Credenciales inválidas")
+                        Toast.makeText(this@LoginActivity, "Credenciales inválidas", Toast.LENGTH_LONG).show()
+
                     }
                     else -> {
                         showError("Error ${response.code()}: ${response.message()}")
