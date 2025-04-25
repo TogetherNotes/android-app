@@ -63,14 +63,12 @@ class MatchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         matchImage = view.findViewById(R.id.matchImage)
-        if(actualApp.role== "Artist" ||actualApp.role== "artist")
-        {
+        if (actualApp.role == "Artist" || actualApp.role == "artist") {
             val btnPlayPause = view?.findViewById<ImageView>(R.id.btnPlayPause)
             seekBar = view?.findViewById(R.id.seekBar) as SeekBar
             seekBar.visibility = View.GONE
             btnPlayPause?.visibility = View.GONE
-        }
-        else{
+        } else {
             reprodMusic()
 
         }
@@ -112,10 +110,7 @@ class MatchFragment : Fragment() {
                             onSwipeLeft()
                         }
                     } else {
-                        frameLayout.animate()
-                            .translationX(0f)
-                            .setDuration(200)
-                            .start()
+                        frameLayout.animate().translationX(0f).setDuration(200).start()
                     }
                 }
             }
@@ -131,28 +126,25 @@ class MatchFragment : Fragment() {
 
     private fun onSwipeRight() {
         showNextMatch("right")
-       insertTmpMatchTable()
+        insertTmpMatchTable()
     }
 
     private fun insertTmpMatchTable() {
         var spaceLiked = false
         var artistLiked = false
-        var spaceId:Int
-        var artistId:Int
-        if (actualApp.role =="Space" )
-        {
+        var spaceId: Int
+        var artistId: Int
+        if (actualApp.role == "Space") {
             spaceLiked = true
             spaceId = actualApp.id
             artistId = possibleMatch.id
-        }
-        else
-        {
+        } else {
             artistLiked = true
             spaceId = actualApp.id
             artistId = possibleMatch.id
         }
 
-        var request_date= Tools.getCurrentFormattedDate()
+        var request_date = Tools.getCurrentFormattedDate()
         val newTempMatch = TempMatch(
             artist_id = artistId,
             space_id = spaceId,
@@ -160,7 +152,7 @@ class MatchFragment : Fragment() {
             space_like = spaceLiked,
             status = "pending",
             request_date = request_date
-        )
+                                    )
         val tempMatchRepository = TempMatchRepository()
         lifecycleScope.launch {
             try {
@@ -173,14 +165,14 @@ class MatchFragment : Fragment() {
                 if (response.isSuccessful) {
                     // Registro creado exitosamente
                     val createdMatch = response.body()
-                   // Toast.makeText(requireContext(), "Registro creado: ${createdMatch?.artist_id}, ${createdMatch?.space_id}", Toast.LENGTH_LONG).show()
+                    // Toast.makeText(requireContext(), "Registro creado: ${createdMatch?.artist_id}, ${createdMatch?.space_id}", Toast.LENGTH_LONG).show()
                 } else {
                     // Manejar errores específicos de la API
                     //Toast.makeText(requireContext(), "Error al crear el registro: ${response.message()}", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 // Manejar excepciones generales
-               // Toast.makeText(requireContext(), "Error inesperado: ${e.message}", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(), "Error inesperado: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
 
@@ -198,50 +190,37 @@ class MatchFragment : Fragment() {
             when (direction) {
                 "left" -> {
                     // Salida hacia la izquierda
-                    it.animate()
-                        .translationXBy(-it.width.toFloat())
-                        .alpha(0f) // Desvanecer
-                        .setDuration(300)
-                        .withEndAction {
+                    it.animate().translationXBy(-it.width.toFloat()).alpha(0f) // Desvanecer
+                        .setDuration(300).withEndAction {
                             updateMatchLayout()
 
                             // Entrada desde la derecha
                             it.translationX = it.width.toFloat()
                             it.alpha = 0f
-                            it.animate()
-                                .translationX(0f)
-                                .alpha(1f) // Aparecer
-                                .setDuration(300)
-                                .start()
-                        }
-                        .start()
+                            it.animate().translationX(0f).alpha(1f) // Aparecer
+                                .setDuration(300).start()
+                        }.start()
                 }
+
                 "right" -> {
                     // Salida hacia la derecha
-                    it.animate()
-                        .translationXBy(it.width.toFloat())
-                        .alpha(0f) // Desvanecer
-                        .setDuration(300)
-                        .withEndAction {
+                    it.animate().translationXBy(it.width.toFloat()).alpha(0f) // Desvanecer
+                        .setDuration(300).withEndAction {
                             updateMatchLayout()
 
                             // Entrada desde la izquierda
                             it.translationX = -it.width.toFloat()
                             it.alpha = 0f
-                            it.animate()
-                                .translationX(0f)
-                                .alpha(1f) // Aparecer
-                                .setDuration(300)
-                                .start()
-                        }
-                        .start()
+                            it.animate().translationX(0f).alpha(1f) // Aparecer
+                                .setDuration(300).start()
+                        }.start()
                 }
             }
         }
     }
 
     private fun updateMatchLayout() {
-        possibleMatchBefore= App(
+        possibleMatchBefore = App(
             id = 1,
             name = "Test Artist",
             mail = "test.artist@domain.com",
@@ -252,72 +231,78 @@ class MatchFragment : Fragment() {
             longitude = -3.7026,
             active = true,
             language_id = 1
-           )
+                                 )
         if (possibleMatchList.isNotEmpty() && searchedMatchesCounter < possibleMatchList.size) {
-            val invalidSubList = possibleMatchList.subList(searchedMatchesCounter, possibleMatchList.size)
+            val invalidSubList =
+                possibleMatchList.subList(searchedMatchesCounter, possibleMatchList.size)
             var canCreate = false
             for (possibleMatch in invalidSubList) {
                 if (possibleMatch.role != actualApp.role) {
 
-                  if (possibleMatchBefore != null) {
-    if (possibleMatch != possibleMatchBefore) {
-        canCreate = true
-    }
-}
-if (canCreate) {
-    Tools.createPossibleUser(
-        possibleMatch.role,
-        possibleMatch.mail,
-        possibleMatch.password,
-        possibleMatch.name,
-        possibleMatch.id,
-        possibleMatch.rating,
-    )
-    possibleMatchBefore = possibleMatch
-    searchedMatchesCounter++
-    view?.let {
-        val posibleMatchName = it.findViewById<TextView>(R.id.userNameMatch)
-        val userRatingMatch = it.findViewById(R.id.userRatingMatch) as ImageView
-        setStarts(possibleMatch.rating, userRatingMatch)
-        posibleMatchName.text = possibleMatch.name
-
-        lifecycleScope.launch {
-            Tools.setProfileImageFromFTP(possibleMatch.id, matchImage, requireContext())
-        }
-    }
-    break
-}
-
-                  
+                    if (possibleMatchBefore != null) {
+                        if (possibleMatch != possibleMatchBefore) {
+                            canCreate = true
+                        }
                     }
+                    if (canCreate) {
+                        Tools.createPossibleUser(
+                            possibleMatch.role,
+                            possibleMatch.mail,
+                            possibleMatch.password,
+                            possibleMatch.name,
+                            possibleMatch.id,
+                            possibleMatch.rating,
+                                                )
+                        possibleMatchBefore = possibleMatch
+                        searchedMatchesCounter++
+                        view?.let {
+                            val posibleMatchName = it.findViewById<TextView>(R.id.userNameMatch)
+                            val userRatingMatch = it.findViewById(R.id.userRatingMatch) as ImageView
+                            setStarts(possibleMatch.rating, userRatingMatch)
+                            posibleMatchName.text = possibleMatch.name
+
+                            lifecycleScope.launch {
+                                Tools.setProfileImageFromFTP(
+                                    possibleMatch.id,
+                                    matchImage,
+                                    requireContext()
+                                                            )
+                            }
+                        }
+                        break
+                    }
+
+
                 }
             }
-        }
-        else {
+        } else {
 
             //Toast.makeText(requireContext(), "No hay más coincidencias", Toast.LENGTH_SHORT).show()
         }
 
     }
-    private fun setStarts(rating: Int, view: ImageView )
-    {
-        when(rating)
-            {
-                1 -> {
-                    view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars1)
-                }
-                2 -> {
-                    view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars2)
-                }
-                3 -> {
-                    view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars3)
-                }
-                4 -> {
-                    view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars4)
-                }
-                5 -> {
-                    view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars5)
-                }
+
+    private fun setStarts(rating: Int, view: ImageView) {
+        when (rating) {
+            1 -> {
+                view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars1)
+            }
+
+            2 -> {
+                view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars2)
+            }
+
+            3 -> {
+                view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars3)
+            }
+
+            4 -> {
+                view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars4)
+            }
+
+            5 -> {
+                view.background = ContextCompat.getDrawable(requireContext(), R.drawable.stars5)
+            }
         }
 
     }
@@ -328,13 +313,13 @@ if (canCreate) {
         likeButton?.setOnClickListener {
             updateMatchLayout()
         }
-        rejectButton?.setOnClickListener{
+        rejectButton?.setOnClickListener {
             updateMatchLayout()
         }
     }
 
     private fun searchMatch() {
-        searchedMatchesCounter =0
+        searchedMatchesCounter = 0
         val appRepository = AppRepository()
         val actualAppDef = App(
             actualApp.id,
@@ -347,7 +332,7 @@ if (canCreate) {
             actualApp.longitude,
             actualApp.active,
             actualApp.language_id
-        )
+                              )
 
         lifecycleScope.launch {
             try {
@@ -356,7 +341,7 @@ if (canCreate) {
                     actualAppDef.longitude ?: 0.0,
                     10000.0,
                     actualAppDef.id
-                )
+                                                              )
 
                 if (response.isSuccessful) {
                     response.body()?.let { apps ->
@@ -368,7 +353,7 @@ if (canCreate) {
                     if (possibleMatchList.isNotEmpty()) {
                         //Toast.makeText( requireContext(), "Se encontraron ${possibleMatchList.size} coincidencias", Toast.LENGTH_LONG ).show()
                     } else {
-                       // Toast.makeText(requireContext(), "No se encontraron coincidencias", Toast.LENGTH_LONG).show()
+                        // Toast.makeText(requireContext(), "No se encontraron coincidencias", Toast.LENGTH_LONG).show()
                     }
                 } else {
                     val errorMessage = response.message() ?: "Error desconocido"
@@ -377,10 +362,11 @@ if (canCreate) {
             } catch (e: Exception) {
                 when (e) {
                     is IOException -> {
-                   //     Toast.makeText(requireContext(), "Error de red: Verifica tu conexión", Toast.LENGTH_LONG).show()
+                        //     Toast.makeText(requireContext(), "Error de red: Verifica tu conexión", Toast.LENGTH_LONG).show()
                     }
+
                     else -> {
-                       // Toast.makeText(requireContext(), "Error inesperado: ${e.message}", Toast.LENGTH_LONG).show()
+                        // Toast.makeText(requireContext(), "Error inesperado: ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -427,20 +413,18 @@ if (canCreate) {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+                             ): View? {
         return inflater.inflate(R.layout.match_fragment, container, false)
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MatchFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+        fun newInstance(param1: String, param2: String) = MatchFragment().apply {
+            arguments = Bundle().apply {
+                putString(ARG_PARAM1, param1)
+                putString(ARG_PARAM2, param2)
             }
+        }
     }
 }
