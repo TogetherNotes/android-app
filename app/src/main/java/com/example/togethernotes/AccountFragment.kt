@@ -427,11 +427,53 @@ class AccountFragment : Fragment() {
         }
     }
 
+    private fun uploadAudioToFtp(audioUri: Uri, userId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val ftpClient = FTPClient()
+
+            try {
+                val inputStream = requireContext().contentResolver.openInputStream(audioUri)
+                    ?: throw IOException("No se pudo abrir el archivo de audio.")
+
+                ftpClient.connect("10.0.0.99")
+                val loginSuccess = ftpClient.login("dam01", "pepe")
+                if (!loginSuccess) {
+                    Log.e("FTP", "Login fallido al intentar subir audio")
+                    return@launch
+                }
+
+                ftpClient.enterLocalPassiveMode()
+                ftpClient.setFileType(FTP.BINARY_FILE_TYPE)
+
+                val path = "/Audios/$userId"
+                if (!ftpClient.changeWorkingDirectory(path)) {
+                    ftpClient.makeDirectory(path)
+                    ftpClient.changeWorkingDirectory(path)
+                }
+
+                val success = ftpClient.storeFile("audio.mp3", inputStream)
+                if (success) {
+                    Log.d("FTP", "Audio subido correctamente")
+                } else {
+                    Log.e("FTP", "Error al subir el audio")
+                }
+
+                inputStream.close()
+                ftpClient.logout()
+                ftpClient.disconnect()
+            } catch (e: Exception) {
+                Log.e("FTP", "Error al subir el audio", e)
+            }
+        }
+    }
+
+
     private fun handleSelectedAudio(audioUri: Uri) {
         // Guardar el URI del archivo de audio en una variable
         val rawAudioUri = audioUri
         Log.d("RAW_AUDIO_URI", "URI del archivo de audio: $rawAudioUri")
 
+        uploadAudioToFtp(audioUri, actualApp.id.toString())
         // Aquí puedes usar la variable `rawAudioUri` según tus necesidades
     }
     @SuppressLint("ClickableViewAccessibility")
