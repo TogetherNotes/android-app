@@ -44,6 +44,8 @@ private const val ARG_PARAM2 = "param2"
 private lateinit var mediaPlayer: MediaPlayer
 private lateinit var seekBar: SeekBar
 private lateinit var matchImage: ImageView
+private lateinit var possibleMatchBefore: App
+
 var searchedMatchesCounter: Int = 0
 
 class MatchFragment : Fragment() {
@@ -239,30 +241,55 @@ class MatchFragment : Fragment() {
     }
 
     private fun updateMatchLayout() {
+        possibleMatchBefore= App(
+            id = 1,
+            name = "Test Artist",
+            mail = "test.artist@domain.com",
+            password = "testpassword",
+            role = "Artist",
+            rating = 4,
+            latitude = 40.4165,
+            longitude = -3.7026,
+            active = true,
+            language_id = 1
+           )
         if (possibleMatchList.isNotEmpty() && searchedMatchesCounter < possibleMatchList.size) {
             val invalidSubList = possibleMatchList.subList(searchedMatchesCounter, possibleMatchList.size)
+            var canCreate = false
             for (possibleMatch in invalidSubList) {
                 if (possibleMatch.role != actualApp.role) {
-                    Tools.createPossibleUser(
-                        possibleMatch.role,
-                        possibleMatch.mail,
-                        possibleMatch.password,
-                        possibleMatch.name,
-                        possibleMatch.id,
-                        possibleMatch.rating,
-                    )
-                    searchedMatchesCounter++
-                    view?.let {
-                        val posibleMatchName = it.findViewById<TextView>(R.id.userNameMatch)
-                        val userRatingMatch = it.findViewById(R.id.userRatingMatch) as ImageView
-                        setStarts(possibleMatch.rating, userRatingMatch)
-                        posibleMatchName.text = possibleMatch.name
 
-                        lifecycleScope.launch {
-                            Tools.setProfileImageFromFTP(possibleMatch.id, matchImage, requireContext())
-                        }
+                  if (possibleMatchBefore != null) {
+    if (possibleMatch != possibleMatchBefore) {
+        canCreate = true
+    }
+}
+if (canCreate) {
+    Tools.createPossibleUser(
+        possibleMatch.role,
+        possibleMatch.mail,
+        possibleMatch.password,
+        possibleMatch.name,
+        possibleMatch.id,
+        possibleMatch.rating,
+    )
+    possibleMatchBefore = possibleMatch
+    searchedMatchesCounter++
+    view?.let {
+        val posibleMatchName = it.findViewById<TextView>(R.id.userNameMatch)
+        val userRatingMatch = it.findViewById(R.id.userRatingMatch) as ImageView
+        setStarts(possibleMatch.rating, userRatingMatch)
+        posibleMatchName.text = possibleMatch.name
+
+        lifecycleScope.launch {
+            Tools.setProfileImageFromFTP(possibleMatch.id, matchImage, requireContext())
+        }
+    }
+    break
+}
+
+                  
                     }
-                    break
                 }
             }
         }

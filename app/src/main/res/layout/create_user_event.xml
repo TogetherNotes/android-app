@@ -1,13 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/createEventSol"
     android:layout_width="350dp"
     android:layout_height="450dp"
-    android:layout_gravity="center"
     android:visibility="gone"
-    android:layout_marginTop="-70dp"
-    android:background="@drawable/default_rectangle"
-    >
+    android:background="@drawable/default_rectangle">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -41,9 +38,7 @@
             layout="@layout/calendar_activity_mini"
             android:layout_width="200dp"
             android:layout_height="150dp"
-            android:layout_gravity="center"
-
-            />
+            android:layout_gravity="center" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -69,8 +64,5 @@
                 android:textColor="@color/black"
                 android:textSize="10sp" />
         </FrameLayout>
-
     </LinearLayout>
-
-
 </FrameLayout>

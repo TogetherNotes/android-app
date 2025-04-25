@@ -20,9 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.models.Contract
-import com.example.togethernotes.models.WorkType
 import com.example.togethernotes.repository.ContractRepository
-import com.example.togethernotes.repository.MessageRepository
 import com.example.togethernotes.tools.actualApp
 import kotlinx.coroutines.launch
 
@@ -40,12 +38,7 @@ class calendarFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val datePicker = view.findViewById<DatePicker>(R.id.datePicker)
-        val recyclerViewEventos = view.findViewById<RecyclerView>(R.id.recyclerViewEventos)
 
-        //initContractAdapter(recyclerViewEventos, year, monthOfYear, dayOfMonth)
-
-        // Configurar el RecyclerView
-        recyclerViewEventos.layoutManager = LinearLayoutManager(requireContext())
 
         // Manejar la selección de fechas
         datePicker.init(
@@ -83,14 +76,20 @@ class calendarFragment : Fragment() {
             val formattedDate = String.format("%04d-%02d-%02d", year, monthOfYear + 1, dayOfMonth)
 
             // Inicializar el adaptador con la fecha formateada
-            initContractAdapter(recyclerViewEventos, formattedDate)
+
+            getContractsByDate(formattedDate)
         }
     }
 
     private fun initContractAdapter(
-        recyclerViewEventos: RecyclerView,
-        date: String
+        listaEventos: List<Contract>,
     ) {
+        val recyclerViewEventos = view?.findViewById<RecyclerView>(R.id.recyclerViewEventos)
+
+        //initContractAdapter(recyclerViewEventos, year, monthOfYear, dayOfMonth)
+
+        // Configurar el RecyclerView
+        recyclerViewEventos?.layoutManager = LinearLayoutManager(requireContext())
 
         // Crear una lista de eventos (puedes reemplazar esto con datos reales)
         val finishTask = view?.findViewById(R.id.finishTask) as FrameLayout
@@ -98,81 +97,92 @@ class calendarFragment : Fragment() {
         val finishTaskButton = view?.findViewById(R.id.confirm_finish_contract) as ImageView
         val calendarFragment = view?.findViewById(R.id.calendarFragment) as LinearLayout
 
-        val listaEventos = listOf(
-            Contract(
-                artist_id = 101,
-                end_hour = "22:00",
-                init_hour = "20:00",
-                space_id = 5,
-                meet_type = WorkType.work.toString(),
-                title = "Evento 1",
-                status = "Pendiente"
-                    ),
-            Contract(
-                artist_id = 102,
-                end_hour = "02:00",
-                init_hour = "23:00",
-                space_id = 7,
-                meet_type = WorkType.work.toString(),
-                title = "Evento 1",
-                status = "Pendiente"
-                    ),
-            Contract(
-                artist_id = 103,
-                end_hour = "19:30",
-                init_hour = "18:00",
-                space_id = 3,
-                meet_type = WorkType.work.toString(),
-                title = "Evento 1",
-                status = "Pendiente"
-                    )
-                             )
-
         // Asignar el adaptador al RecyclerView
-        recyclerViewEventos.adapter = ContractsAdapter(listaEventos) { selectedEvent ->
+        recyclerViewEventos?.adapter = ContractsAdapter(listaEventos) { selectedEvent ->
             // Manejar el clic en el fragmen
             finishTask.visibility = View.VISIBLE
-            recyclerViewEventos.visibility = View.GONE
+            recyclerViewEventos?.visibility = View.GONE
 
             nombreTreaFinishContract.text= selectedEvent.title
             getUserStars()
             // Ejemplo de uso de findViewById en el fragmento
         }
-        detectFocus(calendarFragment,finishTask,recyclerViewEventos)
+        if (recyclerViewEventos != null) {
+            detectFocus(calendarFragment,finishTask,recyclerViewEventos)
+        }
+       // updateContract(finishTaskButton)
     }
-
-    fun getContractsByDate(date: String)
+    /*
+    fun updateContract(finishTaskButton: ImageView)
     {
-        var contractRepository = ContractRepository()
+        finishTaskButton.setOnClickListener {
+            var repository = ContractRepository()
+            lifecycleScope.launch {
+                try {
+                    // Crear un nuevo objeto Match
+                    // Llamar al repositorio para enviar la solicitud POST
+                    val response = matchRepository.updateTempMatch(artistRoleId, spaceRoleId, newMatch)
+
+                    if (response.isSuccessful) {
+                        // Si la solicitud fue exitosa, obtener el match creado
+                        val createdMatch = response.body()
+                        println("Match creado exitosamente: $createdMatch")
+                    } else {
+                        // Si hubo un error, imprimir el mensaje de error
+                        println("Error al crear el match: ${response.message()}")
+                    }
+                } catch (e: Exception) {
+                    // Manejar errores inesperados
+                    println("Error inesperado: ${e.message}")
+                }
+            }
+        }
+    }
+    */
+
+    fun getContractsByDate(date: String) {
+        val contractRepository = ContractRepository()
         lifecycleScope.launch {
             try {
                 val response = contractRepository.getContractsByDate(actualApp.id, date)
                 if (response.isSuccessful) {
+                    // Extraer el cuerpo de la respuesta
+                    val contracts = response.body()
+                    if (contracts != null) {
+                        // Procesar los contratos obtenidos
+                        Toast.makeText(
+                            requireContext(),
+                            "Contratos cargados para la fecha: $date",
+                            Toast.LENGTH_SHORT
+                                      ).show()
 
-                    Toast.makeText(
-                        requireContext(), // Necesitarás un contexto, asegúrate de pasarlo también
-                        "Se ha modificado", Toast.LENGTH_SHORT
-                                  ).show()
+                        // Aquí puedes actualizar el RecyclerView con los contratos
+                        initContractAdapter(contracts)
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "No se encontraron contratos para la fecha: $date",
+                            Toast.LENGTH_SHORT
+                                      ).show()
+                    }
                 } else {
                     Toast.makeText(
-                        requireContext(), // Necesitarás un contexto, asegúrate de pasarlo también
-                        "Se ha modificado", Toast.LENGTH_SHORT
+                        requireContext(),
+                        "Error al cargar contratos: ${response.code()}",
+                        Toast.LENGTH_SHORT
                                   ).show()
                 }
             } catch (e: Exception) {
                 Toast.makeText(
-                    requireContext(), // Necesitarás un contexto, asegúrate de pasarlo también
-                    "Se ha modificado", Toast.LENGTH_SHORT
+                    requireContext(),
+                    "Error de conexión: ${e.message}",
+                    Toast.LENGTH_SHORT
                               ).show()
             }
         }
     }
 
-    fun recordFinishedTask()
-    {
-        val finishTask = view?.findViewById(R.id.finishTask) as FrameLayout
-        finishTask.visibility = View.GONE
-    }
+
     @SuppressLint("ClickableViewAccessibility")
     fun getUserStars(){
 

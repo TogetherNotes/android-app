@@ -7,6 +7,7 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
@@ -83,7 +84,7 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
 
         findViewById<ImageView>(R.id.sendButton).setOnClickListener {
             val messageText = messageInput.text.toString().trim()
-            sendMessage(receiverId, messageText)
+            sendMessage(receiverId, messageText,0)
         }
 
         eventButton()
@@ -92,7 +93,10 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
         val createEventButton = findViewById<ImageView>(R.id.createEventButton)
         val confirmEventButton = findViewById<ImageView>(R.id.confirm_event_info)
         val createEventFrame = findViewById<FrameLayout>(R.id.createEventSol)
+        val rootLaoyout = findViewById<LinearLayout>(R.id.rootLayout)
+
         createEventButton.setOnClickListener {
+            detectFocus(rootLaoyout,createEventFrame)
             createEventFrame.visibility = View.VISIBLE
             confirmEventButton.setOnClickListener {
                 checkDataInserted(createEventFrame)
@@ -124,7 +128,7 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
             // Crear el mensaje formateado usando el mismo esquema que splitMessage
             val formattedMessage = "$$--$title$$--$isChecked$$--$formattedDate"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                sendMessage(receiverId, formattedMessage)
+                sendMessage(receiverId, formattedMessage,0)
             }
             createEventFrame.visibility = View.GONE
 
@@ -264,7 +268,7 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun sendMessage(receiverId: Int, messageText: String) {
+    private fun sendMessage(receiverId: Int, messageText: String, messageId: Int) {
         if (messageText.isEmpty()) return
 
         // Encrypt the message before sending
@@ -315,6 +319,30 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
     private fun log(tag: String, message: String) {
         Log.d(tag, message)
     }
+    @SuppressLint("ClickableViewAccessibility")
+    fun detectFocus(mainLayout: LinearLayout, showGenres: FrameLayout){
+        var windowClosed: Boolean
+        windowClosed = false
+            mainLayout.setOnTouchListener { _, event ->
+                if (showGenres.visibility == View.VISIBLE && event.action == MotionEvent.ACTION_DOWN) {
+                    val x = event.rawX.toInt()
+                    val y = event.rawY.toInt()
+
+                    // Verificar si el clic está fuera del layout pequeño
+                    val showGenresBounds = Rect()
+                    showGenres.getGlobalVisibleRect(showGenresBounds)
+                    if (!showGenresBounds.contains(x, y)) {
+                        showGenres.visibility = View.GONE
+                        windowClosed = true
+                    }
+                    if (windowClosed) {
+
+                    }
+                }
+                false // Permitir que otros gestos se procesen
+            }
+        }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onAcceptButtonClick(message: Message, position: Int) {
@@ -362,35 +390,13 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
         updateMessage(messages[position])
 
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SuspiciousIndentation")
     fun updateMessage(message: Message) {
-        val encryptedText = CryptoUtil.encrypt(message.content)
-
-        message.content = encryptedText
-        var messageRepository = MessageRepository()
-            lifecycleScope.launch {
-                try {
-                    val response = messageRepository.markMessageAsRead(message.id,message)
-                    if (response.isSuccessful) {
-                        Toast.makeText(
-                            this@InsideChatActivity, // Necesitarás un contexto, asegúrate de pasarlo también
-                            "Se ha modificado", Toast.LENGTH_SHORT
-                                      ).show()
-                    } else {
-                        Toast.makeText(
-                            this@InsideChatActivity, "Respuesta vacía", Toast.LENGTH_LONG
-                                      ).show()
-                    }
-                } catch (e: Exception) {
-                    Toast.makeText(
-                        this@InsideChatActivity, "Exception: ${e.message}", Toast.LENGTH_LONG
-                                  ).show()
-                }
-            }
-        }
+        sendMessage(message.senderId,message.content,message.id)
+    }
 
     override fun onDiscardButtonClick(message: Message, position: Int)
     {
-
     }
 }
