@@ -7,6 +7,7 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
@@ -92,7 +93,10 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
         val createEventButton = findViewById<ImageView>(R.id.createEventButton)
         val confirmEventButton = findViewById<ImageView>(R.id.confirm_event_info)
         val createEventFrame = findViewById<FrameLayout>(R.id.createEventSol)
+        val rootLaoyout = findViewById<LinearLayout>(R.id.rootLayout)
+
         createEventButton.setOnClickListener {
+            detectFocus(rootLaoyout,createEventFrame)
             createEventFrame.visibility = View.VISIBLE
             confirmEventButton.setOnClickListener {
                 checkDataInserted(createEventFrame)
@@ -315,6 +319,30 @@ class InsideChatActivity : AppCompatActivity(), OnMessageClickListener {
     private fun log(tag: String, message: String) {
         Log.d(tag, message)
     }
+    @SuppressLint("ClickableViewAccessibility")
+    fun detectFocus(mainLayout: LinearLayout, showGenres: FrameLayout){
+        var windowClosed: Boolean
+        windowClosed = false
+            mainLayout.setOnTouchListener { _, event ->
+                if (showGenres.visibility == View.VISIBLE && event.action == MotionEvent.ACTION_DOWN) {
+                    val x = event.rawX.toInt()
+                    val y = event.rawY.toInt()
+
+                    // Verificar si el clic está fuera del layout pequeño
+                    val showGenresBounds = Rect()
+                    showGenres.getGlobalVisibleRect(showGenresBounds)
+                    if (!showGenresBounds.contains(x, y)) {
+                        showGenres.visibility = View.GONE
+                        windowClosed = true
+                    }
+                    if (windowClosed) {
+
+                    }
+                }
+                false // Permitir que otros gestos se procesen
+            }
+        }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onAcceptButtonClick(message: Message, position: Int) {

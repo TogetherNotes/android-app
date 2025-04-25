@@ -20,9 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.togethernotes.models.Contract
-import com.example.togethernotes.models.WorkType
 import com.example.togethernotes.repository.ContractRepository
-import com.example.togethernotes.repository.MessageRepository
 import com.example.togethernotes.tools.actualApp
 import kotlinx.coroutines.launch
 
@@ -112,7 +110,35 @@ class calendarFragment : Fragment() {
         if (recyclerViewEventos != null) {
             detectFocus(calendarFragment,finishTask,recyclerViewEventos)
         }
+       // updateContract(finishTaskButton)
     }
+    /*
+    fun updateContract(finishTaskButton: ImageView)
+    {
+        finishTaskButton.setOnClickListener {
+            var repository = ContractRepository()
+            lifecycleScope.launch {
+                try {
+                    // Crear un nuevo objeto Match
+                    // Llamar al repositorio para enviar la solicitud POST
+                    val response = matchRepository.updateTempMatch(artistRoleId, spaceRoleId, newMatch)
+
+                    if (response.isSuccessful) {
+                        // Si la solicitud fue exitosa, obtener el match creado
+                        val createdMatch = response.body()
+                        println("Match creado exitosamente: $createdMatch")
+                    } else {
+                        // Si hubo un error, imprimir el mensaje de error
+                        println("Error al crear el match: ${response.message()}")
+                    }
+                } catch (e: Exception) {
+                    // Manejar errores inesperados
+                    println("Error inesperado: ${e.message}")
+                }
+            }
+        }
+    }
+    */
 
     fun getContractsByDate(date: String) {
         val contractRepository = ContractRepository()
@@ -156,11 +182,7 @@ class calendarFragment : Fragment() {
         }
     }
 
-    fun recordFinishedTask()
-    {
-        val finishTask = view?.findViewById(R.id.finishTask) as FrameLayout
-        finishTask.visibility = View.GONE
-    }
+
     @SuppressLint("ClickableViewAccessibility")
     fun getUserStars(){
 
