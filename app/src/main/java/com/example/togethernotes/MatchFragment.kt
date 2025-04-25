@@ -28,9 +28,15 @@ import com.example.togethernotes.tools.actualApp
 import com.example.togethernotes.tools.possibleMatch
 import com.example.togethernotes.tools.possibleMatchList
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.apache.commons.net.ftp.FTP
+import org.apache.commons.net.ftp.FTPClient
 import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale
 import retrofit2.Response
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -374,41 +380,90 @@ class MatchFragment : Fragment() {
     }
 
     private fun reprodMusic() {
-        mediaPlayer = MediaPlayer.create(requireContext(), R.raw.audio_prueba)
         val btnPlayPause = view?.findViewById<ImageView>(R.id.btnPlayPause)
-
         seekBar = view?.findViewById(R.id.seekBar) as SeekBar
-        seekBar.max = mediaPlayer.duration
 
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    mediaPlayer.seekTo(progress)
+        val ftpClient = FTPClient()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                ftpClient.connect("10.0.0.99")
+                val loginSuccess = ftpClient.login("dam01", "pepe")
+                if (!loginSuccess) {
+                    println("FTP login failed")
+                    return@launch
+                }
+
+                ftpClient.enterLocalPassiveMode()
+                ftpClient.setFileType(FTP.BINARY_FILE_TYPE)
+
+                val audioPath = "/Audios/${possibleMatch.id}/audio.mp3"
+                val localFile = File(requireContext().cacheDir, "temp_audio.mp3")
+                val outputStream = FileOutputStream(localFile)
+
+                val fileExists = ftpClient.retrieveFile(audioPath, outputStream)
+                outputStream.close()
+                ftpClient.logout()
+                ftpClient.disconnect()
+
+                if (fileExists) {
+                    mediaPlayer = MediaPlayer()
+                    mediaPlayer.setDataSource(localFile.absolutePath)
+                    mediaPlayer.prepare()
+
+                    requireActivity().runOnUiThread {
+                        seekBar.max = mediaPlayer.duration
+                        seekBar.visibility = View.VISIBLE
+                        btnPlayPause?.visibility = View.VISIBLE
+
+                        btnPlayPause?.setOnClickListener {
+                            if (mediaPlayer.isPlaying) {
+                                mediaPlayer.pause()
+                                btnPlayPause.setImageResource(R.drawable.play_image)
+                            } else {
+                                mediaPlayer.start()
+                                btnPlayPause.setImageResource(R.drawable.pause_image)
+
+                                Thread {
+                                    while (mediaPlayer.isPlaying) {
+                                        val progress = mediaPlayer.currentPosition
+                                        activity?.runOnUiThread {
+                                            seekBar.progress = progress
+                                        }
+                                        Thread.sleep(1000)
+                                    }
+                                }.start()
+                            }
+                        }
+
+                        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                                if (fromUser) mediaPlayer.seekTo(progress)
+                            }
+
+                            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+                        })
+                    }
+                } else {
+                    requireActivity().runOnUiThread {
+                        Toast.makeText(requireContext(), "Este artista no tiene audio disponible", Toast.LENGTH_SHORT).show()
+                        seekBar.visibility = View.GONE
+                        btnPlayPause?.visibility = View.GONE
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                requireActivity().runOnUiThread {
+                    Toast.makeText(requireContext(), "Error al cargar el audio", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+    }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-
-        btnPlayPause?.setOnClickListener {
-            if (mediaPlayer.isPlaying) {
-                mediaPlayer.pause()
-                btnPlayPause.setImageResource(R.drawable.play_image)
-            } else {
-                mediaPlayer.start()
-                btnPlayPause.setImageResource(R.drawable.pause_image)
-
-                Thread {
-                    while (mediaPlayer.isPlaying) {
-                        val progress = mediaPlayer.currentPosition
-                        activity?.runOnUiThread {
-                            seekBar.progress = progress
-                        }
-                        Thread.sleep(1000)
-                    }
-                }.start()
-            }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (::mediaPlayer.isInitialized) {
+            mediaPlayer.release()
         }
     }
 
