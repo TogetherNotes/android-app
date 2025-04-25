@@ -1,8 +1,13 @@
 package com.example.togethernotes.tools
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.view.View
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+import com.example.togethernotes.R
 import com.example.togethernotes.models.Artist
 import com.example.togethernotes.models.Genres
 import com.example.togethernotes.models.Space
@@ -10,6 +15,12 @@ import com.example.togethernotes.models.App
 import com.example.togethernotes.models.Chat
 import com.example.togethernotes.models.TempMatch
 import com.example.togethernotes.models.TempMatchDto
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.apache.commons.net.ftp.FTP
+import org.apache.commons.net.ftp.FTPClient
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -58,6 +69,66 @@ object Tools {
 
         return listOf(titulo, tipoContrato, fecha)
     }
+
+    /**
+     * Este es el método que descarga la imagen desde FTP y la carga en un ImageView
+     *
+     * @param userId El id del usuario del que se quiere sacar la imagen
+     * @param imageView Donde se pondra la imagen del usuario
+     * @param context La actividad donde se subira la imagen
+     */
+    suspend fun setProfileImageFromFTP(userId: Int, imageView: ImageView, context: Context) {
+        withContext(Dispatchers.IO) {
+            val ftpClient = FTPClient()
+            try {
+                ftpClient.connect("10.0.0.99")
+                ftpClient.login("dam01", "pepe")
+                ftpClient.enterLocalPassiveMode()
+                ftpClient.setFileType(FTP.BINARY_FILE_TYPE)
+
+                val imagePath = "Images/$userId/image.jpg"
+                val inputStream = ftpClient.retrieveFileStream(imagePath)
+
+                if (inputStream != null) {
+                    val tempFile = File.createTempFile("profile_temp", ".jpg", context.cacheDir)
+                    FileOutputStream(tempFile).use { output ->
+                        inputStream.copyTo(output)
+                    }
+                    inputStream.close()
+                    ftpClient.completePendingCommand()
+
+                    withContext(Dispatchers.Main) {
+                        Glide.with(context)
+                            .load(tempFile)
+                            .placeholder(R.drawable.user_default)
+                            .error(R.drawable.user_default)
+                            .centerCrop()
+                            .into(imageView)
+                    }
+                } else {
+                    // No se encontró la imagen, usar imagen por defecto
+                    withContext(Dispatchers.Main) {
+                        Glide.with(context)
+                            .load(R.drawable.user_default)
+                            .centerCrop()
+                            .into(imageView)
+                    }
+                }
+
+                ftpClient.logout()
+                ftpClient.disconnect()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    Glide.with(context)
+                        .load(R.drawable.user_default)
+                        .centerCrop()
+                        .into(imageView)
+                }
+            }
+        }
+    }
+
 
 
     /**

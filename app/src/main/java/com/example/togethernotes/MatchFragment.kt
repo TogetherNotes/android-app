@@ -43,6 +43,7 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 private lateinit var mediaPlayer: MediaPlayer
 private lateinit var seekBar: SeekBar
+private lateinit var matchImage: ImageView
 var searchedMatchesCounter: Int = 0
 
 class MatchFragment : Fragment() {
@@ -59,6 +60,7 @@ class MatchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        matchImage = view.findViewById(R.id.matchImage)
         if(actualApp.role== "Artist" ||actualApp.role== "artist")
         {
             val btnPlayPause = view?.findViewById<ImageView>(R.id.btnPlayPause)
@@ -255,6 +257,10 @@ class MatchFragment : Fragment() {
                         val userRatingMatch = it.findViewById(R.id.userRatingMatch) as ImageView
                         setStarts(possibleMatch.rating, userRatingMatch)
                         posibleMatchName.text = possibleMatch.name
+
+                        lifecycleScope.launch {
+                            Tools.setProfileImageFromFTP(possibleMatch.id, matchImage, requireContext())
+                        }
                     }
                     break
                 }

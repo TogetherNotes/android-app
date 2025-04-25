@@ -9,9 +9,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -73,7 +71,7 @@ class AccountFragment : Fragment() {
     private lateinit var userGenres: TextView
     private lateinit var  selectedLanguage: LinearLayout
     companion object {
-        private const val REQUEST_CODE_AUDIO_PICKER = 200 // Código de solicitud único
+        private const val REQUEST_CODE_AUDIO_PICKER = 200
     }
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -105,15 +103,15 @@ class AccountFragment : Fragment() {
 
     private fun loadUserImage() {
         val userId = actualApp.id
-        val ftpUrl = "ftp://dam01@10.0.0.99/Images/$userId/image.jpg"
+        val path = "/Images/$userId/image.jpg"
 
         // Descargar la imagen en segundo plano
         CoroutineScope(Dispatchers.IO).launch {
-            val imageBitmap = downloadImageFromFTP(ftpUrl)
+            val imageBitmap = downloadImageFromFTP(path)
 
             withContext(Dispatchers.Main) {
                 if (imageBitmap != null) {
-                    // Si la imagen fue descargada con éxito, la mostramos con Glide
+
                     Glide.with(this@AccountFragment)
                         .load(imageBitmap)
                         .placeholder(R.drawable.user_default)
@@ -121,7 +119,7 @@ class AccountFragment : Fragment() {
                         .circleCrop()
                         .into(profileImageView)
                 } else {
-                    // Si hubo un error, usamos una imagen por defecto
+
                     Glide.with(this@AccountFragment)
                         .load(R.drawable.user_default)
                         .circleCrop()
@@ -131,12 +129,11 @@ class AccountFragment : Fragment() {
         }
     }
 
-    private fun downloadImageFromFTP(ftpUrl: String): Bitmap? {
+    private fun downloadImageFromFTP(path: String): Bitmap? {
         val ftpClient = FTPClient()
         var bitmap: Bitmap? = null
 
         try {
-            // Conectar al servidor FTP
             ftpClient.connect("10.0.0.99")
             val loginSuccess = ftpClient.login("dam01", "pepe")
             if (!loginSuccess) {
@@ -147,13 +144,12 @@ class AccountFragment : Fragment() {
             ftpClient.enterLocalPassiveMode()
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE)
 
-            // Descargar el archivo de la imagen
-            val inputStream = ftpClient.retrieveFileStream(ftpUrl)
-
-            // Convertir el flujo de entrada a Bitmap
+            val inputStream = ftpClient.retrieveFileStream(path)
             if (inputStream != null) {
                 bitmap = BitmapFactory.decodeStream(inputStream)
                 inputStream.close()
+
+                ftpClient.completePendingCommand()
             }
 
             ftpClient.logout()
@@ -165,6 +161,7 @@ class AccountFragment : Fragment() {
 
         return bitmap
     }
+
 
 
     override fun onAttach(context: Context) {
